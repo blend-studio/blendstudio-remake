@@ -1,99 +1,138 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import PageTransition from "../components/Transition";
 import { RevealText } from "../components/ui/RevealText";
 import { motion, AnimatePresence } from "framer-motion";
-
-const projectsData = [
-  { id: 1, title: "Architettura Srl", cat: "Web Design", img: "https://images.unsplash.com/photo-1600607686527-6fb886090705?q=80&w=1000", size: "large" },
-  { id: 2, title: "Minimalist Brand", cat: "Branding", img: "https://images.unsplash.com/photo-1497215728101-856f4ea42174?q=80&w=1000", size: "small" },
-  { id: 3, title: "Future Tech", cat: "Development", img: "https://images.unsplash.com/photo-1481487484168-9b930d55206d?q=80&w=1000", size: "small" },
-  { id: 4, title: "Luxury Hotel", cat: "Marketing", img: "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?q=80&w=1000", size: "large" },
-  { id: 5, title: "E-Commerce Pro", cat: "Development", img: "https://images.unsplash.com/photo-1556761175-5973dc0f32e7?q=80&w=1000", size: "small" },
-  { id: 6, title: "Art Gallery", cat: "Web Design", img: "https://images.unsplash.com/photo-1577720580479-7d839d829c73?q=80&w=1000", size: "small" },
-];
+import TiltCard from "../components/ui/TiltCard";
+import { getProjects } from "../services/api";
 
 const categories = ["All", "Web Design", "Branding", "Development", "Marketing"];
 
 const Projects = () => {
+  const [projects, setProjects] = useState([]);
   const [filter, setFilter] = useState("All");
+  const [loading, setLoading] = useState(true);
 
-  const filteredProjects = projectsData.filter(p => filter === "All" || p.cat === filter);
+  useEffect(() => {
+    const fetchProjects = async () => {
+      try {
+        const response = await getProjects();
+        if (response.status === "success") {
+            setProjects(response.data);
+        }
+      } catch (error) {
+        console.error("Failed to load projects", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProjects();
+  }, []);
+
+  const filteredProjects = projects.filter(p => filter === "All" || (p.services && p.services.includes(filter)) || p.cat === filter);
+  const featuredProject = projects.length > 0 ? projects[0] : null;
 
   return (
     <PageTransition>
-      <div className="pt-32 md:pt-48 pb-20 px-6 md:px-20 bg-blend-bg min-h-screen">
+      <div className="w-full bg-white min-h-screen">
         
-        {/* Header */}
-        <div className="mb-20 md:mb-32 text-center">
-          <RevealText text="OUR WORK" className="text-6xl md:text-9xl lg:text-[12rem] font-bold text-blend mb-6 justify-center" />
-          <p className="text-xl md:text-2xl text-blend-dark/60 max-w-2xl mx-auto mt-10">
-            Esplora una selezione dei nostri progetti più recenti. 
-            Ogni pixel è pensato per performare.
-          </p>
-        </div>
+        {/* --- COMPACT HERO --- */}
+        <div className="relative h-[60vh] flex items-center justify-center px-6 md:px-20 overflow-hidden bg-black text-white">
+           {featuredProject && (
+               <div className="absolute inset-0">
+                  <div className="absolute inset-0 bg-black/60 z-10" />
+                  <img 
+                    src={featuredProject.cover_image || featuredProject.img} 
+                    alt="Featured Project" 
+                    className="w-full h-full object-cover grayscale"
+                  />
+               </div>
+           )}
 
-        {/* Filter */}
-        <div className="flex flex-wrap justify-center gap-4 mb-20">
-          {categories.map((cat) => (
-            <button
-              key={cat}
-              onClick={() => setFilter(cat)}
-              className={`px-6 py-2 rounded-full text-sm font-bold uppercase tracking-widest transition-all duration-300 ${
-                filter === cat 
-                  ? "bg-blend text-white scale-110" 
-                  : "bg-white text-blend hover:bg-blend/10"
-              }`}
-            >
-              {cat}
-            </button>
-          ))}
-        </div>
-
-        {/* Grid Progetti */}
-        <motion.div layout className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-20">
-          <AnimatePresence>
-            {filteredProjects.map((project, index) => (
-              <motion.div
-                layout
-                key={project.id}
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.9 }}
-                transition={{ duration: 0.5 }}
-                className={`group block ${project.size === "large" ? "md:col-span-2" : "md:col-span-1"}`}
+           <div className="relative z-20 text-center">
+              <motion.span 
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2 }}
+                className="block mb-4 text-xs font-bold uppercase tracking-widest text-white/60"
               >
-                <Link to={`/project/${project.id}`} className="block">
-                  <div className={`overflow-hidden rounded-sm relative bg-gray-200 ${project.size === "large" ? "aspect-[2/1]" : "aspect-[4/5]"}`}>
-                    <div className="absolute inset-0 bg-blend/20 group-hover:bg-transparent transition-colors duration-500 z-10" />
-                    <motion.img
-                      whileHover={{ scale: 1.05 }}
-                      transition={{ duration: 0.7 }}
-                      src={project.img}
-                      alt={project.title}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                  <div className="mt-6 flex justify-between items-center">
-                    <div>
-                      <h3 className="text-3xl md:text-4xl font-bold text-blend">{project.title}</h3>
-                      <p className="text-sm uppercase tracking-widest text-gray-500 mt-2">{project.cat}</p>
-                    </div>
-                    <div className="w-12 h-12 border border-blend rounded-full flex items-center justify-center text-blend opacity-0 group-hover:opacity-100 transition-all duration-300 group-hover:bg-blend group-hover:text-white">
-                      ↗
-                    </div>
-                  </div>
-                </Link>
-              </motion.div>
-            ))}
-          </AnimatePresence>
-        </motion.div>
+                Our Portfolio
+              </motion.span>
+              <h1 className="text-6xl md:text-8xl lg:text-9xl font-bold leading-none tracking-tighter mb-6">
+                <RevealText text="OUR WORK" />
+              </h1>
+           </div>
+        </div>
 
-        {/* Load More (Fake) */}
-        <div className="mt-32 text-center">
-             <button className="text-blend font-bold uppercase tracking-widest border-b-2 border-blend pb-1 hover:text-blend-light hover:border-blend-light transition-colors">
-                Carica altri progetti
-             </button>
+        <div className="py-20 px-6 md:px-20">
+            {/* Filter */}
+            <div className="flex flex-wrap justify-center gap-3 mb-16">
+            {categories.map((cat) => (
+                <button
+                key={cat}
+                onClick={() => setFilter(cat)}
+                className={`px-5 py-2 rounded-full text-[10px] font-bold uppercase tracking-widest transition-all duration-300 ${
+                    filter === cat 
+                    ? "bg-blend text-white" 
+                    : "bg-gray-50 text-blend hover:bg-blend/10 border border-gray-100"
+                }`}
+                >
+                {cat}
+                </button>
+            ))}
+            </div>
+
+            {/* Grid Progetti - 3 Columns */}
+            {loading ? (
+                <div className="text-center py-20 text-gray-400">Loading projects...</div>
+            ) : (
+                <motion.div layout className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-12">
+                <AnimatePresence>
+                    {filteredProjects.map((project) => (
+                    <TiltCard key={project.id} className="h-full">
+                    <motion.div
+                        layout
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.95 }}
+                        transition={{ duration: 0.4 }}
+                        className="group block h-full"
+                    >
+                        <Link to={`/project/${project.id}`} className="block h-full">
+                        <div className="overflow-hidden rounded-sm relative bg-gray-100 aspect-square">
+                            <div className="absolute inset-0 bg-blend/10 group-hover:bg-transparent transition-colors duration-500 z-10" />
+                            <motion.img
+                            whileHover={{ scale: 1.08 }}
+                            transition={{ duration: 0.6, ease: "easeOut" }}
+                            src={project.cover_image || project.img} // Fallback for transition
+                            alt={project.title}
+                            className="w-full h-full object-cover"
+                            />
+                        </div>
+                        <div className="mt-5 flex justify-between items-start">
+                            <div>
+                            <h3 className="text-xl md:text-2xl font-bold text-blend leading-tight">{project.title}</h3>
+                            <p className="text-[10px] uppercase tracking-widest text-gray-400 mt-1 font-bold">{project.services || project.cat}</p>
+                            </div>
+                            <div className="w-8 h-8 border border-gray-200 rounded-full flex items-center justify-center text-blend opacity-0 group-hover:opacity-100 group-hover:bg-blend group-hover:text-white group-hover:border-blend transition-all duration-300 text-xs">
+                            ↗
+                            </div>
+                        </div>
+                        </Link>
+                    </motion.div>
+                    </TiltCard>
+                    ))}
+                </AnimatePresence>
+                </motion.div>
+            )}
+
+            {/* Load More */}
+            <div className="mt-24 text-center">
+                <button className="text-xs font-bold uppercase tracking-[0.2em] text-blend border-b border-blend pb-1 hover:text-blend-light hover:border-blend-light transition-colors">
+                    Esplora Altri Progetti
+                </button>
+            </div>
         </div>
 
       </div>

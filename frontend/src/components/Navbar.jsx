@@ -1,7 +1,8 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import blendLogo from "../assets/images/blend-logo-blu.png";
+import Magnetic from "./ui/Magnetic";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -41,37 +42,38 @@ const Navbar = () => {
           <img 
             src={blendLogo} 
             alt="Blend Studio" 
-            className={`h-16 w-auto transition-all duration-300 ${isOpen ? "brightness-0 invert" : ""}`} 
+            className={`h-16 w-auto transition-all duration-300 ${isOpen ? "brightness-0 invert" : ""}`}
           />
         </Link>
 
-        {/* Menu Toggle - Completely Transparent */}
-        <button
-          onClick={toggleMenu}
-          className="z-50 cursor-pointer p-2 focus:outline-none !bg-transparent border-none !shadow-none hover:!bg-transparent active:!bg-transparent"
-          style={{ background: 'none', border: 'none', boxShadow: 'none', outline: 'none', borderRadius: '0' }}
-          aria-label={isOpen ? "Chiudi Menu" : "Apri Menu"}
-        >
-          <div className="w-8 h-5 flex flex-col justify-between items-center">
-            <span
-              className={`block w-8 h-1 transition-all duration-300 ease-out ${
-                isOpen ? "bg-white rotate-45 translate-y-2" : "bg-[#2f6580]"
-              }`}
-            ></span>
-            <span
-              className={`block w-8 h-1 transition-all duration-300 ease-out ${
-                isOpen ? "opacity-0" : "bg-[#2f6580] opacity-100"
-              }`}
-            ></span>
-            <span
-              className={`block w-8 h-1 transition-all duration-300 ease-out ${
-                isOpen ? "bg-white -rotate-45 -translate-y-2" : "bg-[#2f6580]"
-              }`}
-            ></span>
-          </div>
-        </button>
+        {/* Menu Toggle */}
+        <Magnetic strength={60}>
+          <button
+            onClick={toggleMenu}
+            className="z-50 cursor-pointer p-0 m-0 focus:outline-none !bg-transparent border-none !shadow-none hover:!bg-transparent active:!bg-transparent group"
+            style={{ background: 'none', border: 'none', boxShadow: 'none', outline: 'none', borderRadius: '0' }}
+            aria-label={isOpen ? "Chiudi Menu" : "Apri Menu"}
+          >
+            <div className="w-16 h-16 rounded-full flex flex-col justify-center items-center gap-1.5 transition-all duration-300 group-hover:scale-110">
+              <span
+                className={`block w-8 h-1 transition-all duration-300 ease-out ${
+                  isOpen ? "bg-white rotate-45 translate-y-2.5" : "bg-[#2f6580]"
+                }`}
+              ></span>
+              <span
+                className={`block w-8 h-1 transition-all duration-300 ease-out ${
+                  isOpen ? "opacity-0" : "bg-[#2f6580] opacity-100"
+                }`}
+              ></span>
+              <span
+                className={`block w-8 h-1 transition-all duration-300 ease-out ${
+                  isOpen ? "bg-white -rotate-45 -translate-y-2.5" : "bg-[#2f6580]"
+                }`}
+              ></span>
+            </div>
+          </button>
+        </Magnetic>
       </nav>
-
       <AnimatePresence mode="wait">
         {isOpen && (
           <motion.div
