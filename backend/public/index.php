@@ -64,6 +64,12 @@ $router->add('POST', 'api/logout', 'UserController', 'logout');
 // GET api/check-auth -> UserController::checkAuth (Per vedere se siamo loggati al refresh)
 $router->add('GET', 'api/check-auth', 'UserController', 'checkAuth');
 
+// ... dopo le rotte di login ...
+
+// Rotte Progetti
+$router->add('GET', 'api/projects', 'ProjectController', 'index');
+$router->add('GET', 'api/project', 'ProjectController', 'show'); // Gestisce sia ?id=1 che ?slug=nome
+
 
 // C. Area Progetti (CRUD) - DA IMPLEMENTARE PROSSIMAMENTE
 // $router->add('GET', 'api/projects', 'ProjectController', 'index');

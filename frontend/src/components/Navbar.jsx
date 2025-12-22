@@ -26,6 +26,7 @@ const Navbar = () => {
 
   const navLinks = [
     { title: "Home", href: "/" },
+    { title: "Chi siamo", href: "/about" },
     { title: "Progetti", href: "/projects" },
     { title: "Servizi", href: "/services" },
     { title: "Lavora con noi", href: "/careers" },
