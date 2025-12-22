@@ -1,0 +1,181 @@
+[
+  {
+    "id": 1,
+    "title": "Minimalist Rebrand",
+    "slug": "minimalist-rebrand",
+    "client": "Architettura Srl",
+    "services": "Branding, Web Design",
+    "description": "Un approccio radicale al design minimalista ispirato al modernismo.",
+    "cover_image": "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=1600&q=80",
+    "gallery_images": [
+      "https://images.unsplash.com/photo-1497215728101-856f4ea42174?auto=format&fit=crop&w=800&q=80",
+      "https://images.unsplash.com/photo-1600607686527-6fb886090705?auto=format&fit=crop&w=800&q=80"
+    ],
+    "project_date": "2024-01-15"
+  },
+  {
+    "id": 2,
+    "title": "Aran Cucine",
+    "slug": "aran-cucine",
+    "client": "Aran Cucine",
+    "services": "Advertising, Web Design, Graphic & Illustration, Video Production",
+    "description": "Aran Cucine was involved in the 432 Park Avenue project, a landmark residential high rise in New York City that stands as one of the tallest buildings in the Western Hemisphere. The tower was designed by Rafael Viñoly and contains 106 residences featuring views of Central Park and the city. The project details include: Kitchen Design (custom-made by Aran Cucine designed in collaboration with show architect Rafael Viñoly and March & White), Cabinetry and Finishes (custom cabinetry in natural oak and white lacquer, paired with marble backsplashes), and Additional Provisions (cabinetry for laundry rooms and custom vanities).",
+    "cover_image": "https://blendstudio.it/wp-content/uploads/2025/11/Aran-Cucine-per-Blend-Studio-Piacenza.jpg",
+    "gallery_images": [],
+    "project_date": "2025-12-22"
+  },
+  {
+    "id": 3,
+    "title": "Nino Gandolfo",
+    "slug": "nino-gandolfo",
+    "client": "Nino Gandolfo",
+    "services": "Graphic Design, Packaging",
+    "description": "Graphic design and packaging for Nino Gandolfo.",
+    "cover_image": "https://blendstudio.it/wp-content/uploads/2024/08/NinoGandolfo_001_LR-1.jpg",
+    "gallery_images": [],
+    "project_date": "2025-12-22"
+  },
+  {
+    "id": 4,
+    "title": "Cucine da Incubo",
+    "slug": "cucine-da-incubo",
+    "client": "Cucine da Incubo",
+    "services": "Graphic & Illustration",
+    "description": "Graphic and illustration project for the famous TV show Cucine da Incubo.",
+    "cover_image": "https://blendstudio.it/wp-content/uploads/2024/01/cucine-da-incubo-cover.jpg",
+    "gallery_images": [],
+    "project_date": "2025-12-22"
+  },
+  {
+    "id": 5,
+    "title": "Terra Smeralda",
+    "slug": "terra-smeralda",
+    "client": "Distilleria Lucrezio R.",
+    "services": "Advertising, Graphic & Illustration, Packaging, Art Direction",
+    "description": "Terra Smeralda rappresenta la linea Premium della Distilleria Lucrezio R. di Berchidda e nasce dall'amore della famiglia per le antiche tradizioni enogastronomiche della Sardegna. Il progetto ha previsto la progettazione grafica e l'immagine della nuova linea premium di spirits, formata da un mirto barricato, un gin e un amaro non filtrato.",
+    "cover_image": "https://blendstudio.it/wp-content/uploads/2024/01/TerraSmeralda_MirtoBarrique_dett-etik-1.jpg",
+    "gallery_images": [],
+    "project_date": "2025-12-22"
+  },
+  {
+    "id": 6,
+    "title": "Terra dei Canti",
+    "slug": "terra-dei-canti",
+    "client": "Distilleria Lucrezio R.",
+    "services": "Graphic & Illustration, Packaging, Art Direction",
+    "description": "Ogni etichetta è ispirata a una specifica mitologia sarda. Dal Muto di Gallura, al leggendario Torco, fino ad arrivare alla strega Sa Mama e alla regina Giolzia. Le etichette sono state studiate come un'unica illustrazione che si compone mettendo le bottiglie in fila una dopo l'altra.",
+    "cover_image": "https://blendstudio.it/wp-content/uploads/2024/01/LucrezioR_Reportage_037_LR.jpg",
+    "gallery_images": [],
+    "project_date": "2025-12-22"
+  },
+  {
+    "id": 7,
+    "title": "Catalunya Experience",
+    "slug": "catalunya-experience",
+    "client": "Catalunya Experience",
+    "services": "Advertising, Web Design, Graphic & Illustration",
+    "description": "Promozione turistica e visual identity per Catalunya Experience.",
+    "cover_image": "https://blendstudio.it/wp-content/uploads/2023/08/La-Barceloneta-@ionut_tarin.jpg",
+    "gallery_images": [],
+    "project_date": "2025-12-22"
+  },
+  {
+    "id": 8,
+    "title": "Arduini Legnami S.p.A.",
+    "slug": "arduini-legnami",
+    "client": "Arduini Legnami S.p.A.",
+    "services": "Web Design, Formazione",
+    "description": "Sito web e piattaforma di formazione per Arduini Legnami.",
+    "cover_image": "https://blendstudio.it/wp-content/uploads/2023/08/arduini-legnami-since-1957.jpeg",
+    "gallery_images": [],
+    "project_date": "2025-12-22"
+  },
+  {
+    "id": 9,
+    "title": "Alpestre",
+    "slug": "alpestre",
+    "client": "OnestiGroup S.p.A.",
+    "services": "Web Design, Graphic & Illustration, Video Production, Packaging",
+    "description": "Alpestre è una linea di cinque prodotti premium, espressione di qualità per una mixology contemporanea. Abbiamo realizzato il nuovo sito ufficiale alpestre.com e progettato tutte le etichette della linea mixology.",
+    "cover_image": "https://blendstudio.it/wp-content/uploads/2023/08/alpestre-slide4.jpg",
+    "gallery_images": [],
+    "project_date": "2025-12-22"
+  },
+  {
+    "id": 10,
+    "title": "Emilia Wine Experience",
+    "slug": "emilia-wine-experience",
+    "client": "Emilia Wine Experience",
+    "services": "Web Design, Graphic & Illustration",
+    "description": "Digital identity per Emilia Wine Experience.",
+    "cover_image": "https://blendstudio.it/wp-content/uploads/2023/08/logo-emilia-wine.jpg",
+    "gallery_images": [],
+    "project_date": "2025-12-22"
+  },
+  {
+    "id": 11,
+    "title": "ILIF-FOOD",
+    "slug": "ilif-food",
+    "client": "IDRC / Addis Ababa University",
+    "services": "Web Design, Graphic & Illustration",
+    "description": "Impact of Land Degradation and Integrated Forest Management on Food Security in Ethiopia. Valutazione dell'impatto combinato della degradazione del suolo e dell'attuazione dell'Integrated Forest Management (IFM).",
+    "cover_image": "https://blendstudio.it/wp-content/uploads/2021/11/ilif-food.jpeg",
+    "gallery_images": [],
+    "project_date": "2025-12-22"
+  },
+  {
+    "id": 12,
+    "title": "Tenuta La Ratta",
+    "slug": "tenuta-la-ratta",
+    "client": "Tenuta La Ratta",
+    "services": "Web Design",
+    "description": "Progettazione web per Tenuta La Ratta.",
+    "cover_image": "https://blendstudio.it/wp-content/uploads/2024/02/Tenuta-La-Ratta-Vernasca-Piacenza.jpg",
+    "gallery_images": [],
+    "project_date": "2025-12-22"
+  },
+  {
+    "id": 13,
+    "title": "OnestiGroup",
+    "slug": "onestigroup",
+    "client": "OnestiGroup S.p.A.",
+    "services": "Graphic & Illustration",
+    "description": "Nuova identità visuale di OnestiGroup s.p.a. Il marchio rappresenta sia le iniziali del nome 'O' e 'G', sia un circuito di strade che conduce alle differenti vie di distribuzione del beverage.",
+    "cover_image": "https://blendstudio.it/wp-content/uploads/2021/11/cover-onestigroup-01-scaled.jpg",
+    "gallery_images": [],
+    "project_date": "2025-12-22"
+  },
+  {
+    "id": 14,
+    "title": "Leyel Skin Care",
+    "slug": "leyel",
+    "client": "Leyel Skin Care",
+    "services": "Advertising, Graphic & Illustration, Packaging, Web Development",
+    "description": "Brand italiano specializzato in prodotti nickel-tested e naturali. Il progetto ha coinvolto Branding, Marketing Strategy, Social Media Management e Digital Advertising.",
+    "cover_image": "https://blendstudio.it/wp-content/uploads/2021/11/Shooting-Prodotti0657.jpg",
+    "gallery_images": [],
+    "project_date": "2025-12-22"
+  },
+  {
+    "id": 15,
+    "title": "Lipdent",
+    "slug": "lipdent",
+    "client": "MT&C",
+    "services": "Advertising, Social Media Marketing",
+    "description": "Primo dentifricio volumizzante labbra in Italia. Strategia di social media marketing e digital advertising per rendere il prodotto presente anche sui social e motori di ricerca.",
+    "cover_image": "https://blendstudio.it/wp-content/uploads/2021/11/lipdent-labbra.webp",
+    "gallery_images": [],
+    "project_date": "2025-12-22"
+  },
+  {
+    "id": 16,
+    "title": "Centro Medico Rocca",
+    "slug": "centro-medico-rocca",
+    "client": "Centro Medico Rocca",
+    "services": "Advertising, Web Design, Graphic & Illustration",
+    "description": "Visual identity e digital strategy per Centro Medico Rocca.",
+    "cover_image": "https://blendstudio.it/wp-content/uploads/2021/11/bg-carta-servizi-centro-medico-rocca-scaled.jpg",
+    "gallery_images": [],
+    "project_date": "2025-12-22"
+  }
+]

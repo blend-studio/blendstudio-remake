@@ -13,36 +13,73 @@ const positions = [
 
 const perks = [
   "Lavoro Remoto", "MacBook Pro M3", "Formazione Continua", "Caffè Illimitato", "Team Retreats", "Bonus Performance", "Assicurazione Sanitaria"
-].map(p => <span className="text-3xl font-bold text-blend/30 mx-8 uppercase">{p}</span>);
+].map((p, i) => <span key={i} className="text-3xl font-bold text-blend/30 mx-8 uppercase">{p}</span>);
 
 const Careers = () => {
   const [expanded, setExpanded] = useState(null);
 
   return (
     <PageTransition>
-      <div className="pt-32 md:pt-48 pb-20 px-6 md:px-20 min-h-screen bg-white">
+      <div className="w-full bg-white min-h-screen">
         
-        <div className="max-w-5xl mx-auto mb-20 md:mb-32">
-            <div className="text-center">
-                <RevealText text="JOIN THE TEAM" className="text-6xl md:text-9xl font-bold text-blend mb-6 justify-center" />
-                <p className="text-xl md:text-2xl text-blend-dark/70 max-w-2xl mx-auto leading-relaxed mt-8">
-                    Siamo sempre alla ricerca di menti creative e talenti tecnici che vogliano sfidare lo status quo del web design.
-                </p>
-            </div>
+        {/* --- CAREERS HERO --- */}
+        <div className="relative h-screen flex flex-col justify-center px-6 md:px-20 overflow-hidden bg-black text-white">
+           <div className="absolute inset-0 opacity-70">
+              <img 
+                src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?q=80&w=2671&auto=format&fit=crop" 
+                alt="Team Collaboration" 
+                className="w-full h-full object-cover"
+              />
+           </div>
+           
+           <div className="relative z-10 text-center">
+              <motion.span 
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2 }}
+                className="block mb-6 text-sm font-bold uppercase tracking-widest text-white/80"
+              >
+                Careers
+              </motion.span>
+              
+              <h1 className="text-6xl md:text-9xl font-bold tracking-tighter mb-6 text-white">
+                <RevealText text="JOIN THE TEAM" className="justify-center" />
+              </h1>
+              
+              <motion.p 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.6 }}
+                className="text-xl md:text-2xl text-white/80 max-w-2xl mx-auto leading-relaxed mt-8"
+              >
+                  Siamo sempre alla ricerca di menti creative e talenti tecnici che vogliano sfidare lo status quo.
+              </motion.p>
+           </div>
+
+           <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1, y: [0, 10, 0] }}
+            transition={{ delay: 1.5, duration: 2, repeat: Infinity }}
+            className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 z-10"
+          >
+            <span className="text-[10px] uppercase tracking-widest text-white font-bold">Scroll</span>
+            <div className="w-[1px] h-12 bg-white/50"></div>
+          </motion.div>
         </div>
 
         {/* Perks Marquee */}
-        <div className="py-12 border-y border-gray-100 mb-20 overflow-hidden">
+        <div className="py-16 border-b border-gray-100 mb-20 overflow-hidden bg-gray-50">
              <Marquee items={perks} speed={30} />
         </div>
 
-        <div className="max-w-5xl mx-auto">
+        <div className="max-w-5xl mx-auto pb-20 px-6">
+            <h2 className="text-3xl font-bold text-blend mb-10">Posizioni Aperte</h2>
             {/* Positions List */}
-            <div className="bg-white rounded-sm">
+            <div className="bg-white rounded-sm border border-gray-100 shadow-sm">
                 {positions.map((job, i) => (
                     <motion.div 
                         key={i} 
-                        className="border-b border-gray-100 overflow-hidden"
+                        className="border-b border-gray-100 overflow-hidden last:border-0"
                         initial={false}
                     >
                         <div 

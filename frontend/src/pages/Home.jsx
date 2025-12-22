@@ -5,16 +5,32 @@ import PageTransition from "../components/Transition";
 import { RevealText } from "../components/ui/RevealText";
 import Marquee from "../components/ui/Marquee";
 
+// Import local logos
+import neroBucato from "../assets/images/loghi partner/aran/NERO-BUCATO.svg";
+import medirocca from "../assets/images/loghi partner/02-logo-vector-medirocca.svg";
+import piacenzaNero from "../assets/images/loghi partner/PIACENZA_NERO.png";
+
 const Home = () => {
   const { scrollYProgress } = useScroll();
   const yParallax = useTransform(scrollYProgress, [0, 1], [0, -100]);
 
-  const clients = [
-    "Google", "Nike", "Spotify", "Tesla", "Airbnb", "Vogue", "Prada", "SpaceX"
-  ].map(client => (
-    <span className="text-4xl md:text-6xl font-bold uppercase text-transparent stroke-text opacity-30 hover:opacity-100 transition-opacity duration-300 cursor-default">
-      {client}
-    </span>
+  const clientLogos = [
+    "https://blendstudio.it/wp-content/uploads/2023/08/emilia-wine-experience-1.jpg",
+    "https://blendstudio.it/wp-content/uploads/2024/01/cucine-da-incubo-logo2-1.jpg",
+    "https://blendstudio.it/wp-content/uploads/2021/11/onestigroup-02.png",
+    neroBucato,
+    medirocca,
+    piacenzaNero
+  ];
+
+  const clients = clientLogos.map((logo, index) => (
+    <div key={index} className="flex items-center justify-center h-24 w-40 md:w-56 mx-4 md:mx-8 grayscale opacity-40 hover:grayscale-0 hover:opacity-100 hover:scale-110 transition-all duration-500 cursor-pointer">
+      <img 
+        src={logo} 
+        alt={`Client ${index}`} 
+        className="max-h-full max-w-full object-contain" 
+      />
+    </div>
   ));
 
   return (
@@ -82,9 +98,21 @@ const Home = () => {
         </header>
 
 
-        {/* --- MARQUEE CLIENTS --- */}
-        <section className="py-12 bg-black border-b border-white/10 overflow-hidden">
-           <Marquee items={clients} speed={40} className="text-white" />
+        {/* --- PARTNERS SECTION --- */}
+        <section className="py-24 md:py-32 bg-white text-blend overflow-hidden border-b border-gray-100">
+           <div className="px-6 md:px-20 mb-16 flex flex-col md:flex-row justify-between items-end gap-8">
+              <div>
+                  <h2 className="text-4xl md:text-7xl font-bold tracking-tighter mb-4">Trusted Partners</h2>
+                  <div className="h-1 w-20 bg-blend"></div>
+              </div>
+              <p className="text-gray-500 text-lg max-w-md leading-relaxed">
+                  Collaboriamo con aziende ambiziose per definire nuovi standard nel panorama digitale e fisico.
+              </p>
+           </div>
+           
+           <div className="w-full border-t border-gray-100 pt-16">
+               <Marquee items={clients} speed={30} />
+           </div>
         </section>
 
 

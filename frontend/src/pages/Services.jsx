@@ -42,39 +42,55 @@ const services = [
 const Services = () => {
   return (
     <PageTransition>
-      <div className="pt-32 md:pt-48 pb-20 px-6 md:px-20 min-h-screen bg-white">
+      <div className="w-full bg-white min-h-screen">
         
-        {/* Header */}
-        <div className="mb-20 md:mb-32">
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.2 }}
-            className="flex items-center gap-4 mb-8"
-          >
-            <div className="h-[2px] w-12 bg-blend"></div>
-            <span className="text-blend font-bold uppercase tracking-[0.2em] text-xs md:text-sm">
-              I Nostri Servizi
-            </span>
-          </motion.div>
-          
-          <h1 className="text-5xl md:text-8xl lg:text-9xl font-extrabold tracking-tighter text-blend leading-[0.9]">
-            <RevealText text="ELEVATING" delay={0.1} />
-            <span className="text-blend-light">
-                <RevealText text="BRANDS" delay={0.3} />
-            </span>
-          </h1>
-          
-          <div className="mt-16 md:mt-24 max-w-2xl">
-            <p className="text-xl md:text-2xl text-blend-dark/70 leading-relaxed font-medium">
-              Offriamo soluzioni digitali integrate per aziende che non si accontentano. 
-              Dalla strategia alla produzione, siamo il tuo partner creativo.
-            </p>
-          </div>
+        {/* --- GEOMETRIC HERO --- */}
+        <div className="relative h-screen flex flex-col justify-center px-6 md:px-20 overflow-hidden bg-blend-dark text-white">
+           
+           {/* Abstract Shapes */}
+           <motion.div 
+             animate={{ rotate: 360 }}
+             transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+             className="absolute top-[-10%] right-[-10%] w-[600px] h-[600px] border-[1px] border-white/10 rounded-full z-0"
+           />
+           <motion.div 
+             animate={{ rotate: -360 }}
+             transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
+             className="absolute bottom-[-10%] left-[-10%] w-[800px] h-[800px] border-[1px] border-white/10 rounded-full z-0"
+           />
+           <div className="absolute inset-0 bg-gradient-to-br from-blend to-blend-dark opacity-50 z-0" />
+
+           <div className="relative z-10">
+              <motion.div
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.2 }}
+                className="flex items-center gap-4 mb-8"
+              >
+                <div className="h-[2px] w-12 bg-white"></div>
+                <span className="font-bold uppercase tracking-[0.2em] text-xs md:text-sm text-white/80">
+                  I Nostri Servizi
+                </span>
+              </motion.div>
+              
+              <h1 className="text-6xl md:text-9xl lg:text-[11rem] font-extrabold tracking-tighter leading-[0.9]">
+                <RevealText text="ELEVATING" delay={0.1} />
+                <span className="text-blend-light/80">
+                    <RevealText text="BRANDS" delay={0.3} />
+                </span>
+              </h1>
+              
+              <div className="mt-16 md:mt-24 max-w-2xl">
+                <p className="text-xl md:text-2xl text-white/70 leading-relaxed font-medium">
+                  Offriamo soluzioni digitali integrate per aziende che non si accontentano. 
+                  Dalla strategia alla produzione, siamo il tuo partner creativo.
+                </p>
+              </div>
+           </div>
         </div>
 
         {/* Services List */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-12 md:gap-y-24">
+        <div className="py-20 md:py-32 px-6 md:px-20 grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-12 md:gap-y-24">
           {services.map((service, i) => (
             <motion.div 
               key={i}
@@ -98,7 +114,7 @@ const Services = () => {
         </div>
 
         {/* CTA */}
-        <div className="mt-32 md:mt-48 text-center bg-blend p-12 md:p-24 rounded-sm text-white overflow-hidden relative">
+        <div className="mt-0 md:mt-20 text-center bg-blend p-12 md:p-24 text-white overflow-hidden relative">
            <motion.div
               animate={{ rotate: 360 }}
               transition={{ duration: 50, repeat: Infinity, ease: "linear" }}
