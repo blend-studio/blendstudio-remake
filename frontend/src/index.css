@@ -1,5 +1,18 @@
+@import "tailwindcss";
+
+@theme {
+  --color-blend: #2f657f;
+  --color-blend-dark: #1e4659;
+  --color-blend-light: #4a8fa3;
+  --color-blend-bg: #f4f4f4;
+
+  --font-sans: 'Manrope', sans-serif;
+
+  --text-huge: 10rem;
+}
+
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: var(--font-sans);
   line-height: 1.5;
   font-weight: 400;
 
