@@ -32,7 +32,7 @@ const AnimatedRoutes = () => {
 
 function App() {
   return (
-    <Router>
+    <Router basename={import.meta.env.BASE_URL}>
       <SmoothScroll>
         <div className="antialiased text-gray-900 bg-white min-h-screen selection:bg-blend-light selection:text-white">
           <Navbar />
