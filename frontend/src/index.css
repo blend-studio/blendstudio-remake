@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 @theme {
-  --color-blend: #2f657f;
+  --color-blend: #2f6580;
   --color-blend-dark: #1e4659;
   --color-blend-light: #4a8fa3;
   --color-blend-bg: #f4f4f4;
@@ -28,11 +28,11 @@
 
 a {
   font-weight: 500;
-  color: #646cff;
+  color: inherit;
   text-decoration: inherit;
 }
 a:hover {
-  color: #535bf2;
+  color: inherit;
 }
 
 body {

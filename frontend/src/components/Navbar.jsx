@@ -1,24 +1,132 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
+import { AnimatePresence, motion } from "framer-motion";
+import blendLogo from "../assets/images/blend-logo-blu.png";
 
 const Navbar = () => {
+  const [isOpen, setIsOpen] = useState(false);
+
+  const toggleMenu = () => setIsOpen(!isOpen);
+
+  const menuVariants = {
+    initial: { x: "100%" },
+    animate: { x: 0, transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] } },
+    exit: { x: "100%", transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] } },
+  };
+
+  const linkVariants = {
+    initial: { x: 80, opacity: 0 },
+    animate: (i) => ({
+      x: 0,
+      opacity: 1,
+      transition: { duration: 0.75, ease: [0.76, 0, 0.24, 1], delay: 0.05 * i },
+    }),
+    exit: { x: 80, opacity: 0, transition: { duration: 0.5, ease: [0.76, 0, 0.24, 1] } },
+  };
+
+  const navLinks = [
+    { title: "Home", href: "/" },
+    { title: "Progetti", href: "/projects" },
+    { title: "Servizi", href: "/services" },
+    { title: "Lavora con noi", href: "/careers" },
+    { title: "Contatti", href: "/contact" },
+  ];
+
   return (
-    <nav className="fixed top-0 left-0 w-full p-6 md:p-10 flex justify-between items-center z-50 mix-blend-difference text-white">
-      {/* Logo */}
-      <Link to="/" className="text-2xl font-bold tracking-tighter hover:scale-105 transition-transform">
-        BLEND STUDIO
-      </Link>
+    <>
+      <nav className="fixed top-0 left-0 w-full p-6 md:p-10 flex justify-between items-center z-50">
+        {/* Logo */}
+        <Link to="/" className="z-50 hover:opacity-80 transition-opacity block">
+          <img 
+            src={blendLogo} 
+            alt="Blend Studio" 
+            className={`h-16 w-auto transition-all duration-300 ${isOpen ? "brightness-0 invert" : ""}`} 
+          />
+        </Link>
 
-      {/* Menu Desktop */}
-      <div className="hidden md:flex gap-10 text-xs font-bold uppercase tracking-widest">
-        <Link to="/projects" className="hover:text-blend-light transition-colors">Progetti</Link>
-        <Link to="/services" className="hover:text-blend-light transition-colors">Servizi</Link>
-        <Link to="/careers" className="hover:text-blend-light transition-colors">Lavora con noi</Link>
-        <Link to="/contact" className="hover:text-blend-light transition-colors">Contatti</Link>
-      </div>
+        {/* Menu Toggle - Completely Transparent */}
+        <button
+          onClick={toggleMenu}
+          className="z-50 cursor-pointer p-2 focus:outline-none !bg-transparent border-none !shadow-none hover:!bg-transparent active:!bg-transparent"
+          style={{ background: 'none', border: 'none', boxShadow: 'none', outline: 'none', borderRadius: '0' }}
+          aria-label={isOpen ? "Chiudi Menu" : "Apri Menu"}
+        >
+          <div className="w-8 h-5 flex flex-col justify-between items-center">
+            <span
+              className={`block w-8 h-1 transition-all duration-300 ease-out ${
+                isOpen ? "bg-white rotate-45 translate-y-2" : "bg-[#2f6580]"
+              }`}
+            ></span>
+            <span
+              className={`block w-8 h-1 transition-all duration-300 ease-out ${
+                isOpen ? "opacity-0" : "bg-[#2f6580] opacity-100"
+              }`}
+            ></span>
+            <span
+              className={`block w-8 h-1 transition-all duration-300 ease-out ${
+                isOpen ? "bg-white -rotate-45 -translate-y-2" : "bg-[#2f6580]"
+              }`}
+            ></span>
+          </div>
+        </button>
+      </nav>
 
-      {/* Qui in futuro metteremo l'Hamburger Menu per il mobile */}
-      <div className="md:hidden">MENU</div>
-    </nav>
+      <AnimatePresence mode="wait">
+        {isOpen && (
+          <motion.div
+            variants={menuVariants}
+            initial="initial"
+            animate="animate"
+            exit="exit"
+            className="fixed top-0 left-0 w-full h-screen bg-[#2f6580] text-white z-40 flex flex-col justify-between p-6 md:p-10 overflow-hidden"
+          >
+            {/* Header placeholder */}
+            <div className="h-[20px]"></div>
+
+            {/* Main Links */}
+            <div className="flex flex-col gap-2 md:gap-4 mt-20">
+              {navLinks.map((link, i) => (
+                <motion.div
+                  key={i}
+                  custom={i}
+                  variants={linkVariants}
+                  initial="initial"
+                  animate="animate"
+                  exit="exit"
+                >
+                  <Link
+                    to={link.href}
+                    onClick={toggleMenu}
+                    className="text-5xl md:text-7xl font-bold tracking-tighter text-white !text-white hover:opacity-70 transition-opacity block w-fit"
+                  >
+                    {link.title}
+                  </Link>
+                </motion.div>
+              ))}
+            </div>
+
+            {/* Footer Links */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0, transition: { delay: 0.5 } }}
+              exit={{ opacity: 0, y: 20 }}
+              className="flex flex-col md:flex-row justify-between items-end text-sm text-white uppercase tracking-widest gap-6"
+            >
+              <div className="flex flex-col gap-2">
+                <span className="text-white">Blend Studio Borders</span>
+                <span className="text-white">Blend Studio Lens</span>
+                <span className="text-white">Lavora con noi</span>
+              </div>
+              <div className="flex gap-6">
+                <a href="#" className="text-white !text-white hover:opacity-70 transition-opacity">Instagram</a>
+                <a href="#" className="text-white !text-white hover:opacity-70 transition-opacity">Linkedin</a>
+                <a href="#" className="text-white !text-white hover:opacity-70 transition-opacity">Facebook</a>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
   );
 };
 
