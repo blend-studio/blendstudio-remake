@@ -181,7 +181,7 @@ const ProjectDetail = () => {
               NEXT
            </div>
             <p className="text-white/40 text-sm font-black uppercase tracking-[0.4em] mb-8 relative z-10">Ready for more?</p>
-            <Link to="/projects" className="text-5xl md:text-9xl font-black text-white hover:italic transition-all uppercase tracking-tighter relative z-10">
+            <Link to="/projects" className="text-5xl md:text-9xl font-black !text-white hover:italic transition-all uppercase tracking-tighter relative z-10">
                 Discover More
             </Link>
         </div>

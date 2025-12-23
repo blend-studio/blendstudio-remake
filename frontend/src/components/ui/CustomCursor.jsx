@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { motion, useSpring } from "framer-motion";
 
 const CustomCursor = () => {
@@ -6,12 +6,16 @@ const CustomCursor = () => {
   const [isVisible, setIsVisible] = useState(false);
   const [isEnabled, setIsEnabled] = useState(false);
 
-  const springConfig = { damping: 25, stiffness: 150 };
-  const cursorX = useSpring(0, springConfig);
-  const cursorY = useSpring(0, springConfig);
+  // Separate springs for dot (fast) and glow (smooth/trail)
+  const dotSpringConfig = { damping: 30, stiffness: 250, mass: 0.5 };
+  const glowSpringConfig = { damping: 25, stiffness: 120, mass: 0.8 };
+
+  const dotX = useSpring(0, dotSpringConfig);
+  const dotY = useSpring(0, dotSpringConfig);
+  const glowX = useSpring(0, glowSpringConfig);
+  const glowY = useSpring(0, glowSpringConfig);
 
   useEffect(() => {
-    // Controllo rigoroso: solo se supporta hover (mouse) e schermo > 1024px
     const checkDevice = () => {
       const hasHover = window.matchMedia("(hover: hover)").matches;
       const isLarge = window.innerWidth >= 1024;
@@ -22,13 +26,20 @@ const CustomCursor = () => {
     window.addEventListener("resize", checkDevice);
 
     const mouseMove = (e) => {
-      cursorX.set(e.clientX - 16);
-      cursorY.set(e.clientY - 16);
+      const { clientX, clientY } = e;
+      
+      // Update springs directly without triggering React state for coordinates
+      dotX.set(clientX - 16);
+      dotY.set(clientY - 16);
+      glowX.set(clientX - 16);
+      glowY.set(clientY - 16);
+      
       if (!isVisible) setIsVisible(true);
     };
 
     const handleMouseOver = (e) => {
-      if (e.target.closest("a, button, .cursor-pointer")) {
+      const target = e.target;
+      if (target.closest("a, button, .cursor-pointer, [role='button']")) {
         setIsHovering(true);
       } else {
         setIsHovering(false);
@@ -43,30 +54,30 @@ const CustomCursor = () => {
       window.removeEventListener("mousemove", mouseMove);
       window.removeEventListener("mouseover", handleMouseOver);
     };
-  }, [cursorX, cursorY, isVisible]);
+  }, [dotX, dotY, glowX, glowY, isVisible]);
 
-  // Se siamo su mobile/tablet o il mouse non si è ancora mosso, non renderizziamo nulla
   if (!isEnabled || !isVisible) return null;
 
   return (
     <>
+      {/* Principal Cursor (Fast & Precise) */}
       <motion.div
-        className="custom-cursor fixed top-0 left-0 w-8 h-8 rounded-full pointer-events-none z-[9999] mix-blend-difference"
+        className="custom-cursor fixed top-0 left-0 w-8 h-8 rounded-full pointer-events-none z-[9999] mix-blend-difference bg-white"
         style={{
-          x: cursorX,
-          y: cursorY,
-          backgroundColor: "white",
-          scale: isHovering ? 2.5 : 1,
+          x: dotX,
+          y: dotY,
+          scale: isHovering ? 2 : 1,
         }}
       />
+      
+      {/* Glow Effect (Smooth & Lagging) */}
       <motion.div
-        className="custom-cursor fixed top-0 left-0 w-32 h-32 rounded-full pointer-events-none z-[9998] blur-3xl opacity-20"
+        className="custom-cursor fixed top-0 left-0 w-32 h-32 rounded-full pointer-events-none z-[9998] blur-3xl opacity-20 bg-[#4a8fa3]"
         style={{
-          x: cursorX,
-          y: cursorY,
+          x: glowX,
+          y: glowY,
           translateX: "-35%",
           translateY: "-35%",
-          backgroundColor: "#4a8fa3",
           scale: isHovering ? 1.5 : 1,
         }}
       />
