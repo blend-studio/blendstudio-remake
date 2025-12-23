@@ -193,10 +193,9 @@ const Home = () => {
               </Link>
            </div>
 
-           <div className="px-6 md:px-20 flex overflow-x-auto md:grid md:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8 relative z-10 hide-scrollbar md:overflow-visible snap-x snap-mandatory pb-10 md:pb-0">
-              {servicesShort.map((service, i) => (
-                <motion.div 
-                  key={i} 
+                      <div className="px-6 md:px-12 xl:px-20 flex overflow-x-auto md:grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8 relative z-10 hide-scrollbar md:overflow-visible snap-x snap-mandatory pb-10 md:pb-0">
+                         {servicesShort.map((service, i) => (
+                           <motion.div                    key={i} 
                   initial={{ opacity: 0, y: 40 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
