@@ -275,7 +275,7 @@ const Home = () => {
                   style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
                 >
                    {projects.map((project, index) => (
-                      <div key={project.id || index} className="flex-shrink-0 w-[85vw] md:w-[calc(50%-3rem)] lg:w-[calc(33.333%-2.75rem)] snap-start group/card relative">
+                      <div key={project.id || index} className="flex-shrink-0 w-[85vw] md:w-[calc(50%-1.5rem)] lg:w-[calc(33.333%-2rem)] snap-start group/card relative">
                         <Link to={`/project/${project.id}`} className="block">
                           <div className="relative aspect-[16/10] overflow-hidden rounded-3xl bg-gray-100 shadow-lg">
                             <motion.img 
