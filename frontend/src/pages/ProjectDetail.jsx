@@ -63,7 +63,7 @@ const ProjectDetail = () => {
       <div className="bg-white min-h-screen">
         
         {/* --- FULLSCREEN HERO --- */}
-        <div className="relative h-screen w-full overflow-hidden bg-blend-dark">
+        <div className="relative h-screen w-full overflow-hidden bg-blend-dark nav-dark-section">
            <div className="absolute inset-0 z-0">
               <motion.img 
                 initial={{ scale: 1.1, opacity: 0.4 }}
@@ -89,7 +89,7 @@ const ProjectDetail = () => {
                 </span>
               </motion.div>
 
-              <div className="text-5xl sm:text-7xl md:text-8xl lg:text-[10rem] xl:text-[12rem] font-extrabold leading-[0.85] tracking-tighter text-white">
+              <div className="text-5xl sm:text-7xl md:text-8xl lg:text-[10rem] xl:text-[12rem] font-extrabold leading-[0.85] tracking-normal text-white">
                 <div className="max-w-[15ch]">
                    <RevealText text={project.title.toUpperCase()} delay={0.2} />
                 </div>
@@ -166,7 +166,7 @@ const ProjectDetail = () => {
                           whileInView={{ opacity: 1, y: 0 }}
                           viewport={{ once: true }}
                           transition={{ delay: (i % 2) * 0.1 }}
-                          className={`overflow-hidden rounded-sm group bg-gray-50 ${i % 3 === 0 ? "md:col-span-2 aspect-[16/9]" : "aspect-[4/5] md:aspect-square"}`}
+                          className={`overflow-hidden rounded-3xl group bg-gray-50 shadow-xl ${i % 3 === 0 ? "md:col-span-2 aspect-[16/9]" : "aspect-[4/5] md:aspect-square"}`}
                         >
                             <img src={img} alt={`Gallery ${i}`} className="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-105 transition-all duration-[1.5s] ease-out" />
                         </motion.div>
@@ -176,7 +176,7 @@ const ProjectDetail = () => {
         )}
 
         {/* --- NEXT PROJECT CTA --- */}
-        <div className="bg-blend py-40 md:py-60 text-center relative overflow-hidden">
+        <div className="bg-blend py-40 md:py-60 text-center relative overflow-hidden nav-dark-section">
             <div className="absolute inset-0 opacity-10 font-black text-[30vw] leading-none pointer-events-none select-none flex items-center justify-center text-white">
               NEXT
            </div>

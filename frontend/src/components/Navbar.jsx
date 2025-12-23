@@ -6,23 +6,34 @@ import Magnetic from "./ui/Magnetic";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [isScrolled, setIsScrolled] = useState(false);
+  const [isOverDark, setIsOverDark] = useState(true); // Default true for Hero
 
   useEffect(() => {
-    const handleScroll = () => {
-      // Calcoliamo se siamo ancora nella Hero (altezza 100vh)
-      // Usiamo una tolleranza di 80px (altezza circa della navbar)
-      const heroHeight = window.innerHeight - 80;
-      setIsScrolled(window.scrollY > heroHeight);
+    const checkColor = () => {
+      // Troviamo tutte le sezioni "scure" del sito
+      const darkSections = document.querySelectorAll('.nav-dark-section');
+      let overDark = false;
+
+      darkSections.forEach(section => {
+        const rect = section.getBoundingClientRect();
+        // Se la parte superiore della pagina (dove sta la navbar) è dentro i confini di una sezione scura
+        if (rect.top <= 50 && rect.bottom >= 50) {
+          overDark = true;
+        }
+      });
+
+      setIsOverDark(overDark);
     };
+
+    window.addEventListener("scroll", checkColor);
+    // Controllo iniziale
+    setTimeout(checkColor, 100); 
     
-    // Eseguiamo al caricamento e ad ogni scroll
-    handleScroll();
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", checkColor);
   }, []);
 
   const toggleMenu = () => setIsOpen(!isOpen);
+  // ... resto delle varianti e link ...
 
   const menuVariants = {
     initial: { x: "100%" },
@@ -49,8 +60,8 @@ const Navbar = () => {
     { title: "Contatti", href: "/contact" },
   ];
 
-  // Determiniamo se gli elementi devono essere bianchi (su Hero o Menu Aperto) o Blu
-  const isWhite = !isScrolled || isOpen;
+  // Determiniamo se gli elementi devono essere bianchi (su area scura o Menu Aperto) o Blu
+  const isWhite = isOverDark || isOpen;
   const navColorClass = isWhite ? "brightness-0 invert" : "";
   const burgerColorClass = isWhite ? "bg-white" : "bg-[#2f6580]";
 

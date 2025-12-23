@@ -62,8 +62,12 @@ body {
 
 @media (max-width: 1024px) {
   h1, .text-huge {
-    letter-spacing: -0.05em !important;
+    letter-spacing: -0.02em !important;
   }
+}
+
+.tracking-tighter {
+  letter-spacing: -0.02em !important;
 }
 
 .stroke-text {

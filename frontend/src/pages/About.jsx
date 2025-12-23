@@ -12,7 +12,7 @@ const About = () => {
     "https://images.unsplash.com/photo-1556761175-5973dc0f32e7?q=80&w=1000&auto=format&fit=crop",
     "https://images.unsplash.com/photo-1600880292203-757bb62b4baf?q=80&w=1000&auto=format&fit=crop"
   ].map((src, i) => (
-    <div key={i} className="w-[300px] md:w-[500px] aspect-video overflow-hidden grayscale hover:grayscale-0 transition-all duration-500">
+    <div key={i} className="w-[300px] md:w-[500px] aspect-video overflow-hidden rounded-3xl grayscale hover:grayscale-0 transition-all duration-500 shadow-lg">
       <img src={src} alt="Studio Life" className="w-full h-full object-cover hover:scale-110 transition-transform duration-700" />
     </div>
   ));
@@ -22,7 +22,7 @@ const About = () => {
       <div className="w-full bg-white min-h-screen">
         
         {/* --- FULLSCREEN HERO --- */}
-        <div className="relative h-screen flex flex-col justify-center px-6 md:px-20 overflow-hidden bg-blend-dark">
+        <div className="relative h-screen flex flex-col justify-center px-6 md:px-20 overflow-hidden bg-blend-dark nav-dark-section">
            {/* Visual background with overlay */}
            <div className="absolute inset-0 z-0">
               <img 
@@ -33,7 +33,7 @@ const About = () => {
               <div className="absolute inset-0 bg-gradient-to-t from-blend-dark via-transparent to-transparent"></div>
            </div>
            
-           <div className="max-w-[90rem] w-full z-10 relative mt-20">
+           <div className="max-w-[90rem] w-full z-10 relative mt-10 md:mt-0 pb-20">
               <motion.div
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
@@ -46,7 +46,7 @@ const About = () => {
                 </span>
               </motion.div>
 
-              <div className="text-5xl sm:text-7xl md:text-8xl lg:text-[10rem] xl:text-[12rem] font-extrabold leading-[0.85] tracking-tighter text-white">
+              <div className="text-5xl sm:text-7xl md:text-8xl lg:text-[10rem] xl:text-[12rem] font-extrabold leading-[0.85] tracking-normal text-white">
                 <RevealText text="DIGITAL" delay={0.2} />
                 <div className="text-white/40">
                   <RevealText text="ARTISANS" delay={0.4} />
@@ -57,11 +57,11 @@ const About = () => {
            <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1, y: [0, 10, 0] }}
-            transition={{ delay: 1, duration: 2, repeat: Infinity }}
-            className="absolute bottom-10 left-6 md:left-20 flex flex-col items-center gap-2 z-10"
+            transition={{ delay: 1.5, duration: 2, repeat: Infinity }}
+            className="absolute bottom-6 md:bottom-10 left-6 md:left-20 flex flex-col items-center gap-2 z-10"
           >
             <span className="text-[10px] uppercase tracking-widest text-white font-bold rotate-90 origin-left translate-x-4">Scroll</span>
-            <div className="w-[1px] h-16 bg-white/30 mt-8"></div>
+            <div className="w-[1px] h-10 md:h-16 bg-white/30 mt-8"></div>
           </motion.div>
         </div>
 
@@ -101,7 +101,7 @@ const About = () => {
                  </p>
                  <div className="h-[2px] w-20 bg-blend"></div>
               </div>
-              <div className="relative aspect-square lg:aspect-[4/5] bg-blend-bg overflow-hidden rounded-sm group">
+              <div className="relative aspect-square lg:aspect-[4/5] bg-blend-bg overflow-hidden rounded-3xl group shadow-2xl">
                  <img 
                     src="https://images.unsplash.com/photo-1550684848-fac1c5b4e853?q=80&w=2670&auto=format&fit=crop" 
                     alt="Abstract Blend" 
@@ -137,7 +137,7 @@ const About = () => {
 
 
         {/* --- TEAM CTA --- */}
-        <section className="py-40 md:py-60 bg-blend text-white px-6 md:px-20 text-center relative overflow-hidden">
+        <section className="py-40 md:py-60 bg-blend text-white px-6 md:px-20 text-center relative overflow-hidden nav-dark-section">
            <div className="absolute inset-0 opacity-10 font-black text-[30vw] leading-none pointer-events-none select-none flex items-center justify-center">
               TEAM
            </div>

@@ -6,6 +6,7 @@ import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion"
 import TiltCard from "../components/ui/TiltCard";
 import { getProjects } from "../services/api";
 import liquidTexture from "../assets/images/blend-liquid-texture.jpg";
+import backgroundVideo from "../assets/images/sfondo-blend.mp4";
 
 const categories = ["All", "Web Design", "Branding", "Development", "Marketing"];
 
@@ -41,17 +42,21 @@ const Projects = () => {
       <div className="w-full bg-white min-h-screen">
         
         {/* --- FULLSCREEN HERO --- */}
-        <div className="relative h-screen flex flex-col justify-center px-6 md:px-20 overflow-hidden bg-blend-dark">
-           {/* Texture only - 0 overlay */}
-           <div className="absolute inset-0 z-0">
-              <img 
-                src={liquidTexture} 
-                alt="Background Texture" 
-                className="w-full h-full object-cover"
-              />
+        <div className="relative h-screen flex flex-col justify-center px-6 md:px-20 overflow-hidden bg-black nav-dark-section">
+           {/* Background Video - Self Hosted */}
+           <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden bg-black">
+              <video 
+                autoPlay 
+                loop 
+                muted 
+                playsInline 
+                className="absolute top-1/2 left-1/2 min-w-full min-h-full w-auto h-auto -translate-x-1/2 -translate-y-1/2 object-cover scale-[1.1] opacity-60"
+              >
+                <source src={backgroundVideo} type="video/mp4" />
+              </video>
            </div>
 
-           <div className="max-w-[90rem] w-full z-10 relative mt-20">
+           <div className="max-w-[90rem] w-full z-10 relative mt-10 md:mt-0 pb-20">
               <motion.div
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
@@ -64,7 +69,7 @@ const Projects = () => {
                 </span>
               </motion.div>
 
-              <div className="text-5xl sm:text-7xl md:text-8xl lg:text-[10rem] xl:text-[12rem] font-extrabold leading-[0.85] tracking-tighter text-white">
+              <div className="text-5xl sm:text-7xl md:text-8xl lg:text-[10rem] xl:text-[12rem] font-extrabold leading-[0.85] tracking-normal text-white">
                 <RevealText text="CREATIVE" delay={0.2} />
                 <div className="text-white/40">
                   <RevealText text="ARCHIVE" delay={0.4} />
@@ -76,10 +81,10 @@ const Projects = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1, y: [0, 10, 0] }}
             transition={{ delay: 1, duration: 2, repeat: Infinity }}
-            className="absolute bottom-10 left-6 md:left-20 flex flex-col items-center gap-2 z-10"
+            className="absolute bottom-6 md:bottom-10 left-6 md:left-20 flex flex-col items-center gap-2 z-10"
           >
             <span className="text-[10px] uppercase tracking-widest text-white font-bold rotate-90 origin-left translate-x-4">Scroll</span>
-            <div className="w-[1px] h-16 bg-white/30 mt-8"></div>
+            <div className="w-[1px] h-10 md:h-16 bg-white/30 mt-8"></div>
           </motion.div>
         </div>
 
@@ -96,10 +101,10 @@ const Projects = () => {
                         <button
                           key={cat}
                           onClick={() => setFilter(cat)}
-                          className={`px-6 py-2 rounded-full text-[10px] font-bold uppercase tracking-widest transition-all duration-500 ${
+                          className={`px-6 py-2 rounded-full text-[10px] font-black uppercase tracking-widest transition-all duration-500 cursor-pointer ${
                               filter === cat 
-                              ? "bg-blend !text-white shadow-lg shadow-blend/20" 
-                              : "bg-white text-blend hover:bg-gray-50 border border-gray-200"
+                              ? "!bg-[#4a8fa3] !text-white shadow-lg shadow-cyan-900/20 scale-105" 
+                              : "!bg-[#2f6580] !text-white hover:!bg-[#4a8fa3] border-none shadow-md"
                           }`}
                         >
                         {cat}
@@ -131,7 +136,7 @@ const Projects = () => {
                         className="group"
                     >
                         <Link to={`/project/${project.id}`} className="block">
-                          <div className="relative aspect-[16/10] overflow-hidden bg-gray-100 rounded-sm">
+                          <div className="relative aspect-[16/10] overflow-hidden bg-gray-100 rounded-3xl shadow-xl">
                               {/* Overlay on hover */}
                               <motion.div 
                                 variants={{

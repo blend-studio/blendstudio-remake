@@ -23,7 +23,7 @@ const Careers = () => {
       <div className="w-full bg-white min-h-screen">
         
         {/* --- FULLSCREEN HERO --- */}
-        <div className="relative h-screen flex flex-col justify-center px-6 md:px-20 overflow-hidden bg-blend-dark text-white">
+        <div className="relative h-screen flex flex-col justify-center px-6 md:px-20 overflow-hidden bg-blend-dark text-white nav-dark-section">
            <div className="absolute inset-0 z-0">
               <img 
                 src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?q=80&w=2671&auto=format&fit=crop" 
@@ -33,7 +33,7 @@ const Careers = () => {
               <div className="absolute inset-0 bg-gradient-to-r from-blend-dark to-transparent"></div>
            </div>
            
-           <div className="max-w-[90rem] w-full z-10 relative mt-20">
+           <div className="max-w-[90rem] w-full z-10 relative mt-10 md:mt-0 pb-20">
               <motion.div
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
@@ -46,7 +46,7 @@ const Careers = () => {
                 </span>
               </motion.div>
 
-              <div className="text-5xl sm:text-7xl md:text-8xl lg:text-[10rem] xl:text-[12rem] font-extrabold leading-[0.85] tracking-tighter text-white">
+              <div className="text-5xl sm:text-7xl md:text-8xl lg:text-[10rem] xl:text-[12rem] font-extrabold leading-[0.85] tracking-normal text-white">
                 <RevealText text="JOIN THE" delay={0.2} />
                 <div className="text-white/40">
                   <RevealText text="TEAM" delay={0.4} />
@@ -64,10 +64,10 @@ const Careers = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1, y: [0, 10, 0] }}
             transition={{ delay: 1, duration: 2, repeat: Infinity }}
-            className="absolute bottom-10 left-6 md:left-20 flex flex-col items-center gap-2 z-10"
+            className="absolute bottom-6 md:bottom-10 left-6 md:left-20 flex flex-col items-center gap-2 z-10"
           >
             <span className="text-[10px] uppercase tracking-widest text-white font-bold rotate-90 origin-left translate-x-4">Scroll</span>
-            <div className="w-[1px] h-16 bg-white/30 mt-8"></div>
+            <div className="w-[1px] h-10 md:h-16 bg-white/30 mt-8"></div>
           </motion.div>
         </div>
 
@@ -94,7 +94,7 @@ const Careers = () => {
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
                         transition={{ delay: i * 0.1 }}
-                        className="border border-gray-100 overflow-hidden rounded-sm bg-white"
+                        className="border border-gray-100 overflow-hidden rounded-3xl bg-white shadow-sm hover:shadow-md transition-shadow"
                     >
                         <div 
                             className="p-6 md:p-12 flex flex-col lg:flex-row items-start lg:items-center justify-between hover:bg-gray-50 transition-all group"
