@@ -1,52 +1,61 @@
 <?php
 // backend/public/index.php
 
-// 1. CARICAMENTO DIPENDENZE E CONFIGURAZIONE
-require_once __DIR__ . '/../vendor/autoload.php';
+// 1. HEADERS CORS IMMEDIATI (Prima di ogni altra cosa)
+// Accettiamo richieste dal frontend in sviluppo (localhost:5173).
+// Usare l'Origin della richiesta solo se è presente nella whitelist,
+// altrimenti ricadiamo su un valore di default per sicurezza.
+$allowed_origins = [
+    'http://localhost:5173',
+    'http://127.0.0.1:5173'
+];
+$requestOrigin = $_SERVER['HTTP_ORIGIN'] ?? '';
 
-// Carichiamo il Router manualmente (se non è sotto namespace App)
-require_once __DIR__ . '/../core/Router.php';
-
-use Dotenv\Dotenv;
-use Core\Router;
-
-
-// Carica variabili d'ambiente (.env)
-$dotenv = Dotenv::createImmutable(__DIR__ . '/..');
-$dotenv->load();
-
-// 2. CONFIGURAZIONE SESSIONI PHP
-// Importante per evitare problemi con i cookie tra React e PHP
-ini_set('session.cookie_httponly', 1);
-ini_set('session.use_only_cookies', 1);
-// Se sei in locale (HTTP) usa 'Lax', se sei in HTTPS usa 'None'
-ini_set('session.cookie_samesite', $_ENV['APP_ENV'] === 'local' ? 'Lax' : 'None');
-ini_set('session.cookie_secure', $_ENV['APP_ENV'] === 'local' ? 0 : 1); // 1 solo su HTTPS
-
-// Avviamo la sessione qui per averla disponibile ovunque
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
+if (in_array($requestOrigin, $allowed_origins, true)) {
+    header("Access-Control-Allow-Origin: $requestOrigin");
+} else {
+    header("Access-Control-Allow-Origin: http://localhost:5173");
 }
 
-// 3. HEADERS & CORS (Cross-Origin Resource Sharing)
-// Definisci l'URL del frontend React (leggilo dal .env o mettilo fisso)
-$frontendOrigin = $_ENV['FRONTEND_URL'] ?? 'http://localhost:5173';
-
-header("Access-Control-Allow-Origin: $frontendOrigin");
-header("Access-Control-Allow-Credentials: true"); // Fondamentale per il Login (Cookie)
-header("Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With");
+header("Access-Control-Allow-Credentials: true");
+header("Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With, Origin, Accept");
 header("Access-Control-Allow-Methods: GET, POST, OPTIONS, DELETE, PUT");
 header("Content-Type: application/json; charset=UTF-8");
 
-// Gestione preflight request (OPTIONS)
-// Quando React chiede "posso contattarti?", PHP deve rispondere subito "Sì"
+// Se è una richiesta OPTIONS (preflight), rispondiamo subito
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     http_response_code(200);
     exit();
 }
 
+// 2. CARICAMENTO DIPENDENZE E CONFIGURAZIONE
+require_once __DIR__ . '/../vendor/autoload.php';
+require_once __DIR__ . '/../core/Router.php';
+
+use Dotenv\Dotenv;
+use Core\Router;
+
+try {
+    $dotenv = Dotenv::createImmutable(__DIR__ . '/..');
+    $dotenv->load();
+} catch (Exception $e) {
+    // In produzione fallirebbe, in locale potrebbe mancare il .env
+}
+
+// 3. CONFIGURAZIONE SESSIONI
+ini_set('session.cookie_httponly', 1);
+ini_set('session.use_only_cookies', 1);
+$appEnv = $_ENV['APP_ENV'] ?? 'local';
+ini_set('session.cookie_samesite', $appEnv === 'local' ? 'Lax' : 'None');
+ini_set('session.cookie_secure', $appEnv === 'local' ? 0 : 1);
+
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
 // 4. ROUTING SYSTEM
 $router = new Router();
+// ... resto delle rotte ...
 
 // --- DEFINIZIONE DELLE ROTTE ---
 
