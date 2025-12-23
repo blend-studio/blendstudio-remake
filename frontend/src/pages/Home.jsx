@@ -316,7 +316,19 @@ const Home = () => {
            </div>
            
            <div className="w-full">
-               <Marquee items={clients} speed={20} pauseOnHover={true} />
+               {/* Mobile: Manual Scroll */}
+               <div className="flex overflow-x-auto md:hidden hide-scrollbar gap-8 px-6 snap-x snap-mandatory" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+                   {clients.map((client, i) => (
+                       <div key={i} className="flex-shrink-0 w-40 snap-start">
+                           {client}
+                       </div>
+                   ))}
+               </div>
+
+               {/* Desktop: Auto Scroll Marquee */}
+               <div className="hidden md:block">
+                   <Marquee items={clients} speed={20} pauseOnHover={true} />
+               </div>
            </div>
         </section>
 
