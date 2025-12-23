@@ -248,7 +248,7 @@ const Home = () => {
             <div className="max-w-[110rem] mx-auto px-6 md:px-10 lg:px-20 relative">
                 
                 {/* Navigation Arrows at Edges */}
-                <div className="absolute top-[40%] -left-4 lg:-left-10 z-30 pointer-events-none w-[calc(100%+2rem)] lg:w-[calc(100%+5rem)] hidden lg:flex justify-between px-2">
+                <div className="absolute top-[40%] left-0 xl:-left-12 z-30 pointer-events-none w-full xl:w-[calc(100%+6rem)] hidden lg:flex justify-between px-4 xl:px-0">
                     <button 
                       onClick={() => scroll('left')}
                       className="w-14 h-14 !bg-[#2f6580] !text-white rounded-full flex items-center justify-center hover:!bg-[#4a8fa3] transition-all duration-500 group shadow-2xl pointer-events-auto"
