@@ -3,6 +3,7 @@ import PageTransition from "../components/Transition";
 import { RevealText } from "../components/ui/RevealText";
 import { motion } from "framer-motion";
 import liquidTexture from "../assets/images/blend-liquid-texture.jpg";
+import backgroundVideo from "../assets/images/sfondo-blend.mp4";
 
 const Contact = () => {
   const [formData, setFormData] = useState({ name: "", email: "", message: "" });
@@ -27,17 +28,21 @@ const Contact = () => {
       <div className="w-full bg-white min-h-screen">
         
         {/* --- FULLSCREEN HERO --- */}
-        <div className="relative h-screen flex flex-col justify-center px-6 md:px-20 overflow-hidden bg-blend-dark text-white">
-           {/* Texture only - 0 overlay */}
-           <div className="absolute inset-0 z-0">
-              <img 
-                src={liquidTexture} 
-                alt="Background Texture" 
-                className="w-full h-full object-cover"
-              />
+        <div className="relative h-screen flex flex-col justify-center px-6 md:px-20 overflow-hidden bg-black text-white nav-dark-section">
+           {/* Background Video - Self Hosted */}
+           <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden bg-black">
+              <video 
+                autoPlay 
+                loop 
+                muted 
+                playsInline 
+                className="absolute top-1/2 left-1/2 min-w-full min-h-full w-auto h-auto -translate-x-1/2 -translate-y-1/2 object-cover scale-[1.1] opacity-60"
+              >
+                <source src={backgroundVideo} type="video/mp4" />
+              </video>
            </div>
            
-           <div className="max-w-[90rem] w-full z-10 relative mt-20">
+           <div className="max-w-[90rem] w-full z-10 relative mt-10 md:mt-0 pb-20">
               <motion.div
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
@@ -50,7 +55,7 @@ const Contact = () => {
                 </span>
               </motion.div>
 
-              <div className="text-5xl sm:text-7xl md:text-8xl lg:text-[10rem] xl:text-[12rem] font-extrabold leading-[0.85] tracking-tighter text-white">
+              <div className="text-5xl sm:text-7xl md:text-8xl lg:text-[10rem] xl:text-[12rem] font-extrabold leading-[0.85] tracking-normal text-white">
                 <RevealText text="LET'S" delay={0.2} />
                 <div className="text-white/40">
                   <RevealText text="TALK" delay={0.4} />
@@ -68,11 +73,11 @@ const Contact = () => {
            <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1, y: [0, 10, 0] }}
-            transition={{ delay: 1, duration: 2, repeat: Infinity }}
-            className="absolute bottom-10 left-6 md:left-20 flex flex-col items-center gap-2 z-10"
+            transition={{ delay: 1.5, duration: 2, repeat: Infinity }}
+            className="absolute bottom-6 md:bottom-10 left-6 md:left-20 flex flex-col items-center gap-2 z-10"
           >
             <span className="text-[10px] uppercase tracking-widest text-white font-bold rotate-90 origin-left translate-x-4">Scroll</span>
-            <div className="w-[1px] h-16 bg-white/30 mt-8"></div>
+            <div className="w-[1px] h-10 md:h-16 bg-white/30 mt-8"></div>
           </motion.div>
         </div>
 
@@ -116,7 +121,7 @@ const Contact = () => {
 
               {/* Right Column: Form */}
               <div className="relative">
-                  <div className="sticky top-32 bg-white p-8 md:p-16 border border-gray-100 shadow-2xl rounded-sm">
+                  <div className="sticky top-32 bg-white p-8 md:p-16 border border-gray-100 shadow-2xl rounded-3xl">
                       <h3 className="text-3xl font-black text-blend uppercase tracking-tighter italic mb-12">Drop a message</h3>
                       <form onSubmit={handleSubmit} className="space-y-12">
                           <div className="relative group">

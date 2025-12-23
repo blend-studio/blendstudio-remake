@@ -46,7 +46,7 @@ const Footer = () => {
              <p className="text-xl md:text-2xl font-black text-blend uppercase tracking-tighter italic mb-6 md:text-right">
                 Ready to blend <br /> excellence with us?
              </p>
-             <Link to="/contact" className="text-[10px] font-black uppercase tracking-[0.3em] border-b-2 border-blend pb-1 hover:text-blend-light hover:border-blend-light transition-colors">
+             <Link to="/contact" className="text-[10px] font-black uppercase tracking-[0.3em] text-blend border-b-2 border-blend pb-1 hover:text-blend-light hover:border-blend-light transition-colors">
                 Let's work together
              </Link>
           </div>
