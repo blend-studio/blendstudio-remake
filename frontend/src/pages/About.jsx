@@ -122,7 +122,7 @@ const About = () => {
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
                         transition={{ delay: i * 0.1, duration: 0.6 }}
-                        className="group border-b border-gray-200 py-8 md:py-16 flex justify-between items-center cursor-none hover:bg-blend transition-colors px-2 md:px-4 -mx-2 md:-mx-4"
+                        className="group border-b border-gray-200 py-8 md:py-16 flex justify-between items-center hover:bg-blend transition-colors px-2 md:px-4 -mx-2 md:-mx-4"
                     >
                         <h3 className="text-3xl md:text-6xl lg:text-8xl font-bold text-transparent outline-text group-hover:text-white/20 transition-colors duration-500">
                             0{i + 1}

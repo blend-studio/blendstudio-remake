@@ -1,18 +1,51 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
 import PageTransition from "../components/Transition";
 import { RevealText } from "../components/ui/RevealText";
 import Marquee from "../components/ui/Marquee";
+import { getProjects } from "../services/api";
 
 // Import local logos
 import neroBucato from "../assets/images/loghi partner/aran/NERO-BUCATO.svg";
 import medirocca from "../assets/images/loghi partner/02-logo-vector-medirocca.svg";
 import piacenzaNero from "../assets/images/loghi partner/PIACENZA_NERO.png";
 
+const servicesShort = [
+  { title: "Brand Identity", cat: "Design" },
+  { title: "Web Experience", cat: "Development" },
+  { title: "Digital Strategy", cat: "Marketing" },
+  { title: "Content Creation", cat: "Production" }
+];
+
 const Home = () => {
+  const [projects, setProjects] = useState([]);
+  const scrollRef = React.useRef(null);
   const { scrollYProgress } = useScroll();
   const yParallax = useTransform(scrollYProgress, [0, 1], [0, -100]);
+
+  useEffect(() => {
+    const fetchProjects = async () => {
+      try {
+        const response = await getProjects();
+        if (response.status === "success") {
+          setProjects(response.data);
+        }
+      } catch (error) {
+        console.error("Error fetching projects:", error);
+      }
+    };
+    fetchProjects();
+  }, []);
+
+  const scroll = (direction) => {
+    if (scrollRef.current) {
+      const { scrollLeft, clientWidth } = scrollRef.current;
+      const scrollAmount = clientWidth * 0.6;
+      const scrollTo = direction === 'left' ? scrollLeft - scrollAmount : scrollLeft + scrollAmount;
+      scrollRef.current.scrollTo({ left: scrollTo, behavior: 'smooth' });
+    }
+  };
 
   const clientLogos = [
     "https://blendstudio.it/wp-content/uploads/2023/08/emilia-wine-experience-1.jpg",
@@ -24,11 +57,14 @@ const Home = () => {
   ];
 
   const clients = clientLogos.map((logo, index) => (
-    <div key={index} className="flex items-center justify-center h-24 w-40 md:w-56 mx-4 md:mx-8 grayscale opacity-40 hover:grayscale-0 hover:opacity-100 hover:scale-110 transition-all duration-500 cursor-pointer">
+    <div 
+      key={index} 
+      className="group flex items-center justify-center h-24 w-40 md:w-64 mx-8 md:mx-12 cursor-pointer"
+    >
       <img 
         src={logo} 
         alt={`Client ${index}`} 
-        className="max-h-full max-w-full object-contain" 
+        className="max-h-full max-w-full object-contain grayscale opacity-40 group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-110 transition-all duration-500" 
       />
     </div>
   ));
@@ -39,7 +75,6 @@ const Home = () => {
         
         {/* --- HERO SECTION --- */}
         <header className="relative h-screen flex flex-col justify-center px-6 md:px-20 overflow-hidden">
-          {/* Video Background */}
           <video 
             autoPlay 
             loop 
@@ -72,18 +107,6 @@ const Home = () => {
               </div>
               <RevealText text="EMOTIONS" delay={0.6} />
             </div>
-
-            <div className="hidden md:flex justify-end mt-16 pr-10">
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 1, duration: 0.8 }}
-                className="max-w-md text-lg md:text-xl font-medium leading-relaxed text-white/80"
-              >
-                Trasformiamo le idee in esperienze digitali fluide. 
-                Design minimale, tecnologia solida, impatto reale.
-              </motion.div>
-            </div>
           </div>
 
           <motion.div
@@ -98,30 +121,12 @@ const Home = () => {
         </header>
 
 
-        {/* --- PARTNERS SECTION --- */}
-        <section className="py-24 md:py-32 bg-white text-blend overflow-hidden border-b border-gray-100">
-           <div className="px-6 md:px-20 mb-16 flex flex-col md:flex-row justify-between items-end gap-8">
-              <div>
-                  <h2 className="text-4xl md:text-7xl font-bold tracking-tighter mb-4">Trusted Partners</h2>
-                  <div className="h-1 w-20 bg-blend"></div>
-              </div>
-              <p className="text-gray-500 text-lg max-w-md leading-relaxed">
-                  Collaboriamo con aziende ambiziose per definire nuovi standard nel panorama digitale e fisico.
-              </p>
-           </div>
-           
-           <div className="w-full border-t border-gray-100 pt-16">
-               <Marquee items={clients} speed={30} />
-           </div>
-        </section>
-
-
         {/* --- STATEMENT SECTION --- */}
-        <section className="py-20 md:py-40 px-6 md:px-20 bg-white relative z-10">
+        <section className="py-32 md:py-48 px-6 md:px-20 bg-white relative z-10">
           <div className="grid grid-cols-1 md:grid-cols-12 gap-10 items-start">
             <div className="md:col-span-4 sticky top-32">
               <span className="block w-3 h-3 bg-blend rounded-full mb-4"></span>
-              <h3 className="text-sm font-bold uppercase tracking-widest text-gray-400">Lo Studio</h3>
+              <h3 className="text-xs font-bold uppercase tracking-widest text-gray-400">Lo Studio</h3>
             </div>
             <div className="md:col-span-8">
               <motion.div 
@@ -130,113 +135,129 @@ const Home = () => {
                 viewport={{ once: true, margin: "-100px" }}
                 transition={{ duration: 0.8 }}
               >
-                <p className="text-3xl md:text-5xl lg:text-6xl font-bold text-blend leading-tight mb-10">
+                <p className="text-4xl md:text-6xl lg:text-7xl font-black text-blend leading-[1.1] mb-12 tracking-tighter uppercase italic">
                   Non creiamo solo siti web. <br />
-                  <span className="text-blend-light">Costruiamo ecosistemi digitali</span> che raccontano la tua storia.
+                  <span className="text-blend-light/60">Costruiamo ecosistemi</span> digitali.
                 </p>
-                <p className="text-lg md:text-xl text-gray-500 leading-relaxed max-w-2xl">
+                <p className="text-xl md:text-2xl text-gray-500 leading-relaxed max-w-2xl font-medium">
                   In un mondo rumoroso, il silenzio del buon design è l'unico modo per farsi ascoltare. 
-                  Lavoriamo all'intersezione tra estetica e funzionalità per garantire risultati misurabili e memorabili.
+                  Lavoriamo all'intersezione tra estetica e funzionalità.
                 </p>
               </motion.div>
-              
-              <div className="mt-16">
-                 <Link to="/services" className="group inline-flex items-center gap-4 text-blend font-bold uppercase tracking-widest hover:text-blend-light transition-all">
-                    <span className="border-b-2 border-blend pb-1 group-hover:border-blend-light transition-all">Scopri i servizi</span>
-                    <span className="group-hover:translate-x-2 transition-transform">→</span>
-                 </Link>
-              </div>
             </div>
           </div>
         </section>
 
 
-        {/* --- SELECTED WORKS (Parallax Grid) --- */}
-        <section className="py-20 px-6 md:px-20 bg-blend-bg overflow-hidden">
-            <div className="flex flex-col md:flex-row justify-between items-end mb-20 md:mb-32">
-                <div className="max-w-2xl">
-                    <RevealText text="SELECTED WORKS" className="text-5xl md:text-8xl font-bold text-blend leading-none" />
-                    <p className="mt-6 text-blend-dark/60 text-lg">Una selezione dei nostri progetti più recenti.</p>
+        {/* --- SERVICES PREVIEW --- */}
+        <section className="py-24 md:py-32 bg-blend-bg border-y border-gray-100">
+           <div className="px-6 md:px-20 mb-20">
+              <h2 className="text-5xl md:text-8xl font-black text-blend uppercase tracking-tighter italic">Services</h2>
+           </div>
+           <div className="px-6 md:px-20 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+              {servicesShort.map((service, i) => (
+                <div key={i} className="group border-t border-gray-200 pt-8">
+                   <span className="text-[10px] font-black text-blend-light uppercase tracking-widest mb-4 block">0{i+1} / {service.cat}</span>
+                   <h3 className="text-2xl md:text-3xl font-black text-blend uppercase tracking-tighter group-hover:text-blend-light transition-colors mb-6">{service.title}</h3>
+                   <Link to="/services" className="text-[10px] font-black uppercase tracking-[0.3em] border-b-2 border-blend pb-1">Scopri di più</Link>
                 </div>
-                <Link to="/projects" className="hidden md:block px-8 py-4 border border-blend rounded-full text-blend hover:bg-blend hover:text-white transition-all duration-300 uppercase text-xs font-bold tracking-widest">
-                    Tutti i progetti
-                </Link>
+              ))}
+           </div>
+        </section>
+
+
+        {/* --- PROJECTS SLIDER --- */}
+        <section className="py-32 md:py-48 bg-white overflow-hidden relative">
+            <div className="px-6 md:px-20 mb-20 flex flex-col md:flex-row justify-between items-end gap-10">
+                <div>
+                    <h2 className="text-5xl md:text-8xl font-black text-blend uppercase tracking-tighter italic">Works</h2>
+                    <p className="text-gray-400 mt-4 text-xl font-medium">L'eccellenza in ogni pixel.</p>
+                </div>
+                <div className="flex gap-4">
+                    <button 
+                      onClick={() => scroll('left')}
+                      className="w-14 h-14 border border-gray-200 rounded-full flex items-center justify-center text-blend hover:bg-blend hover:text-white transition-all duration-500 group"
+                    >
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="group-hover:-translate-x-1 transition-transform">
+                        <line x1="19" y1="12" x2="5" y2="12"></line>
+                        <polyline points="12 19 5 12 12 5"></polyline>
+                      </svg>
+                    </button>
+                    <button 
+                      onClick={() => scroll('right')}
+                      className="w-14 h-14 border border-gray-200 rounded-full flex items-center justify-center text-blend hover:bg-blend hover:text-white transition-all duration-500 group"
+                    >
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="group-hover:translate-x-1 transition-transform">
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                        <polyline points="12 5 19 12 12 19"></polyline>
+                      </svg>
+                    </button>
+                </div>
             </div>
 
-            {/* Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-32 w-full">
-                
-                {/* Project 01 */}
-                <Link to="/projects" className="group cursor-pointer block">
-                    <motion.div 
-                        whileHover={{ scale: 0.98 }}
-                        transition={{ duration: 0.5 }}
-                        className="overflow-hidden rounded-sm relative aspect-[4/5]"
-                    >
+            <div 
+              ref={scrollRef}
+              className="flex overflow-x-auto hide-scrollbar gap-8 px-6 md:px-20 snap-x snap-mandatory relative z-10"
+              style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+            >
+               {projects.map((project, index) => (
+                  <div key={project.id || index} className="flex-shrink-0 w-[85vw] md:w-[600px] snap-start group/card relative">
+                    <Link to={`/project/${project.id}`} className="block relative z-30">
+                      <div className="relative aspect-[16/10] overflow-hidden rounded-sm bg-gray-100">
                         <motion.img 
-                            whileHover={{ scale: 1.1 }}
-                            transition={{ duration: 0.7 }}
-                            src="https://images.unsplash.com/photo-1600607686527-6fb886090705?q=80&w=2668&auto=format&fit=crop" 
-                            alt="Project One" 
-                            className="w-full h-full object-cover"
+                          whileHover={{ scale: 1.05 }}
+                          transition={{ duration: 0.6 }}
+                          src={project.cover_image || project.img} 
+                          alt={project.title} 
+                          className="w-full h-full object-cover grayscale group-hover/card:grayscale-0 transition-all duration-500"
                         />
-                    </motion.div>
-                    <div className="mt-6 flex justify-between items-start">
-                        <div>
-                            <h3 className="text-3xl font-bold text-blend group-hover:translate-x-2 transition-transform duration-300">Architettura Srl</h3>
-                            <p className="text-sm text-gray-500 mt-1 uppercase tracking-wider">Web Design / Branding</p>
+                        <div className="absolute inset-0 bg-blend-dark/20 opacity-0 group-hover/card:opacity-100 transition-opacity flex items-center justify-center">
+                           <span className="px-8 py-3 bg-white text-blend font-black text-[10px] uppercase tracking-[0.3em] rounded-full shadow-2xl">Explore Case</span>
                         </div>
-                    </div>
-                </Link>
-
-                {/* Project 02 (Offset) */}
-                <Link to="/projects" className="group cursor-pointer block md:mt-40">
-                    <motion.div 
-                         whileHover={{ scale: 0.98 }}
-                         transition={{ duration: 0.5 }}
-                         className="overflow-hidden rounded-sm relative aspect-[4/5]"
-                    >
-                        <motion.img 
-                            whileHover={{ scale: 1.1 }}
-                            transition={{ duration: 0.7 }}
-                            src="https://images.unsplash.com/photo-1497215728101-856f4ea42174?q=80&w=2668&auto=format&fit=crop" 
-                            alt="Project Two" 
-                            className="w-full h-full object-cover"
-                        />
-                    </motion.div>
-                    <div className="mt-6 flex justify-between items-start">
-                        <div>
-                            <h3 className="text-3xl font-bold text-blend group-hover:translate-x-2 transition-transform duration-300">Minimalist Rebrand</h3>
-                            <p className="text-sm text-gray-500 mt-1 uppercase tracking-wider">Strategy / Art Direction</p>
-                        </div>
-                    </div>
-                </Link>
-
-            </div>
-            
-            <div className="mt-20 text-center md:hidden">
-                <Link to="/projects" className="inline-block px-8 py-4 border border-blend rounded-full text-blend uppercase text-xs font-bold tracking-widest">
-                    Vedi tutto
-                </Link>
+                      </div>
+                      <div className="mt-8">
+                        <h3 className="text-2xl md:text-4xl font-black text-blend tracking-tighter uppercase italic">{project.title}</h3>
+                        <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 mt-4 border-l-2 border-blend-light pl-4">
+                          {project.services || project.cat}
+                        </p>
+                      </div>
+                    </Link>
+                  </div>
+               ))}
             </div>
         </section>
 
 
-        {/* --- BIG CTA SECTION --- */}
-        <section className="py-32 md:py-60 px-6 md:px-20 bg-blend text-white flex flex-col items-center justify-center text-center overflow-hidden relative">
-            <motion.div style={{ y: yParallax }} className="absolute inset-0 opacity-10 pointer-events-none">
-                 <h1 className="text-[20vw] font-bold leading-none text-white whitespace-nowrap absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
-                    CREATIVITY
-                 </h1>
-            </motion.div>
+        {/* --- PARTNERS SECTION --- */}
+        <section className="py-32 md:py-48 bg-white text-blend overflow-hidden border-t border-gray-100">
+           <div className="px-6 md:px-20 mb-20 flex flex-col md:flex-row justify-between items-end gap-10">
+              <div>
+                  <h2 className="text-5xl md:text-8xl font-black tracking-tighter uppercase italic mb-6">Partners</h2>
+                  <p className="text-gray-400 text-xl font-medium max-w-md leading-relaxed">
+                      Collaboriamo con brand ambiziosi per ridefinire i confini del possibile.
+                  </p>
+              </div>
+              <div className="hidden md:block h-[1px] flex-grow bg-gray-200 mx-10 mb-4"></div>
+           </div>
+           
+           <div className="w-full">
+               <Marquee items={clients} speed={4} pauseOnHover={false} />
+           </div>
+        </section>
 
-            <p className="text-sm md:text-base font-bold uppercase tracking-widest opacity-70 mb-8 relative z-10">Hai un progetto in mente?</p>
+        {/* --- BIG CTA SECTION (Now at the very bottom) --- */}
+        <section className="py-32 md:py-60 bg-blend text-white flex flex-col items-center justify-center text-center overflow-hidden relative">
+            <div className="absolute inset-0 opacity-10 font-black text-[25vw] leading-none pointer-events-none select-none flex items-center justify-center text-white">
+              TALK
+            </div>
+
+            <p className="text-xs md:text-sm font-black uppercase tracking-[0.4em] opacity-70 mb-12 relative z-10">Hai un progetto in mente?</p>
             
             <Link to="/contact" className="group relative z-10">
-                <h2 className="text-6xl md:text-9xl font-extrabold tracking-tighter hover:text-transparent hover:bg-clip-text hover:bg-gradient-to-r hover:from-white hover:to-gray-400 transition-all duration-500">
+                <h2 className="text-6xl md:text-[10rem] font-black tracking-tighter hover:italic transition-all duration-500 uppercase">
                     LET'S TALK
                 </h2>
-                <div className="h-1 w-0 bg-white group-hover:w-full transition-all duration-500 mt-2"></div>
+                <div className="h-1 w-0 bg-white group-hover:w-full transition-all duration-500 mt-4"></div>
             </Link>
         </section>
 

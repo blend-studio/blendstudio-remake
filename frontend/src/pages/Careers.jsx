@@ -97,7 +97,7 @@ const Careers = () => {
                         className="border border-gray-100 overflow-hidden rounded-sm bg-white"
                     >
                         <div 
-                            className="p-6 md:p-12 flex flex-col lg:flex-row items-start lg:items-center justify-between hover:bg-gray-50 transition-all cursor-none group"
+                            className="p-6 md:p-12 flex flex-col lg:flex-row items-start lg:items-center justify-between hover:bg-gray-50 transition-all group"
                             onClick={() => setExpanded(expanded === i ? null : i)}
                         >
                             <div className="max-w-3xl">

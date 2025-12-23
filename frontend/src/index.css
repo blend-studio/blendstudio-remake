@@ -16,9 +16,9 @@
   line-height: 1.5;
   font-weight: 400;
 
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+  color-scheme: light;
+  color: #213547;
+  background-color: #ffffff;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -31,29 +31,12 @@ a {
   color: inherit;
   text-decoration: inherit;
 }
-a:hover {
-  color: inherit;
-}
 
 body {
   margin: 0;
   width: 100%;
   min-width: 320px;
   min-height: 100vh;
-}
-
-/* Only hide cursor on devices that support hover (desktops) and large screens */
-@media (hover: hover) and (min-width: 1024px) {
-  body, a, button, [role="button"], .cursor-pointer {
-    cursor: none !important;
-  }
-}
-
-/* Fail-safe: ensure any element with cursor class is hidden on mobile via CSS */
-@media (max-width: 1023px) {
-  .custom-cursor {
-    display: none !important;
-  }
 }
 
 .outline-text {
@@ -100,27 +83,14 @@ button {
   font-size: 1em;
   font-weight: 500;
   font-family: inherit;
-  background-color: #1a1a1a;
+  background-color: #f9f9f9;
   cursor: pointer;
   transition: border-color 0.25s;
 }
 button:hover {
-  border-color: #646cff;
+  border-color: #2f6580;
 }
 button:focus,
 button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
-}
-
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
-  }
 }

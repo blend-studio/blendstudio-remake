@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import PageTransition from "../components/Transition";
 import { RevealText } from "../components/ui/RevealText";
+import liquidTexture from "../assets/images/blend-liquid-texture.jpg";
 
 const services = [
   {
@@ -46,11 +47,13 @@ const Services = () => {
         
         {/* --- FULLSCREEN HERO --- */}
         <div className="relative h-screen flex flex-col justify-center px-6 md:px-20 overflow-hidden bg-blend-dark text-white">
-           {/* Abstract Shapes - Optimized */}
-           <div className="absolute inset-0 z-0 opacity-20">
-              <div className="absolute top-[-10%] right-[-10%] w-[600px] h-[600px] border-[1px] border-white/20 rounded-full" />
-              <div className="absolute bottom-[-10%] left-[-10%] w-[800px] h-[800px] border-[1px] border-white/20 rounded-full" />
-              <div className="absolute inset-0 bg-gradient-to-br from-blend/40 to-transparent" />
+           {/* Texture only - 0 overlay */}
+           <div className="absolute inset-0 z-0">
+              <img 
+                src={liquidTexture} 
+                alt="Background Texture" 
+                className="w-full h-full object-cover"
+              />
            </div>
 
            <div className="max-w-[90rem] w-full z-10 relative mt-20">
