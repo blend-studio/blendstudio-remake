@@ -45,7 +45,7 @@ const Contact = () => {
                 </span>
               </motion.div>
 
-              <div className="text-6xl md:text-8xl lg:text-[10rem] xl:text-[12rem] font-extrabold leading-[0.85] tracking-tighter text-white">
+              <div className="text-5xl sm:text-7xl md:text-8xl lg:text-[10rem] xl:text-[12rem] font-extrabold leading-[0.85] tracking-tighter text-white">
                 <RevealText text="LET'S" delay={0.2} />
                 <div className="text-white/40">
                   <RevealText text="TALK" delay={0.4} />
@@ -86,7 +86,7 @@ const Contact = () => {
                                 initial={{ x: 0, opacity: 0.5 }}
                                 whileHover={{ x: 20, opacity: 1 }}
                                 transition={{ duration: 0.3 }}
-                                className="text-5xl md:text-8xl font-black text-blend tracking-tighter uppercase italic hover:text-blend-light transition-colors duration-300 w-fit cursor-none"
+                                className="text-4xl md:text-8xl font-black text-blend tracking-tighter uppercase italic hover:text-blend-light transition-colors duration-300 w-fit cursor-none"
                             >
                                 {social.name}
                             </motion.a>

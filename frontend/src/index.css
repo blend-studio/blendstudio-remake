@@ -40,12 +40,20 @@ body {
   width: 100%;
   min-width: 320px;
   min-height: 100vh;
-  cursor: none;
 }
 
-/* Ensure interactive elements also hide cursor */
-a, button, [role="button"], .cursor-pointer {
-  cursor: none !important;
+/* Only hide cursor on devices that support hover (desktops) and large screens */
+@media (hover: hover) and (min-width: 1024px) {
+  body, a, button, [role="button"], .cursor-pointer {
+    cursor: none !important;
+  }
+}
+
+/* Fail-safe: ensure any element with cursor class is hidden on mobile via CSS */
+@media (max-width: 1023px) {
+  .custom-cursor {
+    display: none !important;
+  }
 }
 
 .outline-text {
@@ -53,16 +61,22 @@ a, button, [role="button"], .cursor-pointer {
   -webkit-text-stroke: 1px rgba(255, 255, 255, 0.3);
 }
 
+/* Responsive Font Scaling for massive headers */
+@media (max-width: 640px) {
+  .text-5xl { font-size: 2.5rem !important; line-height: 1.1; }
+  .text-6xl { font-size: 3rem !important; line-height: 1.1; }
+  .text-7xl { font-size: 3.5rem !important; line-height: 1.1; }
+}
+
+@media (max-width: 1024px) {
+  h1, .text-huge {
+    letter-spacing: -0.05em !important;
+  }
+}
+
 .stroke-text {
   -webkit-text-stroke: 1px #2f6580;
   color: transparent;
-}
-
-/* Allow default cursor on mobile/touch if needed, but for now we hide it */
-@media (hover: none) and (pointer: coarse) {
-  body, a, button {
-    cursor: auto !important;
-  }
 }
 
 h1 {
