@@ -40,6 +40,29 @@ body {
   width: 100%;
   min-width: 320px;
   min-height: 100vh;
+  cursor: none;
+}
+
+/* Ensure interactive elements also hide cursor */
+a, button, [role="button"], .cursor-pointer {
+  cursor: none !important;
+}
+
+.outline-text {
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(255, 255, 255, 0.3);
+}
+
+.stroke-text {
+  -webkit-text-stroke: 1px #2f6580;
+  color: transparent;
+}
+
+/* Allow default cursor on mobile/touch if needed, but for now we hide it */
+@media (hover: none) and (pointer: coarse) {
+  body, a, button {
+    cursor: auto !important;
+  }
 }
 
 h1 {

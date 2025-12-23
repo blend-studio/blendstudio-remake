@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, useLocation } from "react-route
 import { AnimatePresence } from "framer-motion";
 import Navbar from "./components/Navbar";
 import SmoothScroll from "./components/SmoothScroll";
+import CustomCursor from "./components/ui/CustomCursor";
 import Home from "./pages/Home";
 import About from "./pages/About";
 import Projects from "./pages/Projects";
@@ -33,6 +34,7 @@ const AnimatedRoutes = () => {
 function App() {
   return (
     <Router basename={import.meta.env.BASE_URL}>
+      <CustomCursor />
       <SmoothScroll>
         <div className="antialiased text-gray-900 bg-white min-h-screen selection:bg-blend-light selection:text-white">
           <Navbar />

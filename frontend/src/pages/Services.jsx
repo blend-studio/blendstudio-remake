@@ -44,85 +44,93 @@ const Services = () => {
     <PageTransition>
       <div className="w-full bg-white min-h-screen">
         
-        {/* --- GEOMETRIC HERO --- */}
+        {/* --- FULLSCREEN HERO --- */}
         <div className="relative h-screen flex flex-col justify-center px-6 md:px-20 overflow-hidden bg-blend-dark text-white">
-           
-           {/* Abstract Shapes */}
-           <motion.div 
-             animate={{ rotate: 360 }}
-             transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-             className="absolute top-[-10%] right-[-10%] w-[600px] h-[600px] border-[1px] border-white/10 rounded-full z-0"
-           />
-           <motion.div 
-             animate={{ rotate: -360 }}
-             transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
-             className="absolute bottom-[-10%] left-[-10%] w-[800px] h-[800px] border-[1px] border-white/10 rounded-full z-0"
-           />
-           <div className="absolute inset-0 bg-gradient-to-br from-blend to-blend-dark opacity-50 z-0" />
+           {/* Abstract Shapes - Optimized */}
+           <div className="absolute inset-0 z-0 opacity-20">
+              <div className="absolute top-[-10%] right-[-10%] w-[600px] h-[600px] border-[1px] border-white/20 rounded-full" />
+              <div className="absolute bottom-[-10%] left-[-10%] w-[800px] h-[800px] border-[1px] border-white/20 rounded-full" />
+              <div className="absolute inset-0 bg-gradient-to-br from-blend/40 to-transparent" />
+           </div>
 
-           <div className="relative z-10">
+           <div className="max-w-[90rem] w-full z-10 relative mt-20">
               <motion.div
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.2 }}
-                className="flex items-center gap-4 mb-8"
+                transition={{ delay: 0.5, duration: 0.8 }}
+                className="flex items-center gap-4 mb-6 md:mb-10"
               >
-                <div className="h-[2px] w-12 bg-white"></div>
-                <span className="font-bold uppercase tracking-[0.2em] text-xs md:text-sm text-white/80">
-                  I Nostri Servizi
+                <div className="h-[2px] w-12 bg-white/60"></div>
+                <span className="text-white/80 font-bold uppercase tracking-[0.2em] text-xs md:text-sm">
+                  Our Expertise
                 </span>
               </motion.div>
-              
-              <h1 className="text-6xl md:text-9xl lg:text-[11rem] font-extrabold tracking-tighter leading-[0.9]">
-                <RevealText text="ELEVATING" delay={0.1} />
-                <span className="text-blend-light/80">
-                    <RevealText text="BRANDS" delay={0.3} />
-                </span>
-              </h1>
-              
-              <div className="mt-16 md:mt-24 max-w-2xl">
-                <p className="text-xl md:text-2xl text-white/70 leading-relaxed font-medium">
-                  Offriamo soluzioni digitali integrate per aziende che non si accontentano. 
-                  Dalla strategia alla produzione, siamo il tuo partner creativo.
+
+              <div className="text-6xl md:text-8xl lg:text-[10rem] xl:text-[12rem] font-extrabold leading-[0.85] tracking-tighter text-white">
+                <RevealText text="ELEVATING" delay={0.2} />
+                <div className="text-white/40">
+                  <RevealText text="BRANDS" delay={0.4} />
+                </div>
+              </div>
+
+              <div className="mt-16 max-w-2xl">
+                <p className="text-xl md:text-3xl text-white/60 leading-tight font-medium">
+                  Soluzioni digitali integrate per aziende ambiziose. 
+                  Dalla strategia alla produzione d'eccellenza.
                 </p>
               </div>
            </div>
+
+           <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1, y: [0, 10, 0] }}
+            transition={{ delay: 1, duration: 2, repeat: Infinity }}
+            className="absolute bottom-10 left-6 md:left-20 flex flex-col items-center gap-2 z-10"
+          >
+            <span className="text-[10px] uppercase tracking-widest text-white font-bold rotate-90 origin-left translate-x-4">Scroll</span>
+            <div className="w-[1px] h-16 bg-white/30 mt-8"></div>
+          </motion.div>
         </div>
 
         {/* Services List */}
-        <div className="py-20 md:py-32 px-6 md:px-20 grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-12 md:gap-y-24">
-          {services.map((service, i) => (
-            <motion.div 
-              key={i}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.1, duration: 0.6 }}
-              className="group border-t border-gray-100 pt-10"
-            >
-              <span className="text-xs font-bold text-blend-light/60 uppercase tracking-widest block mb-4">
-                0{i + 1}
-              </span>
-              <h3 className="text-3xl md:text-4xl font-bold text-blend mb-6 group-hover:text-blend-light transition-colors">
-                {service.title}
-              </h3>
-              <p className="text-gray-500 text-lg leading-relaxed max-w-md">
-                {service.description}
-              </p>
-            </motion.div>
-          ))}
+        <div className="py-32 md:py-48 px-6 md:px-20">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-24 gap-y-32">
+            {services.map((service, i) => (
+              <motion.div 
+                key={i}
+                initial={{ opacity: 0, y: 40 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i % 2 * 0.1, duration: 0.8 }}
+                className="group"
+              >
+                <div className="flex items-end justify-between border-b border-gray-100 pb-6 mb-10">
+                   <span className="text-xs font-black text-blend-light uppercase tracking-[0.3em]">
+                     0{i + 1}
+                   </span>
+                   <div className="w-12 h-12 rounded-full border border-gray-100 flex items-center justify-center group-hover:bg-blend group-hover:text-white transition-all duration-500">
+                      →
+                   </div>
+                </div>
+                <h3 className="text-4xl md:text-6xl font-black text-blend mb-8 tracking-tighter uppercase italic group-hover:text-blend-light transition-colors">
+                  {service.title}
+                </h3>
+                <p className="text-gray-500 text-xl md:text-2xl leading-relaxed max-w-lg">
+                  {service.description}
+                </p>
+              </motion.div>
+            ))}
+          </div>
         </div>
 
         {/* CTA */}
-        <div className="mt-0 md:mt-20 text-center bg-blend p-12 md:p-24 text-white overflow-hidden relative">
-           <motion.div
-              animate={{ rotate: 360 }}
-              transition={{ duration: 50, repeat: Infinity, ease: "linear" }}
-              className="absolute -right-20 -top-20 w-80 h-80 border border-white/10 rounded-full"
-           />
-           <h2 className="text-4xl md:text-6xl font-bold mb-8 relative z-10">Pronto a trasformare la tua visione?</h2>
+        <div className="py-40 md:py-60 bg-blend text-white text-center overflow-hidden relative">
+           <div className="absolute inset-0 opacity-10 font-black text-[30vw] leading-none pointer-events-none select-none flex items-center justify-center">
+              PROJECT
+           </div>
+           <h2 className="text-5xl md:text-9xl font-black mb-12 tracking-tighter uppercase italic relative z-10">Let's create.</h2>
            <div className="relative z-10">
-              <Link to="/contact" className="inline-block px-10 py-4 bg-white !text-[#2f6580] rounded-full font-bold uppercase tracking-widest hover:bg-gray-100 transition-colors">
+              <Link to="/contact" className="inline-block px-14 py-6 bg-white !text-blend rounded-full font-black uppercase tracking-[0.3em] text-xs hover:scale-110 transition-transform shadow-2xl">
                   Inizia un progetto
               </Link>
            </div>
