@@ -21,75 +21,91 @@ const About = () => {
     <PageTransition>
       <div className="w-full bg-white min-h-screen">
         
-        {/* --- VISUAL HERO --- */}
-        <div className="relative h-[80vh] md:h-screen flex items-center justify-center px-6 md:px-20 overflow-hidden bg-black">
-           {/* Background Visual */}
-           <div className="absolute inset-0 opacity-60">
+        {/* --- FULLSCREEN HERO --- */}
+        <div className="relative h-screen flex flex-col justify-center px-6 md:px-20 overflow-hidden bg-blend-dark">
+           {/* Visual background with overlay */}
+           <div className="absolute inset-0 z-0">
               <img 
                 src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=2670&auto=format&fit=crop" 
                 alt="Studio Team" 
-                className="w-full h-full object-cover"
+                className="w-full h-full object-cover opacity-30 grayscale"
               />
+              <div className="absolute inset-0 bg-gradient-to-t from-blend-dark via-transparent to-transparent"></div>
            </div>
            
-           <div className="relative z-10 text-center text-white">
+           <div className="max-w-[90rem] w-full z-10 relative mt-20">
               <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.2 }}
-                className="flex items-center justify-center gap-4 mb-8"
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.5, duration: 0.8 }}
+                className="flex items-center gap-4 mb-6 md:mb-10"
               >
-                <div className="h-[2px] w-12 bg-white"></div>
-                <span className="font-bold uppercase tracking-[0.2em] text-xs md:text-sm">
-                  Chi Siamo
+                <div className="h-[2px] w-12 bg-white/60"></div>
+                <span className="text-white/80 font-bold uppercase tracking-[0.2em] text-xs md:text-sm">
+                  The Studio
                 </span>
-                <div className="h-[2px] w-12 bg-white"></div>
               </motion.div>
 
-              <h1 className="text-6xl md:text-9xl lg:text-[10rem] font-extrabold tracking-tighter leading-[0.9] text-white">
-                <div className="overflow-hidden"><RevealText text="DIGITAL" /></div>
-                <div className="overflow-hidden text-white/80"><RevealText text="ARTISANS" delay={0.2} /></div>
-              </h1>
+              <div className="text-6xl md:text-8xl lg:text-[10rem] xl:text-[12rem] font-extrabold leading-[0.85] tracking-tighter text-white">
+                <RevealText text="DIGITAL" delay={0.2} />
+                <div className="text-white/40">
+                  <RevealText text="ARTISANS" delay={0.4} />
+                </div>
+              </div>
            </div>
+
+           <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1, y: [0, 10, 0] }}
+            transition={{ delay: 1, duration: 2, repeat: Infinity }}
+            className="absolute bottom-10 left-6 md:left-20 flex flex-col items-center gap-2 z-10"
+          >
+            <span className="text-[10px] uppercase tracking-widest text-white font-bold rotate-90 origin-left translate-x-4">Scroll</span>
+            <div className="w-[1px] h-16 bg-white/30 mt-8"></div>
+          </motion.div>
         </div>
 
         {/* --- INTRO TEXT --- */}
-        <div className="py-20 md:py-32 px-6 md:px-20 grid grid-cols-1 md:grid-cols-12 gap-10">
-            <div className="md:col-span-8 md:col-start-3 text-center">
-               <motion.p 
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.8 }}
-                className="text-2xl md:text-4xl font-medium leading-relaxed text-blend-dark"
-               >
-                 Siamo un collettivo di creativi, sviluppatori e strateghi. 
-                 Crediamo che il digitale non sia solo codice, ma un'estensione dell'identità umana.
-               </motion.p>
+        <div className="py-32 md:py-48 px-6 md:px-20">
+            <div className="grid grid-cols-1 md:grid-cols-12 gap-10">
+                <div className="md:col-span-8 md:col-start-4">
+                   <motion.div 
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 1 }}
+                   >
+                     <span className="block text-blend-light font-bold uppercase tracking-[0.3em] text-xs mb-8">Manifesto</span>
+                     <p className="text-3xl md:text-5xl lg:text-6xl font-bold leading-[1.2] text-blend tracking-tight">
+                       Siamo un collettivo di creativi, sviluppatori e strateghi. 
+                       Crediamo che il digitale non sia solo codice, ma un'estensione dell'identità umana.
+                     </p>
+                   </motion.div>
+                </div>
             </div>
         </div>
 
         {/* --- GALLERY MARQUEE --- */}
-        <section className="py-20 -mx-6 md:-mx-20 overflow-hidden bg-gray-50">
+        <section className="py-20 -mx-6 md:-mx-20 overflow-hidden bg-gray-50 border-y border-gray-100">
             <Marquee items={galleryImages} speed={50} />
         </section>
 
         {/* --- PHILOSOPHY --- */}
-        <section className="py-20 px-6 md:px-20">
-           <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
+        <section className="py-32 md:py-48 px-6 md:px-20">
+           <div className="grid grid-cols-1 md:grid-cols-2 gap-20 md:gap-32 items-center">
               <div>
-                 <h2 className="text-4xl md:text-6xl font-bold text-blend mb-8">Il Metodo Blend</h2>
-                 <p className="text-gray-500 text-lg md:text-xl leading-relaxed">
-                    Uniamo (Blend) due mondi spesso distanti: la precisione ingegneristica e l'intuizione artistica. 
+                 <h2 className="text-5xl md:text-8xl font-black text-blend mb-12 tracking-tighter uppercase italic">Il Metodo</h2>
+                 <p className="text-gray-500 text-xl md:text-2xl leading-relaxed mb-10">
+                    Uniamo la precisione ingegneristica e l'intuizione artistica. 
                     Ogni progetto nasce da una profonda analisi dei dati e fiorisce attraverso un design emotivo.
-                    Non seguiamo i trend, cerchiamo di definire quelli di domani.
                  </p>
+                 <div className="h-[2px] w-20 bg-blend"></div>
               </div>
-              <div className="relative h-[600px] bg-blend-bg overflow-hidden rounded-sm">
+              <div className="relative aspect-square bg-blend-bg overflow-hidden rounded-sm group">
                  <img 
                     src="https://images.unsplash.com/photo-1550684848-fac1c5b4e853?q=80&w=2670&auto=format&fit=crop" 
                     alt="Abstract Blend" 
-                    className="w-full h-full object-cover hover:scale-105 transition-transform duration-[1.5s]"
+                    className="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-105 transition-all duration-[1.5s]"
                  />
               </div>
            </div>
@@ -98,7 +114,7 @@ const About = () => {
 
         {/* --- VALUES --- */}
         <section className="py-20 md:py-32 px-6 md:px-20">
-            <div className="flex flex-col gap-0">
+            <div className="flex flex-col gap-0 border-t border-gray-200">
                 {["Innovazione", "Precisione", "Empatia", "Visione", "Qualità"].map((val, i) => (
                     <motion.div 
                         key={i}
@@ -106,12 +122,12 @@ const About = () => {
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
                         transition={{ delay: i * 0.1, duration: 0.6 }}
-                        className="group border-b border-gray-200 py-6 md:py-10 flex justify-between items-center cursor-default hover:bg-gray-50 transition-colors px-4 -mx-4"
+                        className="group border-b border-gray-200 py-10 md:py-16 flex justify-between items-center cursor-none hover:bg-blend transition-colors px-4 -mx-4"
                     >
-                        <h3 className="text-3xl md:text-5xl font-bold text-transparent stroke-text group-hover:text-blend transition-colors duration-500">
+                        <h3 className="text-4xl md:text-8xl font-bold text-transparent outline-text group-hover:text-white/20 transition-colors duration-500">
                             0{i + 1}
                         </h3>
-                        <span className="text-xl md:text-3xl font-bold text-blend uppercase tracking-widest group-hover:translate-x-[-20px] transition-transform duration-500">
+                        <span className="text-2xl md:text-5xl font-bold text-blend uppercase tracking-tighter group-hover:text-white group-hover:translate-x-[-20px] transition-all duration-500">
                             {val}
                         </span>
                     </motion.div>
@@ -120,15 +136,14 @@ const About = () => {
         </section>
 
 
-        {/* --- TEAM --- */}
-        <section className="py-20 md:py-40 bg-blend text-white px-6 md:px-20">
-           <div className="text-center max-w-4xl mx-auto">
-              <h2 className="text-4xl md:text-6xl font-bold mb-10">Le persone dietro il codice</h2>
-              <p className="text-xl md:text-2xl text-white/70 mb-12">
-                 Siamo un team distribuito ma unito dalla stessa passione per l'eccellenza.
-                 Nessun ego, solo grandi idee.
-              </p>
-              <Link to="/contact" className="inline-block px-12 py-5 bg-white !text-blend rounded-full font-bold uppercase tracking-widest hover:scale-105 transition-transform">
+        {/* --- TEAM CTA --- */}
+        <section className="py-40 md:py-60 bg-blend text-white px-6 md:px-20 text-center relative overflow-hidden">
+           <div className="absolute inset-0 opacity-10 font-black text-[30vw] leading-none pointer-events-none select-none flex items-center justify-center">
+              TEAM
+           </div>
+           <div className="relative z-10 max-w-4xl mx-auto">
+              <h2 className="text-5xl md:text-8xl font-black mb-12 tracking-tighter uppercase">Le persone dietro il codice</h2>
+              <Link to="/contact" className="inline-block px-14 py-6 bg-white !text-blend rounded-full font-black uppercase tracking-[0.3em] text-xs hover:scale-110 transition-transform shadow-2xl">
                   Unisciti a noi
               </Link>
            </div>
