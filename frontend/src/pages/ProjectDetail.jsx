@@ -60,74 +60,95 @@ const ProjectDetail = () => {
 
   return (
     <PageTransition>
-      <div className="bg-white min-h-screen pb-20">
+      <div className="bg-white min-h-screen">
         
-        {/* --- HERO IMAGE --- */}
-        <div className="relative h-[80vh] w-full overflow-hidden">
-           <div className="absolute inset-0 bg-black/30 z-10" />
-           <motion.img 
-             initial={{ scale: 1.1 }}
-             animate={{ scale: 1 }}
-             transition={{ duration: 1.5, ease: "easeOut" }}
-             src={coverImage} 
-             alt={project.title} 
-             className="w-full h-full object-cover"
-           />
-           <div className="absolute bottom-0 left-0 w-full p-6 md:p-20 z-20 text-white">
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.5 }}
-              >
-                <span className="block mb-4 text-sm font-bold uppercase tracking-widest opacity-80">
-                    {project.services || project.cat || "Project"}
-                </span>
-                <h1 className="text-5xl md:text-8xl font-bold leading-tight tracking-tighter">
-                    {project.title}
-                </h1>
-              </motion.div>
+        {/* --- FULLSCREEN HERO --- */}
+        <div className="relative h-screen w-full overflow-hidden bg-blend-dark">
+           <div className="absolute inset-0 z-0">
+              <motion.img 
+                initial={{ scale: 1.1, opacity: 0.4 }}
+                animate={{ scale: 1, opacity: 0.3 }}
+                transition={{ duration: 2, ease: "easeOut" }}
+                src={coverImage} 
+                alt={project.title} 
+                className="w-full h-full object-cover grayscale"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-blend-dark via-transparent to-transparent" />
            </div>
+
+           <div className="max-w-[90rem] w-full z-10 relative mt-20 px-6 md:px-20 h-full flex flex-col justify-center">
+              <motion.div
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.5, duration: 0.8 }}
+                className="flex items-center gap-4 mb-6 md:mb-10"
+              >
+                <div className="h-[2px] w-12 bg-white/60"></div>
+                <span className="text-white/80 font-bold uppercase tracking-[0.2em] text-xs md:text-sm">
+                  Case Study
+                </span>
+              </motion.div>
+
+              <div className="text-5xl sm:text-7xl md:text-8xl lg:text-[10rem] xl:text-[12rem] font-extrabold leading-[0.85] tracking-tighter text-white">
+                <div className="max-w-[15ch]">
+                   <RevealText text={project.title.toUpperCase()} delay={0.2} />
+                </div>
+              </div>
+              
+              <div className="mt-16 max-w-2xl">
+                <p className="text-xl md:text-3xl text-white/60 leading-tight font-medium uppercase italic tracking-tighter">
+                  {project.services || project.cat || "Digital Experience"}
+                </p>
+              </div>
+           </div>
+
+           <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1, y: [0, 10, 0] }}
+            transition={{ delay: 1.5, duration: 2, repeat: Infinity }}
+            className="absolute bottom-10 left-6 md:left-20 flex flex-col items-center gap-2 z-10"
+          >
+            <span className="text-[10px] uppercase tracking-widest text-white font-bold rotate-90 origin-left translate-x-4">Scroll</span>
+            <div className="w-[1px] h-16 bg-white/30 mt-8"></div>
+          </motion.div>
         </div>
 
         {/* --- CONTENT --- */}
-        <div className="px-6 md:px-20 py-20 max-w-7xl mx-auto">
-            <div className="grid grid-cols-1 md:grid-cols-12 gap-12 md:gap-24">
+        <div className="px-6 md:px-20 py-32 md:py-48">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 md:gap-32">
                 
                 {/* Sidebar Info */}
-                <div className="md:col-span-4 space-y-10">
+                <div className="lg:col-span-4 space-y-12 order-2 lg:order-1 border-t lg:border-t-0 border-gray-100 pt-16 lg:pt-0">
                     <div>
-                        <h3 className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-2">Cliente</h3>
-                        <p className="text-xl font-medium text-blend">{project.client || "Cliente Confidenziale"}</p>
+                        <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-blend-light/60 mb-4">Cliente</h3>
+                        <p className="text-3xl font-black text-blend uppercase tracking-tighter italic">{project.client || "Confidential"}</p>
                     </div>
                     <div>
-                        <h3 className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-2">Data</h3>
-                        <p className="text-xl font-medium text-blend">{project.project_date || "2024"}</p>
+                        <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-blend-light/60 mb-4">Anno</h3>
+                        <p className="text-3xl font-black text-blend uppercase tracking-tighter italic">{project.project_date || "2024"}</p>
                     </div>
                     <div>
-                        <h3 className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-2">Servizi</h3>
-                        <p className="text-xl font-medium text-blend">{project.services || "Web Design & Dev"}</p>
+                        <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-blend-light/60 mb-4">Expertise</h3>
+                        <div className="flex flex-wrap gap-2 mt-4">
+                           {(project.services || project.cat || "").split(",").map((s, i) => (
+                             <span key={i} className="px-4 py-2 border border-gray-100 rounded-full text-[10px] font-black uppercase tracking-widest text-blend-light">
+                               {s.trim()}
+                             </span>
+                           ))}
+                        </div>
                     </div>
                 </div>
 
                 {/* Main Description */}
-                <div className="md:col-span-8">
-                    <h2 className="text-3xl md:text-5xl font-bold text-blend mb-10 leading-tight">
-                        About the project
+                <div className="lg:col-span-8 order-1 lg:order-2">
+                    <h2 className="text-4xl md:text-7xl font-black text-blend mb-12 tracking-tighter uppercase italic">
+                        The Project
                     </h2>
-                    <div className="text-lg md:text-xl text-gray-600 leading-relaxed space-y-6">
+                    <div className="text-xl md:text-3xl text-gray-500 leading-[1.3] font-medium tracking-tight space-y-8">
                         {project.description ? (
                             <p>{project.description}</p>
                         ) : (
-                            <>
-                                <p>
-                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 
-                                    Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-                                </p>
-                                <p>
-                                    Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. 
-                                    Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-                                </p>
-                            </>
+                            <p>Costruiamo ecosistemi digitali che trasformano la percezione del brand e guidano risultati misurabili attraverso un design d'avanguardia.</p>
                         )}
                     </div>
                 </div>
@@ -136,21 +157,31 @@ const ProjectDetail = () => {
 
         {/* --- GALLERY --- */}
         {project.gallery_images && Array.isArray(project.gallery_images) && project.gallery_images.length > 0 && (
-            <div className="px-6 md:px-20 py-10">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+            <div className="px-6 md:px-20 pb-32 md:pb-48">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-10">
                     {project.gallery_images.map((img, i) => (
-                        <div key={i} className={`overflow-hidden rounded-sm ${i % 3 === 0 ? "md:col-span-2 aspect-[2/1]" : "aspect-square"}`}>
-                            <img src={img} alt={`Gallery ${i}`} className="w-full h-full object-cover hover:scale-105 transition-transform duration-700" />
-                        </div>
+                        <motion.div 
+                          key={i} 
+                          initial={{ opacity: 0, y: 30 }}
+                          whileInView={{ opacity: 1, y: 0 }}
+                          viewport={{ once: true }}
+                          transition={{ delay: (i % 2) * 0.1 }}
+                          className={`overflow-hidden rounded-sm group bg-gray-50 ${i % 3 === 0 ? "md:col-span-2 aspect-[16/9]" : "aspect-[4/5] md:aspect-square"}`}
+                        >
+                            <img src={img} alt={`Gallery ${i}`} className="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-105 transition-all duration-[1.5s] ease-out" />
+                        </motion.div>
                     ))}
                 </div>
             </div>
         )}
 
         {/* --- NEXT PROJECT CTA --- */}
-        <div className="border-t border-gray-100 mt-20 py-32 text-center">
-            <p className="text-gray-400 text-sm font-bold uppercase tracking-widest mb-6">Next Project</p>
-            <Link to="/projects" className="text-6xl md:text-8xl font-bold text-blend hover:text-transparent hover:bg-clip-text hover:bg-gradient-to-r hover:from-blend hover:to-blend-light transition-all">
+        <div className="bg-blend py-40 md:py-60 text-center relative overflow-hidden">
+            <div className="absolute inset-0 opacity-10 font-black text-[30vw] leading-none pointer-events-none select-none flex items-center justify-center text-white">
+              NEXT
+           </div>
+            <p className="text-white/40 text-sm font-black uppercase tracking-[0.4em] mb-8 relative z-10">Ready for more?</p>
+            <Link to="/projects" className="text-5xl md:text-9xl font-black text-white hover:italic transition-all uppercase tracking-tighter relative z-10">
                 Discover More
             </Link>
         </div>
@@ -159,5 +190,7 @@ const ProjectDetail = () => {
     </PageTransition>
   );
 };
+
+   
 
 export default ProjectDetail;

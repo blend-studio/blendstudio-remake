@@ -68,6 +68,15 @@ body {
   .text-7xl { font-size: 3.5rem !important; line-height: 1.1; }
 }
 
+@media (min-width: 1025px) and (max-width: 1536px) {
+  .text-5xl { font-size: 3rem !important; }
+  .text-6xl { font-size: 3.5rem !important; }
+  .text-8xl { font-size: 5rem !important; }
+  .lg\:text-\[10rem\] { font-size: 7rem !important; }
+  .xl\:text-\[12rem\] { font-size: 8rem !important; }
+  .xl\:text-\[13rem\] { font-size: 8.5rem !important; }
+}
+
 @media (max-width: 1024px) {
   h1, .text-huge {
     letter-spacing: -0.05em !important;
