@@ -46,7 +46,7 @@ const Careers = () => {
                 </span>
               </motion.div>
 
-              <div className="text-6xl md:text-8xl lg:text-[10rem] xl:text-[12rem] font-extrabold leading-[0.85] tracking-tighter text-white">
+              <div className="text-5xl sm:text-7xl md:text-8xl lg:text-[10rem] xl:text-[12rem] font-extrabold leading-[0.85] tracking-tighter text-white">
                 <RevealText text="JOIN THE" delay={0.2} />
                 <div className="text-white/40">
                   <RevealText text="TEAM" delay={0.4} />
@@ -76,17 +76,17 @@ const Careers = () => {
              <Marquee items={perks} speed={40} />
         </div>
 
-        <div className="py-32 md:py-48 px-6 md:px-20">
-            <div className="grid grid-cols-1 md:grid-cols-12 gap-10 mb-20">
-                <div className="md:col-span-4">
-                    <h2 className="text-5xl md:text-7xl font-black text-blend tracking-tighter uppercase italic">Open Roles</h2>
+        <div className="py-24 md:py-48 px-6 md:px-20">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-20 mb-16 md:mb-24">
+                <div className="lg:col-span-5">
+                    <h2 className="text-5xl md:text-7xl lg:text-8xl font-black text-blend tracking-tighter uppercase italic">Open Roles</h2>
                 </div>
-                <div className="md:col-span-8">
-                    <p className="text-gray-400 text-xl font-medium">Nessun ego, solo grandi idee. Siamo un team distribuito unito dalla stessa passione per l'eccellenza.</p>
+                <div className="lg:col-span-7">
+                    <p className="text-gray-400 text-lg md:text-2xl font-medium lg:max-w-2xl">Nessun ego, solo grandi idee. Siamo un team distribuito unito dalla stessa passione per l'eccellenza.</p>
                 </div>
             </div>
 
-            <div className="space-y-4">
+            <div className="space-y-6 md:space-y-8">
                 {positions.map((job, i) => (
                     <motion.div 
                         key={i} 
@@ -97,21 +97,21 @@ const Careers = () => {
                         className="border border-gray-100 overflow-hidden rounded-sm bg-white"
                     >
                         <div 
-                            className="p-8 md:p-12 flex flex-col md:flex-row items-start md:items-center justify-between hover:bg-gray-50 transition-all cursor-none group"
+                            className="p-6 md:p-12 flex flex-col lg:flex-row items-start lg:items-center justify-between hover:bg-gray-50 transition-all cursor-none group"
                             onClick={() => setExpanded(expanded === i ? null : i)}
                         >
-                            <div className="max-w-2xl">
-                                <h3 className="text-3xl md:text-5xl font-black text-blend tracking-tighter uppercase group-hover:text-blend-light transition-colors">{job.role}</h3>
-                                <div className="flex gap-6 mt-6 text-[10px] font-black uppercase tracking-[0.2em] text-blend-light/60">
+                            <div className="max-w-3xl">
+                                <h3 className="text-2xl md:text-4xl lg:text-5xl font-black text-blend tracking-tighter uppercase group-hover:text-blend-light transition-colors">{job.role}</h3>
+                                <div className="flex flex-wrap gap-4 md:gap-8 mt-4 md:mt-6 text-[10px] md:text-xs font-black uppercase tracking-[0.2em] text-blend-light/60">
                                     <span className="border-l-2 border-blend-light pl-2">{job.type}</span>
                                     <span className="border-l-2 border-blend-light pl-2">{job.loc}</span>
                                 </div>
                             </div>
-                            <div className="mt-8 md:mt-0 flex items-center gap-4">
+                            <div className="mt-8 lg:mt-0 flex items-center gap-6 w-full lg:w-auto justify-between lg:justify-end">
                                 <span className="text-[10px] font-black uppercase tracking-widest text-blend group-hover:translate-x-[-10px] transition-transform">
                                    {expanded === i ? "Chiudi" : "Dettagli"}
                                 </span>
-                                <div className={`w-14 h-14 border border-gray-200 rounded-full flex items-center justify-center text-blend group-hover:bg-blend group-hover:text-white transition-all duration-500 ${expanded === i ? "bg-blend text-white rotate-45" : ""}`}>
+                                <div className={`w-12 h-12 md:w-16 md:h-16 border border-gray-100 rounded-full flex items-center justify-center text-blend group-hover:bg-blend group-hover:text-white transition-all duration-500 ${expanded === i ? "bg-blend text-white rotate-45" : ""}`}>
                                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                                       <line x1="12" y1="5" x2="12" y2="19"></line>
                                       <line x1="5" y1="12" x2="19" y2="12"></line>
@@ -128,11 +128,11 @@ const Careers = () => {
                                     exit={{ height: 0, opacity: 0 }}
                                     transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
                                 >
-                                    <div className="px-8 md:px-12 pb-12 pt-0">
-                                        <p className="text-xl md:text-2xl text-gray-500 leading-relaxed max-w-3xl border-t border-gray-100 pt-10">
+                                    <div className="px-6 md:px-12 pb-10 md:pb-16 pt-0">
+                                        <p className="text-lg md:text-2xl text-gray-500 leading-relaxed max-w-4xl border-t border-gray-100 pt-8 md:pt-12">
                                             {job.desc}
                                         </p>
-                                        <button className="mt-12 inline-block px-10 py-5 bg-blend !text-white rounded-full font-black uppercase tracking-[0.2em] text-[10px] hover:scale-105 transition-transform shadow-xl">
+                                        <button className="mt-10 md:mt-14 inline-block px-8 md:px-14 py-4 md:py-6 bg-blend !text-white rounded-full font-black uppercase tracking-[0.2em] text-[10px] hover:scale-105 transition-transform shadow-xl">
                                             Invia Candidatura Ora
                                         </button>
                                     </div>

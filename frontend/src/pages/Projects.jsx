@@ -60,7 +60,7 @@ const Projects = () => {
                 </span>
               </motion.div>
 
-              <div className="text-6xl md:text-8xl lg:text-[10rem] xl:text-[12rem] font-extrabold leading-[0.85] tracking-tighter text-white">
+              <div className="text-5xl sm:text-7xl md:text-8xl lg:text-[10rem] xl:text-[12rem] font-extrabold leading-[0.85] tracking-tighter text-white">
                 <RevealText text="CREATIVE" delay={0.2} />
                 <div className="text-white/40">
                   <RevealText text="ARCHIVE" delay={0.4} />
@@ -171,7 +171,7 @@ const Projects = () => {
                           
                           <div className="mt-8 flex justify-between items-start">
                               <div className="max-w-[80%]">
-                                <h3 className="text-3xl md:text-5xl font-bold text-blend tracking-tighter group-hover:text-blend-light transition-colors duration-300">
+                                <h3 className="text-2xl md:text-5xl font-bold text-blend tracking-tighter group-hover:text-blend-light transition-colors duration-300">
                                   {project.title}
                                 </h3>
                                 <div className="flex flex-wrap gap-3 mt-4">

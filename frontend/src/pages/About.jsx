@@ -46,7 +46,7 @@ const About = () => {
                 </span>
               </motion.div>
 
-              <div className="text-6xl md:text-8xl lg:text-[10rem] xl:text-[12rem] font-extrabold leading-[0.85] tracking-tighter text-white">
+              <div className="text-5xl sm:text-7xl md:text-8xl lg:text-[10rem] xl:text-[12rem] font-extrabold leading-[0.85] tracking-tighter text-white">
                 <RevealText text="DIGITAL" delay={0.2} />
                 <div className="text-white/40">
                   <RevealText text="ARTISANS" delay={0.4} />
@@ -91,17 +91,17 @@ const About = () => {
         </section>
 
         {/* --- PHILOSOPHY --- */}
-        <section className="py-32 md:py-48 px-6 md:px-20">
-           <div className="grid grid-cols-1 md:grid-cols-2 gap-20 md:gap-32 items-center">
+        <section className="py-24 md:py-48 px-6 md:px-20">
+           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-32 items-center">
               <div>
-                 <h2 className="text-5xl md:text-8xl font-black text-blend mb-12 tracking-tighter uppercase italic">Il Metodo</h2>
-                 <p className="text-gray-500 text-xl md:text-2xl leading-relaxed mb-10">
+                 <h2 className="text-5xl md:text-7xl lg:text-8xl font-black text-blend mb-8 md:mb-12 tracking-tighter uppercase italic">Il Metodo</h2>
+                 <p className="text-gray-500 text-lg md:text-2xl leading-relaxed mb-10">
                     Uniamo la precisione ingegneristica e l'intuizione artistica. 
                     Ogni progetto nasce da una profonda analisi dei dati e fiorisce attraverso un design emotivo.
                  </p>
                  <div className="h-[2px] w-20 bg-blend"></div>
               </div>
-              <div className="relative aspect-square bg-blend-bg overflow-hidden rounded-sm group">
+              <div className="relative aspect-square lg:aspect-[4/5] bg-blend-bg overflow-hidden rounded-sm group">
                  <img 
                     src="https://images.unsplash.com/photo-1550684848-fac1c5b4e853?q=80&w=2670&auto=format&fit=crop" 
                     alt="Abstract Blend" 
@@ -122,12 +122,12 @@ const About = () => {
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
                         transition={{ delay: i * 0.1, duration: 0.6 }}
-                        className="group border-b border-gray-200 py-10 md:py-16 flex justify-between items-center cursor-none hover:bg-blend transition-colors px-4 -mx-4"
+                        className="group border-b border-gray-200 py-8 md:py-16 flex justify-between items-center cursor-none hover:bg-blend transition-colors px-2 md:px-4 -mx-2 md:-mx-4"
                     >
-                        <h3 className="text-4xl md:text-8xl font-bold text-transparent outline-text group-hover:text-white/20 transition-colors duration-500">
+                        <h3 className="text-3xl md:text-6xl lg:text-8xl font-bold text-transparent outline-text group-hover:text-white/20 transition-colors duration-500">
                             0{i + 1}
                         </h3>
-                        <span className="text-2xl md:text-5xl font-bold text-blend uppercase tracking-tighter group-hover:text-white group-hover:translate-x-[-20px] transition-all duration-500">
+                        <span className="text-lg md:text-3xl lg:text-5xl font-bold text-blend uppercase tracking-tighter group-hover:text-white group-hover:translate-x-[-20px] transition-all duration-500 text-right">
                             {val}
                         </span>
                     </motion.div>

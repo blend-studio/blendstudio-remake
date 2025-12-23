@@ -66,7 +66,7 @@ const Services = () => {
                 </span>
               </motion.div>
 
-              <div className="text-6xl md:text-8xl lg:text-[10rem] xl:text-[12rem] font-extrabold leading-[0.85] tracking-tighter text-white">
+              <div className="text-5xl sm:text-7xl md:text-8xl lg:text-[10rem] xl:text-[12rem] font-extrabold leading-[0.85] tracking-tighter text-white">
                 <RevealText text="ELEVATING" delay={0.2} />
                 <div className="text-white/40">
                   <RevealText text="BRANDS" delay={0.4} />
@@ -93,8 +93,8 @@ const Services = () => {
         </div>
 
         {/* Services List */}
-        <div className="py-32 md:py-48 px-6 md:px-20">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-24 gap-y-32">
+        <div className="py-24 md:py-48 px-6 md:px-20">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-16 xl:gap-x-32 gap-y-24 md:gap-y-32">
             {services.map((service, i) => (
               <motion.div 
                 key={i}
@@ -104,18 +104,18 @@ const Services = () => {
                 transition={{ delay: i % 2 * 0.1, duration: 0.8 }}
                 className="group"
               >
-                <div className="flex items-end justify-between border-b border-gray-100 pb-6 mb-10">
+                <div className="flex items-end justify-between border-b border-gray-100 pb-6 mb-8 md:mb-10">
                    <span className="text-xs font-black text-blend-light uppercase tracking-[0.3em]">
                      0{i + 1}
                    </span>
-                   <div className="w-12 h-12 rounded-full border border-gray-100 flex items-center justify-center group-hover:bg-blend group-hover:text-white transition-all duration-500">
+                   <div className="w-10 h-10 md:w-12 md:h-12 rounded-full border border-gray-100 flex items-center justify-center group-hover:bg-blend group-hover:text-white transition-all duration-500">
                       →
                    </div>
                 </div>
-                <h3 className="text-4xl md:text-6xl font-black text-blend mb-8 tracking-tighter uppercase italic group-hover:text-blend-light transition-colors">
+                <h3 className="text-3xl md:text-5xl lg:text-6xl font-black text-blend mb-6 md:mb-8 tracking-tighter uppercase italic group-hover:text-blend-light transition-colors">
                   {service.title}
                 </h3>
-                <p className="text-gray-500 text-xl md:text-2xl leading-relaxed max-w-lg">
+                <p className="text-lg md:text-2xl text-gray-500 leading-relaxed lg:max-w-lg">
                   {service.description}
                 </p>
               </motion.div>

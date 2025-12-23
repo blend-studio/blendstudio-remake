@@ -36,43 +36,45 @@ const Navbar = () => {
 
   return (
     <>
-      <nav className="fixed top-0 left-0 w-full p-6 md:p-10 flex justify-between items-center z-50">
+      <nav className="fixed top-0 left-0 w-full p-6 md:px-20 md:py-10 flex justify-between items-center z-50 pointer-events-none">
         {/* Logo */}
-        <Link to="/" className="z-50 hover:opacity-80 transition-opacity block">
+        <Link to="/" className="z-50 hover:opacity-80 transition-opacity block pointer-events-auto">
           <img 
             src={blendLogo} 
             alt="Blend Studio" 
-            className={`h-16 w-auto transition-all duration-300 ${isOpen ? "brightness-0 invert" : ""}`}
+            className={`h-12 md:h-16 w-auto transition-all duration-300 ${isOpen ? "brightness-0 invert" : ""}`}
           />
         </Link>
 
         {/* Menu Toggle */}
-        <Magnetic strength={60}>
-          <button
-            onClick={toggleMenu}
-            className="z-50 cursor-pointer p-0 m-0 focus:outline-none !bg-transparent border-none !shadow-none hover:!bg-transparent active:!bg-transparent group"
-            style={{ background: 'none', border: 'none', boxShadow: 'none', outline: 'none', borderRadius: '0' }}
-            aria-label={isOpen ? "Chiudi Menu" : "Apri Menu"}
-          >
-            <div className="w-16 h-16 rounded-full flex flex-col justify-center items-center gap-1.5 transition-all duration-300 group-hover:scale-110">
-              <span
-                className={`block w-8 h-1 transition-all duration-300 ease-out ${
-                  isOpen ? "bg-white rotate-45 translate-y-2.5" : "bg-[#2f6580]"
-                }`}
-              ></span>
-              <span
-                className={`block w-8 h-1 transition-all duration-300 ease-out ${
-                  isOpen ? "opacity-0" : "bg-[#2f6580] opacity-100"
-                }`}
-              ></span>
-              <span
-                className={`block w-8 h-1 transition-all duration-300 ease-out ${
-                  isOpen ? "bg-white -rotate-45 -translate-y-2.5" : "bg-[#2f6580]"
-                }`}
-              ></span>
-            </div>
-          </button>
-        </Magnetic>
+        <div className="pointer-events-auto">
+          <Magnetic strength={60}>
+            <button
+              onClick={toggleMenu}
+              className="z-50 cursor-pointer p-0 m-0 focus:outline-none !bg-transparent border-none !shadow-none hover:!bg-transparent active:!bg-transparent group"
+              style={{ background: 'none', border: 'none', boxShadow: 'none', outline: 'none', borderRadius: '0' }}
+              aria-label={isOpen ? "Chiudi Menu" : "Apri Menu"}
+            >
+              <div className="w-12 h-12 md:w-16 md:h-16 rounded-full flex flex-col justify-center items-center gap-1.5 transition-all duration-300 group-hover:scale-110">
+                <span
+                  className={`block w-6 md:w-8 h-1 transition-all duration-300 ease-out ${
+                    isOpen ? "bg-white rotate-45 translate-y-2.5" : "bg-[#2f6580]"
+                  }`}
+                ></span>
+                <span
+                  className={`block w-6 md:w-8 h-1 transition-all duration-300 ease-out ${
+                    isOpen ? "opacity-0" : "bg-[#2f6580] opacity-100"
+                  }`}
+                ></span>
+                <span
+                  className={`block w-6 md:w-8 h-1 transition-all duration-300 ease-out ${
+                    isOpen ? "bg-white -rotate-45 -translate-y-2.5" : "bg-[#2f6580]"
+                  }`}
+                ></span>
+              </div>
+            </button>
+          </Magnetic>
+        </div>
       </nav>
       <AnimatePresence mode="wait">
         {isOpen && (
@@ -81,7 +83,7 @@ const Navbar = () => {
             initial="initial"
             animate="animate"
             exit="exit"
-            className="fixed top-0 left-0 w-full h-screen bg-[#2f6580] text-white z-40 flex flex-col justify-between p-6 md:p-10 overflow-hidden"
+            className="fixed top-0 left-0 w-full h-screen bg-[#2f6580] text-white z-40 flex flex-col justify-between p-6 md:p-20 overflow-hidden"
           >
             {/* Header placeholder */}
             <div className="h-[20px]"></div>

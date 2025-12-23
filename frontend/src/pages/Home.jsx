@@ -65,7 +65,7 @@ const Home = () => {
               </span>
             </motion.div>
 
-            <div className="text-6xl md:text-8xl lg:text-[10rem] font-extrabold leading-[0.85] tracking-tighter text-white">
+            <div className="text-5xl md:text-8xl lg:text-[10rem] xl:text-[12rem] font-extrabold leading-[0.85] tracking-tighter text-white">
               <RevealText text="WE CRAFT" delay={0.2} />
               <div className="text-white/80">
                 <RevealText text="DIGITAL" delay={0.4} />
