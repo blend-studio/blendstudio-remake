@@ -248,7 +248,7 @@ const Home = () => {
             <div className="max-w-[110rem] mx-auto px-6 md:px-10 lg:px-20 relative">
                 
                 {/* Navigation Arrows at Edges */}
-                <div className="absolute top-[40%] -left-4 lg:-left-10 z-30 pointer-events-none w-[calc(100%+2rem)] lg:w-[calc(100%+5rem)] hidden md:flex justify-between px-2">
+                <div className="absolute top-[40%] -left-4 lg:-left-10 z-30 pointer-events-none w-[calc(100%+2rem)] lg:w-[calc(100%+5rem)] hidden lg:flex justify-between px-2">
                     <button 
                       onClick={() => scroll('left')}
                       className="w-14 h-14 !bg-[#2f6580] !text-white rounded-full flex items-center justify-center hover:!bg-[#4a8fa3] transition-all duration-500 group shadow-2xl pointer-events-auto"
@@ -283,7 +283,7 @@ const Home = () => {
                               transition={{ duration: 0.6 }}
                               src={project.cover_image || project.img} 
                               alt={project.title} 
-                              className="w-full h-full object-cover md:grayscale md:group-hover/card:grayscale-0 transition-all duration-500"
+                              className="w-full h-full object-cover xl:grayscale xl:group-hover/card:grayscale-0 transition-all duration-500"
                             />
                             <div className="absolute inset-0 bg-blend-dark/20 opacity-0 group-hover/card:opacity-100 transition-opacity flex items-center justify-center">
                                <span className="px-8 py-3 bg-white text-blend font-black text-[10px] uppercase tracking-[0.3em] rounded-full shadow-2xl">Explore Case</span>
