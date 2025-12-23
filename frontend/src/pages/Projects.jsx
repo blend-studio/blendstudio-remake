@@ -5,6 +5,7 @@ import { RevealText } from "../components/ui/RevealText";
 import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
 import TiltCard from "../components/ui/TiltCard";
 import { getProjects } from "../services/api";
+import liquidTexture from "../assets/images/blend-liquid-texture.jpg";
 
 const categories = ["All", "Web Design", "Branding", "Development", "Marketing"];
 
@@ -41,10 +42,13 @@ const Projects = () => {
         
         {/* --- FULLSCREEN HERO --- */}
         <div className="relative h-screen flex flex-col justify-center px-6 md:px-20 overflow-hidden bg-blend-dark">
-           {/* Decorative elements - optimized */}
+           {/* Texture only - 0 overlay */}
            <div className="absolute inset-0 z-0">
-              <div className="absolute -top-1/4 -left-1/4 w-full h-full bg-blend-light/10 rounded-full blur-[120px]" />
-              <div className="absolute -bottom-1/4 -right-1/4 w-full h-full bg-blend/20 rounded-full blur-[120px]" />
+              <img 
+                src={liquidTexture} 
+                alt="Background Texture" 
+                className="w-full h-full object-cover"
+              />
            </div>
 
            <div className="max-w-[90rem] w-full z-10 relative mt-20">
@@ -94,7 +98,7 @@ const Projects = () => {
                           onClick={() => setFilter(cat)}
                           className={`px-6 py-2 rounded-full text-[10px] font-bold uppercase tracking-widest transition-all duration-500 ${
                               filter === cat 
-                              ? "bg-blend text-white shadow-lg shadow-blend/20" 
+                              ? "bg-blend !text-white shadow-lg shadow-blend/20" 
                               : "bg-white text-blend hover:bg-gray-50 border border-gray-200"
                           }`}
                         >

@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import PageTransition from "../components/Transition";
 import { RevealText } from "../components/ui/RevealText";
 import { motion } from "framer-motion";
+import liquidTexture from "../assets/images/blend-liquid-texture.jpg";
 
 const Contact = () => {
   const [formData, setFormData] = useState({ name: "", email: "", message: "" });
@@ -27,9 +28,13 @@ const Contact = () => {
         
         {/* --- FULLSCREEN HERO --- */}
         <div className="relative h-screen flex flex-col justify-center px-6 md:px-20 overflow-hidden bg-blend-dark text-white">
+           {/* Texture only - 0 overlay */}
            <div className="absolute inset-0 z-0">
-              <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-blend-light/10 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/2" />
-              <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-blend/20 rounded-full blur-[120px] translate-y-1/2 -translate-x-1/2" />
+              <img 
+                src={liquidTexture} 
+                alt="Background Texture" 
+                className="w-full h-full object-cover"
+              />
            </div>
            
            <div className="max-w-[90rem] w-full z-10 relative mt-20">
@@ -86,7 +91,7 @@ const Contact = () => {
                                 initial={{ x: 0, opacity: 0.5 }}
                                 whileHover={{ x: 20, opacity: 1 }}
                                 transition={{ duration: 0.3 }}
-                                className="text-4xl md:text-8xl font-black text-blend tracking-tighter uppercase italic hover:text-blend-light transition-colors duration-300 w-fit cursor-none"
+                                className="text-4xl md:text-8xl font-black text-blend tracking-tighter uppercase italic hover:text-blend-light transition-colors duration-300 w-fit"
                             >
                                 {social.name}
                             </motion.a>
@@ -118,7 +123,7 @@ const Contact = () => {
                               <label className="block text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 mb-2 group-focus-within:text-blend transition-colors">Nome</label>
                               <input 
                                   type="text" 
-                                  className="w-full bg-transparent border-b border-gray-100 py-4 text-2xl text-blend font-bold placeholder-gray-200 focus:outline-none focus:border-blend transition-colors cursor-none"
+                                  className="w-full bg-transparent border-b border-gray-100 py-4 text-2xl text-blend font-bold placeholder-gray-200 focus:outline-none focus:border-blend transition-colors"
                                   value={formData.name}
                                   onChange={(e) => setFormData({...formData, name: e.target.value})}
                                   required 
@@ -129,7 +134,7 @@ const Contact = () => {
                               <label className="block text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 mb-2 group-focus-within:text-blend transition-colors">Email</label>
                               <input 
                                   type="email" 
-                                  className="w-full bg-transparent border-b border-gray-100 py-4 text-2xl text-blend font-bold placeholder-gray-200 focus:outline-none focus:border-blend transition-colors cursor-none"
+                                  className="w-full bg-transparent border-b border-gray-100 py-4 text-2xl text-blend font-bold placeholder-gray-200 focus:outline-none focus:border-blend transition-colors"
                                   value={formData.email}
                                   onChange={(e) => setFormData({...formData, email: e.target.value})}
                                   required 
@@ -140,7 +145,7 @@ const Contact = () => {
                               <label className="block text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 mb-2 group-focus-within:text-blend transition-colors">Messaggio</label>
                               <textarea 
                                   rows="4"
-                                  className="w-full bg-transparent border-b border-gray-100 py-4 text-2xl text-blend font-bold placeholder-gray-200 focus:outline-none focus:border-blend transition-colors resize-none cursor-none"
+                                  className="w-full bg-transparent border-b border-gray-100 py-4 text-2xl text-blend font-bold placeholder-gray-200 focus:outline-none focus:border-blend transition-colors resize-none"
                                   value={formData.message}
                                   onChange={(e) => setFormData({...formData, message: e.target.value})}
                                   required 
@@ -151,7 +156,7 @@ const Contact = () => {
                               <button 
                                   type="submit" 
                                   disabled={status === "sending" || status === "success"}
-                                  className="w-full py-6 bg-blend text-white font-black uppercase tracking-[0.2em] text-[10px] rounded-full hover:scale-[1.02] transition-all disabled:opacity-70 disabled:cursor-none shadow-xl cursor-none"
+                                  className="w-full py-6 bg-blend text-white font-black uppercase tracking-[0.2em] text-[10px] rounded-full hover:scale-[1.02] transition-all disabled:opacity-70 shadow-xl"
                               >
                                   {status === "sending" ? "Invio in corso..." : status === "success" ? "Messaggio Inviato!" : "Invia Messaggio"}
                               </button>
