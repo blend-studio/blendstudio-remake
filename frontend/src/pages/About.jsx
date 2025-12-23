@@ -99,19 +99,19 @@ const About = () => {
         {/* --- VALUES --- */}
         <section className="py-20 md:py-32 px-6 md:px-20">
             <div className="flex flex-col gap-0">
-                {["Innovazione", "Precisione", "Empatia", "Visione"].map((val, i) => (
+                {["Innovazione", "Precisione", "Empatia", "Visione", "Qualità"].map((val, i) => (
                     <motion.div 
                         key={i}
                         initial={{ opacity: 0, y: 50 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
                         transition={{ delay: i * 0.1, duration: 0.6 }}
-                        className="group border-b border-gray-200 py-10 md:py-16 flex justify-between items-center cursor-default hover:bg-gray-50 transition-colors px-4 -mx-4"
+                        className="group border-b border-gray-200 py-6 md:py-10 flex justify-between items-center cursor-default hover:bg-gray-50 transition-colors px-4 -mx-4"
                     >
-                        <h3 className="text-5xl md:text-8xl font-bold text-transparent stroke-text group-hover:text-blend transition-colors duration-500">
+                        <h3 className="text-3xl md:text-5xl font-bold text-transparent stroke-text group-hover:text-blend transition-colors duration-500">
                             0{i + 1}
                         </h3>
-                        <span className="text-3xl md:text-6xl font-bold text-blend uppercase tracking-widest group-hover:translate-x-[-20px] transition-transform duration-500">
+                        <span className="text-xl md:text-3xl font-bold text-blend uppercase tracking-widest group-hover:translate-x-[-20px] transition-transform duration-500">
                             {val}
                         </span>
                     </motion.div>
@@ -128,7 +128,7 @@ const About = () => {
                  Siamo un team distribuito ma unito dalla stessa passione per l'eccellenza.
                  Nessun ego, solo grandi idee.
               </p>
-              <Link to="/contact" className="inline-block px-12 py-5 bg-white text-blend rounded-full font-bold uppercase tracking-widest hover:scale-105 transition-transform">
+              <Link to="/contact" className="inline-block px-12 py-5 bg-white !text-blend rounded-full font-bold uppercase tracking-widest hover:scale-105 transition-transform">
                   Unisciti a noi
               </Link>
            </div>
