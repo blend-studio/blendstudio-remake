@@ -181,7 +181,7 @@ const Home = () => {
                 viewport={{ once: true }}
                 transition={{ duration: 0.8 }}
               >
-                 <h2 className="text-6xl md:text-[9rem] font-black text-blend uppercase tracking-tighter italic leading-none">Services</h2>
+                 <h2 className="text-6xl md:text-8xl lg:text-[9rem] font-black text-blend uppercase tracking-tighter italic leading-none">Services</h2>
                  <div className="flex items-center gap-4 mt-6">
                     <div className="h-[2px] w-12 bg-blend-light"></div>
                     <p className="text-blend-light font-black uppercase tracking-[0.4em] text-xs md:text-sm">Innovazione & Design</p>
@@ -193,7 +193,7 @@ const Home = () => {
               </Link>
            </div>
 
-           <div className="px-6 md:px-20 flex overflow-x-auto lg:grid lg:grid-cols-4 gap-6 md:gap-8 relative z-10 hide-scrollbar snap-x snap-mandatory pb-10">
+           <div className="px-6 md:px-20 flex overflow-x-auto md:grid md:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8 relative z-10 hide-scrollbar md:overflow-visible snap-x snap-mandatory pb-10 md:pb-0">
               {servicesShort.map((service, i) => (
                 <motion.div 
                   key={i} 
@@ -202,7 +202,7 @@ const Home = () => {
                   viewport={{ once: true }}
                   transition={{ delay: i * 0.05, duration: 0.6 }}
                   whileHover={{ y: -15 }}
-                  className="group flex-shrink-0 w-[85vw] md:w-[calc(50%-2rem)] lg:w-auto snap-start relative p-8 md:p-10 bg-white border border-gray-100 hover:border-blend-light/30 hover:shadow-[0_30px_60px_-15px_rgba(47,101,128,0.15)] transition-all duration-700 rounded-[2.5rem] overflow-hidden"
+                  className="group flex-shrink-0 w-[85vw] md:w-auto snap-start relative p-8 md:p-10 bg-white border border-gray-100 hover:border-blend-light/30 hover:shadow-[0_30px_60px_-15px_rgba(47,101,128,0.15)] transition-all duration-700 rounded-[2.5rem] overflow-hidden"
                 >
                    {/* Background Number */}
                    <span className="absolute -right-4 -top-4 text-9xl font-black text-blend/[0.03] group-hover:text-blend/[0.08] transition-colors duration-700 italic select-none">
