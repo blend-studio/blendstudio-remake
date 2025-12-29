@@ -102,10 +102,12 @@ const Home = () => {
     fetchProjects();
   }, []);
 
-  // Lock body scroll and force navbar white when modal is open
+  // Lock body scroll and force navbar white when modal is open (Mobile Only)
   useEffect(() => {
-    const handleScrollLock = () => {
+    const handleState = () => {
       const isMobile = window.innerWidth < 1024;
+      
+      // 1. Scroll Lock
       if (activeService !== null && isMobile) {
         document.body.style.overflow = 'hidden';
         lenis?.stop();
@@ -113,22 +115,23 @@ const Home = () => {
         document.body.style.overflow = 'auto';
         lenis?.start();
       }
+
+      // 2. Navbar Color Force
+      if (activeService !== null && isMobile) {
+        window.dispatchEvent(new CustomEvent("nav-force-white", { detail: true }));
+      } else {
+        window.dispatchEvent(new CustomEvent("nav-force-white", { detail: false }));
+      }
     };
 
-    handleScrollLock();
-    window.addEventListener('resize', handleScrollLock);
-
-    if (activeService !== null) {
-      window.dispatchEvent(new CustomEvent("nav-force-white", { detail: true }));
-    } else {
-      window.dispatchEvent(new CustomEvent("nav-force-white", { detail: false }));
-    }
+    handleState();
+    window.addEventListener('resize', handleState);
 
     return () => {
       document.body.style.overflow = 'auto';
       lenis?.start();
       window.dispatchEvent(new CustomEvent("nav-force-white", { detail: false }));
-      window.removeEventListener('resize', handleScrollLock);
+      window.removeEventListener('resize', handleState);
     };
   }, [activeService, lenis]);
 
