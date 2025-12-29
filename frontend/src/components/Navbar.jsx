@@ -7,6 +7,7 @@ import Magnetic from "./ui/Magnetic";
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isOverDark, setIsOverDark] = useState(true); // Default true for Hero
+  const [forceWhite, setForceWhite] = useState(false); // External override
 
   useEffect(() => {
     const checkColor = () => {
@@ -25,11 +26,19 @@ const Navbar = () => {
       setIsOverDark(overDark);
     };
 
+    const handleForceWhite = (e) => {
+      setForceWhite(e.detail);
+    };
+
     window.addEventListener("scroll", checkColor);
+    window.addEventListener("nav-force-white", handleForceWhite);
     // Controllo iniziale
     setTimeout(checkColor, 100); 
     
-    return () => window.removeEventListener("scroll", checkColor);
+    return () => {
+      window.removeEventListener("scroll", checkColor);
+      window.removeEventListener("nav-force-white", handleForceWhite);
+    };
   }, []);
 
   const toggleMenu = () => setIsOpen(!isOpen);
@@ -60,8 +69,8 @@ const Navbar = () => {
     { title: "Contatti", href: "/contact" },
   ];
 
-  // Determiniamo se gli elementi devono essere bianchi (su area scura o Menu Aperto) o Blu
-  const isWhite = isOverDark || isOpen;
+  // Determiniamo se gli elementi devono essere bianchi (su area scura o Menu Aperto o Forzato)
+  const isWhite = isOverDark || isOpen || forceWhite;
   const navColorClass = isWhite ? "brightness-0 invert" : "";
   const burgerColorClass = isWhite ? "bg-white" : "bg-[#2f6580]";
 
