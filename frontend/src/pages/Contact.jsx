@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import PageTransition from "../components/Transition";
 import { RevealText } from "../components/ui/RevealText";
 import { motion } from "framer-motion";
-import liquidTexture from "../assets/images/blend-liquid-texture.jpg";
 import backgroundVideo from "../assets/images/sfondo-blend.mp4";
 
 const Contact = () => {
@@ -89,7 +88,7 @@ const Contact = () => {
                   <div className="flex flex-col gap-8">
                       <h3 className="text-xs font-black uppercase tracking-[0.3em] text-blend-light/60 border-b border-gray-100 pb-4">Connect</h3>
                       <div className="flex flex-col gap-6">
-                        {socials.map((social, i) => (
+                        {socials.map((social) => (
                             <motion.a 
                                 key={social.name} 
                                 href={social.link} 
