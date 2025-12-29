@@ -299,7 +299,7 @@ const Home = () => {
              <div className="absolute top-[20%] -translate-y-1/2 left-0 w-full z-20 flex justify-between px-2 pointer-events-none lg:hidden">
                 <button 
                   onClick={() => scrollServices('left')}
-                  className="w-10 h-10 bg-white text-black rounded-full flex items-center justify-center shadow-lg pointer-events-auto border border-gray-100"
+                  className="w-10 h-10 bg-white !text-[#2f6580] rounded-full flex items-center justify-center shadow-lg pointer-events-auto border border-gray-100"
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" aria-hidden="true">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 15.75 3 12m0 0 3.75-3.75M3 12h18" />
@@ -307,7 +307,7 @@ const Home = () => {
                 </button>
                 <button 
                   onClick={() => scrollServices('right')}
-                  className="w-10 h-10 bg-white text-black rounded-full flex items-center justify-center shadow-lg pointer-events-auto border border-gray-100"
+                  className="w-10 h-10 bg-white !text-[#2f6580] rounded-full flex items-center justify-center shadow-lg pointer-events-auto border border-gray-100"
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" aria-hidden="true">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M17.25 8.25 21 12m0 0-3.75 3.75M21 12H3" />
