@@ -20,7 +20,7 @@ const ProjectDetail = () => {
         } else {
           setError("Project not found");
         }
-      } catch (err) {
+      } catch {
         setError("Error fetching project details");
       } finally {
         setLoading(false);

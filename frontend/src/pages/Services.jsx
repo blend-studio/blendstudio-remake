@@ -3,7 +3,6 @@ import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import PageTransition from "../components/Transition";
 import { RevealText } from "../components/ui/RevealText";
-import liquidTexture from "../assets/images/blend-liquid-texture.jpg";
 import backgroundVideo from "../assets/images/sfondo-blend.mp4";
 
 const services = [

@@ -2,10 +2,8 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import PageTransition from "../components/Transition";
 import { RevealText } from "../components/ui/RevealText";
-import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
-import TiltCard from "../components/ui/TiltCard";
+import { motion, AnimatePresence } from "framer-motion";
 import { getProjects } from "../services/api";
-import liquidTexture from "../assets/images/blend-liquid-texture.jpg";
 import backgroundVideo from "../assets/images/sfondo-blend.mp4";
 
 const categories = ["All", "Web Design", "Branding", "Development", "Marketing"];
@@ -14,9 +12,6 @@ const Projects = () => {
   const [projects, setProjects] = useState([]);
   const [filter, setFilter] = useState("All");
   const [loading, setLoading] = useState(true);
-  const { scrollY } = useScroll();
-  const y1 = useTransform(scrollY, [0, 500], [0, 200]);
-  const opacity = useTransform(scrollY, [0, 300], [1, 0]);
 
   useEffect(() => {
     const fetchProjects = async () => {

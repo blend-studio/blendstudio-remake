@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { motion, useScroll, useTransform, AnimatePresence, LayoutGroup } from "framer-motion";
+import { motion, AnimatePresence, LayoutGroup } from "framer-motion";
 import { useLenis } from 'lenis/react';
 import PageTransition from "../components/Transition";
 import { RevealText } from "../components/ui/RevealText";
@@ -85,7 +85,6 @@ const Home = () => {
   const scrollRef = React.useRef(null);
   const servicesScrollRef = React.useRef(null);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
-  const { scrollYProgress } = useScroll();
 
   const lenis = useLenis();
 
@@ -105,19 +104,31 @@ const Home = () => {
 
   // Lock body scroll and force navbar white when modal is open
   useEffect(() => {
+    const handleScrollLock = () => {
+      const isMobile = window.innerWidth < 1024;
+      if (activeService !== null && isMobile) {
+        document.body.style.overflow = 'hidden';
+        lenis?.stop();
+      } else {
+        document.body.style.overflow = 'auto';
+        lenis?.start();
+      }
+    };
+
+    handleScrollLock();
+    window.addEventListener('resize', handleScrollLock);
+
     if (activeService !== null) {
-      document.body.style.overflow = 'hidden';
-      lenis?.stop();
       window.dispatchEvent(new CustomEvent("nav-force-white", { detail: true }));
     } else {
-      document.body.style.overflow = 'auto';
-      lenis?.start();
       window.dispatchEvent(new CustomEvent("nav-force-white", { detail: false }));
     }
+
     return () => {
       document.body.style.overflow = 'auto';
       lenis?.start();
       window.dispatchEvent(new CustomEvent("nav-force-white", { detail: false }));
+      window.removeEventListener('resize', handleScrollLock);
     };
   }, [activeService, lenis]);
 
