@@ -5,6 +5,9 @@ import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import SmoothScroll from "./components/SmoothScroll";
 import ScrollToTop from "./components/ScrollToTop";
+import GrainOverlay from "./components/ui/GrainOverlay";
+
+// Pagine
 import Home from "./pages/Home";
 import About from "./pages/About";
 import Projects from "./pages/Projects";
@@ -13,7 +16,6 @@ import Services from "./pages/Services";
 import Careers from "./pages/Careers";
 import Contact from "./pages/Contact";
 
-// Componente wrapper per gestire AnimatePresence con useLocation
 const AnimatedRoutes = () => {
   const location = useLocation();
 
@@ -37,6 +39,8 @@ function App() {
     <Router basename={import.meta.env.BASE_URL}>
       <SmoothScroll>
         <ScrollToTop />
+        <GrainOverlay />
+        
         <div className="antialiased text-gray-900 bg-white min-h-screen selection:bg-blend-light selection:text-white">
           <Navbar />
           <AnimatedRoutes />

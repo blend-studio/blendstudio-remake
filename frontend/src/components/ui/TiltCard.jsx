@@ -39,7 +39,7 @@ const TiltCard = ({ children, className = "" }) => {
       }}
       className={`relative ${className}`}
     >
-      <div style={{ transform: "translateZ(50px)", transformStyle: "preserve-3d" }}>
+      <div style={{ transform: "translateZ(50px)", transformStyle: "preserve-3d" }} className="w-full h-full">
         {children}
       </div>
     </motion.div>
