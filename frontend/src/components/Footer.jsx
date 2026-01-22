@@ -14,9 +14,11 @@ const Footer = () => {
           <div className="md:col-span-4">
             <img src={blendLogo} alt="Blend Studio" className="h-12 w-auto mb-8 grayscale opacity-50 hover:grayscale-0 hover:opacity-100 transition-all cursor-pointer" />
             <div className="space-y-2 text-gray-400 text-sm font-medium">
-              <p>Via della Creatività, 12</p>
-              <p>35100 Padova, IT</p>
-              <p className="pt-4 uppercase tracking-widest text-[10px] font-black">P.IVA 01234567890</p>
+              <p>info@blendstudio.it</p>
+              <p>+39 352 039 0732</p>
+              <p>Strada Val Nure 16/I</p>
+              <p>29122 Piacenza, IT</p>
+              <p className="pt-4 uppercase tracking-widest text-[10px] font-black">CF e PIVA: 01905100333</p>
             </div>
           </div>
 
@@ -55,7 +57,7 @@ const Footer = () => {
         {/* Bottom Bar */}
         <div className="pt-10 border-t border-gray-50 flex flex-col md:row justify-between items-center gap-6">
           <p className="text-[10px] font-black text-gray-300 uppercase tracking-[0.2em]">
-            © {currentYear} Blend Studio Srl — Tutti i diritti riservati.
+            © 2026 Blend Studio Srl — Tutti i diritti riservati.
           </p>
           <div className="flex gap-8 text-[10px] font-black text-gray-300 uppercase tracking-[0.2em]">
             <a href="#" className="hover:text-blend transition-colors">Privacy Policy</a>
