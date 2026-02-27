@@ -13,7 +13,7 @@ const PageTransition = ({ children }) => {
       initial="initial"
       animate="animate"
       exit="exit"
-      transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }} // Curva Bezier "Lusso"
+      transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }} // Più veloce e reattivo
       className="w-full min-h-screen"
     >
       {children}

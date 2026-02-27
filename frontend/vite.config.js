@@ -9,4 +9,14 @@ export default defineConfig({
     react(),
     tailwindcss(),
   ],
+  server: {
+    watch: {
+      usePolling: true,
+      interval: 1000, // Aumentiamo l'intervallo di polling per risparmiare CPU
+      ignored: ['**/node_modules/**', '**/dist/**', '**/public/**'],
+    },
+    host: true,
+    strictPort: true,
+    port: 5173,
+  },
 })

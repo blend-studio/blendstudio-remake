@@ -11,32 +11,34 @@ const Navbar = () => {
 
   useEffect(() => {
     const checkColor = () => {
-      // Troviamo tutte le sezioni "scure" del sito
       const darkSections = document.querySelectorAll('.nav-dark-section');
-      let overDark = false;
-
-      darkSections.forEach(section => {
-        const rect = section.getBoundingClientRect();
-        // Se la parte superiore della pagina (dove sta la navbar) è dentro i confini di una sezione scura
-        if (rect.top <= 50 && rect.bottom >= 50) {
-          overDark = true;
-        }
+      
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            setIsOverDark(true);
+          } else {
+            setIsOverDark(false);
+          }
+        });
+      }, {
+        threshold: [0, 0.1, 0.9, 1],
+        rootMargin: "-80px 0px -90% 0px" 
       });
 
-      setIsOverDark(overDark);
+      darkSections.forEach(section => observer.observe(section));
+
+      return () => observer.disconnect();
     };
 
     const handleForceWhite = (e) => {
       setForceWhite(e.detail);
     };
 
-    window.addEventListener("scroll", checkColor);
+    checkColor();
     window.addEventListener("nav-force-white", handleForceWhite);
-    // Controllo iniziale
-    setTimeout(checkColor, 100); 
     
     return () => {
-      window.removeEventListener("scroll", checkColor);
       window.removeEventListener("nav-force-white", handleForceWhite);
     };
   }, []);

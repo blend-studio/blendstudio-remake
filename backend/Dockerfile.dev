@@ -1,0 +1,10 @@
+FROM mcr.microsoft.com/dotnet/sdk:9.0
+WORKDIR /app
+
+# Espone la porta usata da ASP.NET Core
+EXPOSE 8080
+
+# Usiamo dotnet watch per il ricaricamento a caldo. 
+# --non-interactive evita blocchi in Docker.
+# --urls permette l'ascolto su tutte le interfacce del container.
+ENTRYPOINT ["dotnet", "watch", "run", "--urls", "http://0.0.0.0:8080", "--non-interactive"]

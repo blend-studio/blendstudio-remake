@@ -100,36 +100,7 @@ const wrap = (min, max, v) => {
 
 // 1. Background Waves (GPU Accelerated)
 const BlendWaves = () => {
-  const { scrollY } = useScroll();
-  // Movimento parallasse più contenuto
-  const y1 = useTransform(scrollY, [0, 2000], [0, -200]);
-  const y2 = useTransform(scrollY, [0, 2000], [0, -300]);
-
-  return (
-    <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
-        {/* Blob 1 */}
-        <motion.div 
-          style={{ y: y1, x: 0 }} 
-          className="absolute top-[-10%] left-[-10%] w-[60vw] h-[60vw] bg-blend-light/10 rounded-full blur-[60px] opacity-50 will-change-transform" 
-          animate={{ 
-            scale: [1, 1.1, 1],
-            rotate: [0, 10, 0]
-          }} 
-          transition={{ duration: 15, repeat: Infinity, ease: "linear" }} 
-        />
-        
-        {/* Blob 2 */}
-        <motion.div 
-          style={{ y: y2, x: 0 }} 
-          className="absolute top-[30%] -right-[20%] w-[70vw] h-[70vw] bg-blend/5 rounded-full blur-[80px] opacity-40 will-change-transform" 
-          animate={{ 
-            scale: [1, 1.1, 1],
-            rotate: [0, -10, 0]
-          }} 
-          transition={{ duration: 20, repeat: Infinity, ease: "linear" }} 
-        />
-    </div>
-  )
+  return null; // Disabilitato per massimizzare la fluidità
 }
 
 // 2. Velocity Text Scroll
@@ -146,10 +117,13 @@ function ParallaxText({ children, baseVelocity = 40 }) {
   useAnimationFrame((t, delta) => {
     let moveBy = directionFactor.current * baseVelocity * (delta / 1000);
     
-    if (velocityFactor.get() < 0) {
-      directionFactor.current = -1;
-    } else if (velocityFactor.get() > 0) {
-      directionFactor.current = 1;
+    // Riduciamo la frequenza di aggiornamento della direzione per risparmiare CPU
+    if (t % 100 < 16) { 
+      if (velocityFactor.get() < 0) {
+        directionFactor.current = -1;
+      } else if (velocityFactor.get() > 0) {
+        directionFactor.current = 1;
+      }
     }
 
     moveBy += directionFactor.current * moveBy * velocityFactor.get();
@@ -171,30 +145,48 @@ function ParallaxText({ children, baseVelocity = 40 }) {
   );
 }
 
-// 3. Highlight Paragraph
+// 3. Highlight Paragraph (Optimized: use whileInView instead of scroll transforms)
 const HighlightParagraph = ({ text }) => {
-  const container = useRef(null);
-  const { scrollYProgress } = useScroll({
-    target: container,
-    offset: ["start 0.9", "start 0.25"]
-  });
-
   const words = text.split(" ");
   
+  const container = {
+    hidden: { opacity: 0 },
+    visible: (i = 1) => ({
+      opacity: 1,
+      transition: { staggerChildren: 0.05, delayChildren: 0.1 * i },
+    }),
+  };
+
+  const child = {
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        type: "spring",
+        damping: 12,
+        stiffness: 100,
+      },
+    },
+    hidden: {
+      opacity: 0.1,
+      y: 20,
+    },
+  };
+
   return (
-    <p ref={container} className="text-4xl md:text-6xl lg:text-7xl font-black leading-[1.1] mb-12 tracking-tighter uppercase italic flex flex-wrap gap-x-3 md:gap-x-4 relative z-10">
-      {words.map((word, i) => {
-        const start = i / words.length;
-        const end = start + (1 / words.length);
-        const opacity = useTransform(scrollYProgress, [start, end], [0.15, 1]);
-        
-        return (
-          <motion.span key={i} style={{ opacity }} className="text-blend transition-colors duration-200">
-            {word}
-          </motion.span>
-        );
-      })}
-    </p>
+    <motion.p 
+      variants={container}
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: true, margin: "-10%" }}
+      className="text-4xl md:text-6xl lg:text-7xl font-black leading-[1.1] mb-12 tracking-tighter uppercase italic flex flex-wrap gap-x-3 md:gap-x-4 relative z-10"
+    >
+      {words.map((word, i) => (
+        <motion.span key={i} variants={child} className="text-blend">
+          {word}
+        </motion.span>
+      ))}
+    </motion.p>
   );
 };
 
@@ -439,7 +431,7 @@ const Home = () => {
           onMouseMove={handleMouseMoveSection}
         >
            <motion.div 
-             className="absolute pointer-events-none z-0 w-[800px] h-[800px] bg-gradient-to-r from-blend-light/10 to-transparent rounded-full blur-[100px] hidden lg:block will-change-transform"
+             className="absolute pointer-events-none z-0 w-[800px] h-[800px] bg-gradient-to-r from-blend-light/5 to-transparent rounded-full blur-[60px] hidden lg:block will-change-transform"
              animate={{ x: mousePos.x - 400, y: mousePos.y - 400 }}
              transition={{ type: "spring", stiffness: 50, damping: 30, mass: 0.5 }}
            />
@@ -638,7 +630,7 @@ const Home = () => {
               <p className="text-xs md:text-sm font-black uppercase tracking-[0.4em] opacity-70 mb-12">Hai un progetto in mente?</p>
               
               <Link to="/contact" className="group relative inline-block">
-                  <h2 className="text-6xl md:text-[10rem] font-black tracking-tighter transition-all duration-500 uppercase hover:text-transparent hover:stroke-text hover:italic">
+                  <h2 className="text-6xl md:text-[10rem] font-black tracking-tighter transition-all duration-500 uppercase group-hover:italic group-hover:scale-105">
                       LET'S TALK
                   </h2>
                   <div className="h-1 w-0 bg-white group-hover:w-full transition-all duration-500 mt-4 mx-auto"></div>
