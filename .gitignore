@@ -1,3 +1,25 @@
 initial_schema.sql
 uploads.tar.gz
 /uploads
+
+# .NET Core
+backend/[Bb]in/
+backend/[Oo]bj/
+backend/out/
+backend/.vs/
+backend/*.user
+backend/*.suo
+
+# Node/React
+frontend/node_modules/
+frontend/dist/
+frontend/build/
+frontend/.env.local
+frontend/.env.development.local
+frontend/.env.test.local
+frontend/.env.production.local
+
+# Docker Data 
+db_data/
+docker-compose.override.yml
+.env
