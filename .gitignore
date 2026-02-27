@@ -23,3 +23,6 @@ frontend/.env.production.local
 db_data/
 docker-compose.override.yml
 .env
+
+Dump20251222.sql
+seed.sql

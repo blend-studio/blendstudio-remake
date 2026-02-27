@@ -407,6 +407,32 @@ const Home = () => {
         </section>
 
 
+        {/* --- CHI CI HA SCELTO SECTION --- */}
+        <section className="py-24 md:py-32 bg-white text-blend overflow-hidden border-y border-gray-100 relative z-10">
+           <div className="px-6 md:px-20 mb-16 flex flex-col md:flex-row justify-between items-end gap-10">
+              <div>
+                  <h2 className="text-5xl md:text-8xl font-black tracking-tighter uppercase italic mb-6">Chi ci ha scelto</h2>
+                  <p className="text-gray-400 text-xl font-medium max-w-md leading-relaxed">
+                      Collaboriamo con brand ambiziosi per ridefinire i confini del possibile.
+                  </p>
+              </div>
+              <div className="hidden md:block h-[1px] flex-grow bg-gray-200 mx-10 mb-4"></div>
+           </div>
+           
+           <div className="w-full">
+               <div className="flex overflow-x-auto md:hidden hide-scrollbar gap-8 px-6 snap-x snap-mandatory" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+                   {clients.map((client, i) => (
+                       <div key={i} className="flex-shrink-0 w-40 snap-start">
+                           {client}
+                       </div>
+                   ))}
+               </div>
+               <div className="hidden md:block">
+                   <Marquee items={clients} speed={30} pauseOnHover={true} />
+               </div>
+           </div>
+        </section>
+
         {/* --- SERVICES PREVIEW (NO BLUR) --- */}
         <section 
           className="py-32 md:py-60 bg-white/50 border-y border-gray-100 relative overflow-hidden group/section z-10"
@@ -600,31 +626,7 @@ const Home = () => {
         </section>
 
 
-        {/* --- PARTNERS SECTION (NO BLUR) --- */}
-        <section className="py-32 md:py-48 bg-white text-blend overflow-hidden border-t border-gray-100 relative z-10">
-           <div className="px-6 md:px-20 mb-20 flex flex-col md:flex-row justify-between items-end gap-10">
-              <div>
-                  <h2 className="text-5xl md:text-8xl font-black tracking-tighter uppercase italic mb-6">Partners</h2>
-                  <p className="text-gray-400 text-xl font-medium max-w-md leading-relaxed">
-                      Collaboriamo con brand ambiziosi per ridefinire i confini del possibile.
-                  </p>
-              </div>
-              <div className="hidden md:block h-[1px] flex-grow bg-gray-200 mx-10 mb-4"></div>
-           </div>
-           
-           <div className="w-full">
-               <div className="flex overflow-x-auto md:hidden hide-scrollbar gap-8 px-6 snap-x snap-mandatory" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
-                   {clients.map((client, i) => (
-                       <div key={i} className="flex-shrink-0 w-40 snap-start">
-                           {client}
-                       </div>
-                   ))}
-               </div>
-               <div className="hidden md:block">
-                   <Marquee items={clients} speed={30} pauseOnHover={true} />
-               </div>
-           </div>
-        </section>
+
 
         {/* --- BIG CTA SECTION --- */}
         <section className="py-32 md:py-60 bg-blend text-white flex flex-col items-center justify-center text-center overflow-hidden relative nav-dark-section z-10">
