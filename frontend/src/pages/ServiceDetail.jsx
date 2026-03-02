@@ -73,8 +73,10 @@ const ServiceDetail = () => {
                 alt={service.title} 
                 className="w-full h-full object-cover grayscale"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-blend-dark via-blend-dark/50 to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent" />
            </motion.div>
+           {/* Fixed overlay independent from parallax */}
+           <div className="absolute inset-0 z-[1] bg-gradient-to-t from-black/80 via-black/40 to-transparent pointer-events-none" />
 
            <motion.div 
              style={{ y: yText }}

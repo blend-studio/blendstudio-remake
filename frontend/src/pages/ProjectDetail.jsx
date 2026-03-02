@@ -73,7 +73,7 @@ const ProjectDetail = () => {
                 alt={project.title} 
                 className="w-full h-full object-cover grayscale"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-blend-dark via-transparent to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent" />
            </div>
 
            <div className="max-w-[90rem] w-full z-10 relative px-6 md:px-20 h-full flex flex-col justify-center pt-[15vh] pb-[12vh]">

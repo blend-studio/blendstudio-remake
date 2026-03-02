@@ -209,7 +209,13 @@ const Home = () => {
 
   const lenis = useLenis();
 
-  // Parallax Hero Logic
+  // Mobile detection
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    setIsMobile(window.innerWidth < 768);
+  }, []);
+
+  // Parallax Hero Logic (disabled on mobile for perf)
   const { scrollY } = useScroll();
   const heroTextY = useTransform(scrollY, [0, 1000], [0, 400]);
   const heroVideoScale = useTransform(scrollY, [0, 1000], [1, 1.2]);
@@ -229,13 +235,13 @@ const Home = () => {
     fetchProjects();
   }, []);
 
-  // Video Optimization
+  // Video Optimization — skip video on mobile
   useEffect(() => {
+    if (isMobile) return; // No video on mobile
     const updateVideoPlayback = () => {
       const v = videoRef.current;
       if (!v) return;
-      const isMobile = window.innerWidth < 1024;
-      if (document.hidden || isMobile) {
+      if (document.hidden) {
         if (!v.paused) v.pause();
       } else {
         v.play?.().catch(() => {});
@@ -249,7 +255,7 @@ const Home = () => {
       document.removeEventListener('visibilitychange', updateVideoPlayback);
       window.removeEventListener('resize', updateVideoPlayback);
     };
-  }, []);
+  }, [isMobile]);
 
   // Lock body scroll logic
   useEffect(() => {
@@ -323,17 +329,19 @@ const Home = () => {
         {/* --- HERO SECTION --- */}
         <header className="relative h-screen flex flex-col justify-center px-6 md:px-20 overflow-hidden nav-dark-section perspective-1000 z-10">
           <motion.div 
-            style={{ scale: heroVideoScale }} 
+            style={isMobile ? {} : { scale: heroVideoScale }} 
             className="absolute inset-0 w-full h-full z-0 will-change-transform"
           >
-             <video ref={videoRef} autoPlay loop muted playsInline preload="metadata" className="absolute inset-0 w-full h-full object-cover">
-               <source src="https://blendstudio.it/wp-content/uploads/2024/01/Blend-Showreel_V5.mp4" type="video/mp4" />
-             </video>
-             <motion.div style={{ opacity: heroOverlayOpacity }} className="absolute inset-0 bg-black"></motion.div>
+             {!isMobile && (
+               <video ref={videoRef} autoPlay loop muted playsInline preload="metadata" className="absolute inset-0 w-full h-full object-cover">
+                 <source src="https://blendstudio.it/wp-content/uploads/2024/01/Blend-Showreel_V5.mp4" type="video/mp4" />
+               </video>
+             )}
+             <motion.div style={isMobile ? { opacity: 0.7 } : { opacity: heroOverlayOpacity }} className="absolute inset-0 bg-black"></motion.div>
           </motion.div>
 
           <motion.div 
-            style={{ y: heroTextY }} 
+            style={isMobile ? {} : { y: heroTextY }} 
             className="max-w-[100rem] mt-10 md:mt-0 z-10 relative pb-20 pointer-events-none origin-top"
           >
             <motion.div
@@ -380,7 +388,7 @@ const Home = () => {
 
 
         {/* --- STATEMENT SECTION --- */}
-        <section className="py-32 md:py-52 px-6 md:px-20 bg-transparent relative z-10">
+        <section className="py-16 md:py-52 px-6 md:px-20 bg-transparent relative z-10">
           <div className="grid grid-cols-1 md:grid-cols-12 gap-10 items-start">
             <div className="md:col-span-4 sticky top-40">
               <div className="flex items-center gap-3 mb-4">
@@ -408,8 +416,8 @@ const Home = () => {
 
 
         {/* --- CHI CI HA SCELTO SECTION --- */}
-        <section className="py-24 md:py-32 bg-white text-blend overflow-hidden border-y border-gray-100 relative z-10">
-           <div className="px-6 md:px-20 mb-16 flex flex-col md:flex-row justify-between items-end gap-10">
+        <section className="py-12 md:py-32 bg-white text-blend overflow-hidden border-y border-gray-100 relative z-10">
+           <div className="px-6 md:px-20 mb-8 md:mb-16 flex flex-col md:flex-row justify-between items-start md:items-end gap-6 md:gap-10">
               <div>
                   <h2 className="text-5xl md:text-8xl font-black tracking-tighter uppercase italic mb-6">Chi ci ha scelto</h2>
                   <p className="text-gray-400 text-xl font-medium max-w-md leading-relaxed">
@@ -420,22 +428,13 @@ const Home = () => {
            </div>
            
            <div className="w-full">
-               <div className="flex overflow-x-auto md:hidden hide-scrollbar gap-8 px-6 snap-x snap-mandatory" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
-                   {clients.map((client, i) => (
-                       <div key={i} className="flex-shrink-0 w-40 snap-start">
-                           {client}
-                       </div>
-                   ))}
-               </div>
-               <div className="hidden md:block">
-                   <Marquee items={clients} speed={30} pauseOnHover={true} />
-               </div>
-           </div>
+                <Marquee items={clients} speed={30} pauseOnHover={true} />
+            </div>
         </section>
 
         {/* --- SERVICES PREVIEW (NO BLUR) --- */}
         <section 
-          className="py-32 md:py-60 bg-white/50 border-y border-gray-100 relative overflow-hidden group/section z-10"
+          className="py-20 md:py-60 bg-white/50 border-y border-gray-100 relative overflow-hidden group/section z-10"
           onMouseMove={handleMouseMoveSection}
         >
            <motion.div 
@@ -444,9 +443,9 @@ const Home = () => {
              transition={{ type: "spring", stiffness: 50, damping: 30, mass: 0.5 }}
            />
 
-           <div className="px-6 md:px-20 mb-32 flex flex-col md:flex-row justify-between items-end gap-10 relative z-10">
+           <div className="px-6 md:px-20 mb-12 md:mb-32 flex flex-col md:flex-row justify-between items-start md:items-end gap-6 md:gap-10 relative z-10">
               <motion.div initial={{ opacity: 0, x: -30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.8 }}>
-                 <h2 className="text-6xl md:text-8xl lg:text-[9rem] font-black text-blend uppercase tracking-tighter italic leading-none stroke-text md:text-transparent md:bg-clip-text md:bg-gradient-to-br md:from-blend md:to-blend-light">Services</h2>
+                 <h2 className="text-6xl md:text-8xl lg:text-[9rem] font-black text-blend uppercase tracking-tighter italic leading-none text-left md:text-transparent md:bg-clip-text md:bg-gradient-to-br md:from-blend md:to-blend-light">Services</h2>
                  <div className="flex items-center gap-4 mt-6">
                     <div className="h-[2px] w-12 bg-blend-light"></div>
                     <p className="text-blend-light font-black uppercase tracking-[0.4em] text-xs md:text-sm">Innovazione & Design</p>
@@ -458,11 +457,7 @@ const Home = () => {
               </Link>
            </div>
 
-           <div className="px-6 md:px-12 xl:px-20 relative z-10 min-h-[600px]">
-             <div className="absolute top-[20%] -translate-y-1/2 left-0 w-full z-20 flex justify-between px-2 pointer-events-none lg:hidden">
-                <button onClick={() => scrollServices('left')} className="w-12 h-12 bg-white text-blend rounded-full flex items-center justify-center shadow-xl pointer-events-auto border border-gray-100 active:scale-90 transition-transform">←</button>
-                <button onClick={() => scrollServices('right')} className="w-12 h-12 bg-white text-blend rounded-full flex items-center justify-center shadow-xl pointer-events-auto border border-gray-100 active:scale-90 transition-transform">→</button>
-             </div>
+           <div className="px-6 md:px-12 xl:px-20 relative z-10 min-h-0 md:min-h-[600px]">
              
              <LayoutGroup>
                <AnimatePresence>
@@ -541,21 +536,26 @@ const Home = () => {
                    </motion.div>
                  )}
                </AnimatePresence>
-             </LayoutGroup>
+              </LayoutGroup>
+              {/* Mobile arrows below cards */}
+              <div className="flex justify-center gap-4 mt-8 lg:hidden">
+                <button onClick={() => scrollServices('left')} className="w-12 h-12 bg-white text-blend rounded-full flex items-center justify-center shadow-lg border border-gray-100 active:scale-90 transition-transform cursor-pointer">←</button>
+                <button onClick={() => scrollServices('right')} className="w-12 h-12 bg-white text-blend rounded-full flex items-center justify-center shadow-lg border border-gray-100 active:scale-90 transition-transform cursor-pointer">→</button>
+              </div>
            </div>
         </section>
 
 
         {/* --- PROJECTS SLIDER (NO BLUR, NO HEAVY SHADOWS) --- */}
-        <section className="py-32 md:py-48 bg-white relative group/slider-section z-10">
-            <div className="px-6 md:px-20 mb-20 flex flex-col md:flex-row justify-between items-end gap-10">
+        <section className="py-16 md:py-48 bg-white relative group/slider-section z-10">
+            <div className="px-6 md:px-20 mb-10 md:mb-20 flex flex-col md:flex-row justify-between items-start md:items-end gap-6 md:gap-10">
                 <motion.div
                   initial={{ opacity: 0, x: -30 }}
                   whileInView={{ opacity: 1, x: 0 }}
                   viewport={{ once: true }}
                 >
-                    <h2 className="text-5xl md:text-8xl font-black text-blend uppercase tracking-tighter italic">Works</h2>
-                    <p className="text-gray-400 mt-4 text-xl font-medium">L'eccellenza in ogni pixel.</p>
+                    <h2 className="text-5xl md:text-8xl font-black text-blend uppercase tracking-tighter italic text-left">Works</h2>
+                    <p className="text-gray-400 mt-4 text-xl font-medium text-left">L'eccellenza in ogni pixel.</p>
                 </motion.div>
             </div>
 
@@ -599,6 +599,7 @@ const Home = () => {
                                 src={project.cover_image || project.img} 
                                 alt={project.title} 
                                 className="w-full h-full object-cover transition-all duration-500"
+                                loading="lazy"
                               />
                             </motion.div>
                             <div className="absolute inset-0 bg-blend-dark/20 opacity-0 group-hover/card:opacity-100 transition-opacity flex items-center justify-center">
@@ -621,6 +622,15 @@ const Home = () => {
                         </Link>
                       </div>
                    ))}
+                </div>
+                {/* Mobile arrows below slider */}
+                <div className="flex justify-center gap-4 mt-6 lg:hidden">
+                  <button onClick={() => scroll('left')} className="w-12 h-12 bg-white text-blend rounded-full flex items-center justify-center shadow-lg border border-gray-100 active:scale-90 transition-transform cursor-pointer">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+                  </button>
+                  <button onClick={() => scroll('right')} className="w-12 h-12 bg-white text-blend rounded-full flex items-center justify-center shadow-lg border border-gray-100 active:scale-90 transition-transform cursor-pointer">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                  </button>
                 </div>
             </div>
         </section>

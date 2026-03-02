@@ -4,6 +4,7 @@ import PageTransition from "../components/Transition";
 import { RevealText } from "../components/ui/RevealText";
 import { motion, AnimatePresence } from "framer-motion";
 import { getProjects } from "../services/api";
+import LazyVideo from "../components/ui/LazyVideo";
 import backgroundVideo from "../assets/images/sfondo-blend.mp4";
 
 const categories = ["All", "Web Design", "Branding", "Development", "Marketing"];
@@ -12,6 +13,8 @@ const Projects = () => {
   const [projects, setProjects] = useState([]);
   const [filter, setFilter] = useState("All");
   const [loading, setLoading] = useState(true);
+  const [showFilterModal, setShowFilterModal] = useState(false);
+  const [showFilterFab, setShowFilterFab] = useState(false);
 
   useEffect(() => {
     const fetchProjects = async () => {
@@ -30,6 +33,17 @@ const Projects = () => {
     fetchProjects();
   }, []);
 
+  // Show floating filter button after scrolling past the filter section
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollY = window.scrollY;
+      // Show after scrolling 800px (past hero + filter section)
+      setShowFilterFab(scrollY > 800);
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   const filteredProjects = projects.filter(p => filter === "All" || (p.services && p.services.includes(filter)) || p.cat === filter);
 
   return (
@@ -38,17 +52,13 @@ const Projects = () => {
         
         {/* --- FULLSCREEN HERO --- */}
         <div className="relative h-screen flex flex-col justify-center px-6 md:px-20 overflow-hidden bg-black nav-dark-section">
-           {/* Background Video - Self Hosted */}
            <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden bg-black">
-              <video 
-                autoPlay 
-                loop 
-                muted 
-                playsInline 
+              <LazyVideo 
+                src={backgroundVideo}
+                autoPlay loop muted playsInline 
                 className="absolute top-1/2 left-1/2 min-w-full min-h-full w-auto h-auto -translate-x-1/2 -translate-y-1/2 object-cover scale-[1.1] opacity-60"
-              >
-                <source src={backgroundVideo} type="video/mp4" />
-              </video>
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent" />
            </div>
 
            <div className="max-w-[90rem] w-full z-10 relative mt-10 md:mt-0 pb-20">
@@ -85,11 +95,11 @@ const Projects = () => {
 
         <div className="py-20 md:py-40 px-6 md:px-20">
             {/* Filter Section */}
-            <div className="mb-20">
-                <div className="flex flex-col md:flex-row justify-between items-end gap-8 border-b border-gray-100 pb-10">
+            <div className="mb-16 md:mb-20">
+                <div className="flex flex-col items-start gap-8 border-b border-gray-100 pb-10">
                    <div>
-                      <h2 className="text-4xl font-bold text-blend uppercase tracking-tighter italic">Filtraggio</h2>
-                      <p className="text-gray-400 mt-2">Esplora per categoria</p>
+                      <h2 className="text-4xl font-bold text-blend uppercase tracking-tighter italic text-left">Filtra</h2>
+                      <p className="text-gray-400 mt-2 text-left">Esplora per categoria</p>
                    </div>
                    <div className="flex flex-wrap gap-2">
                     {categories.map((cat) => (
@@ -163,6 +173,7 @@ const Projects = () => {
                                 src={project.cover_image || project.img}
                                 alt={project.title}
                                 className="w-full h-full object-cover"
+                                loading="lazy"
                               />
                               
                               {/* Numbering */}
@@ -217,6 +228,82 @@ const Projects = () => {
                 </Link>
             </div>
         </div>
+
+
+        {/* ====== FLOATING FILTER FAB (Mobile) ====== */}
+        <AnimatePresence>
+          {showFilterFab && (
+            <motion.button
+              initial={{ opacity: 0, y: 20, scale: 0.8 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 20, scale: 0.8 }}
+              transition={{ duration: 0.3 }}
+              onClick={() => setShowFilterModal(true)}
+              className="fixed bottom-8 right-6 z-[9998] lg:hidden w-14 h-14 !bg-blend !text-white rounded-full shadow-2xl shadow-blend/30 flex items-center justify-center cursor-pointer hover:scale-110 transition-transform"
+            >
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+              </svg>
+            </motion.button>
+          )}
+        </AnimatePresence>
+
+        {/* ====== FILTER MODAL (Mobile) ====== */}
+        <AnimatePresence>
+          {showFilterModal && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 z-[9999] bg-black/60 backdrop-blur-sm flex items-end justify-center lg:hidden"
+              onClick={() => setShowFilterModal(false)}
+            >
+              <motion.div
+                initial={{ y: "100%" }}
+                animate={{ y: 0 }}
+                exit={{ y: "100%" }}
+                transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                className="w-full bg-white rounded-t-[2rem] p-8 pb-12 max-h-[70vh] overflow-y-auto"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <div className="flex justify-between items-center mb-8">
+                  <h3 className="text-2xl font-black text-blend uppercase tracking-tighter italic">Filtra progetti</h3>
+                  <button 
+                    onClick={() => setShowFilterModal(false)}
+                    className="w-12 h-12 rounded-full !bg-blend flex items-center justify-center !text-white cursor-pointer shadow-md"
+                  >
+                    <span className="text-2xl font-bold leading-none">✕</span>
+                  </button>
+                </div>
+                
+                <div className="flex flex-col gap-3">
+                  {categories.map((cat) => (
+                    <button
+                      key={cat}
+                      onClick={() => { setFilter(cat); setShowFilterModal(false); }}
+                      className={`w-full text-left px-6 py-4 rounded-2xl text-sm font-black uppercase tracking-widest transition-all duration-300 cursor-pointer ${
+                        filter === cat
+                          ? "!bg-blend !text-white shadow-lg"
+                          : "!bg-gray-50 !text-blend hover:!bg-gray-100"
+                      }`}
+                    >
+                      {cat}
+                    </button>
+                  ))}
+                </div>
+
+                {filter !== "All" && (
+                  <button
+                    onClick={() => { setFilter("All"); setShowFilterModal(false); }}
+                    className="mt-6 w-full text-center text-xs font-black uppercase tracking-widest text-gray-400 py-3 cursor-pointer"
+                  >
+                    ✕ Rimuovi filtro
+                  </button>
+                )}
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
       </div>
     </PageTransition>

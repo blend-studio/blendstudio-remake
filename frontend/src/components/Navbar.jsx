@@ -72,18 +72,18 @@ const Navbar = () => {
 
   const menuVariants = {
     initial: { x: "100%" },
-    animate: { x: 0, transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] } },
-    exit: { x: "100%", transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] } },
+    animate: { x: 0, transition: { duration: 0.4, ease: [0.32, 0.72, 0, 1] } },
+    exit: { x: "100%", transition: { duration: 0.3, ease: [0.32, 0.72, 0, 1] } },
   };
 
   const linkVariants = {
-    initial: { x: 80, opacity: 0 },
+    initial: { x: 40, opacity: 0 },
     animate: (i) => ({
       x: 0,
       opacity: 1,
-      transition: { duration: 0.75, ease: [0.76, 0, 0.24, 1], delay: 0.05 * i },
+      transition: { duration: 0.4, ease: [0.32, 0.72, 0, 1], delay: 0.03 * i },
     }),
-    exit: { x: 80, opacity: 0, transition: { duration: 0.5, ease: [0.76, 0, 0.24, 1] } },
+    exit: { x: 40, opacity: 0, transition: { duration: 0.25, ease: [0.32, 0.72, 0, 1] } },
   };
 
   const navLinks = [
@@ -145,14 +145,14 @@ const Navbar = () => {
           </Magnetic>
         </div>
       </nav>
-      <AnimatePresence mode="wait">
+      <AnimatePresence>
         {isOpen && (
           <motion.div
             variants={menuVariants}
             initial="initial"
             animate="animate"
             exit="exit"
-            className="fixed top-0 left-0 w-full h-screen bg-[#2f6580] text-white z-40 flex flex-col justify-between p-6 md:p-20 overflow-hidden"
+            className="fixed top-0 left-0 w-full h-screen bg-[#2f6580] text-white z-40 flex flex-col justify-between p-6 md:p-20 overflow-hidden will-change-transform"
           >
             {/* Header placeholder */}
             <div className="h-[20px]"></div>

@@ -197,7 +197,7 @@ const About = () => {
                 loading="eager"
               />
               <div className="absolute inset-0 bg-blend-dark/80 mix-blend-multiply"></div>
-              <div className="absolute inset-0 bg-gradient-to-t from-blend-dark via-transparent to-transparent"></div>
+              <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent"></div>
            </motion.div>
            
            <motion.div style={{ y: heroY }} className="max-w-[100rem] w-full z-10 relative mt-10 md:mt-0 pb-20 will-change-transform">
@@ -301,7 +301,7 @@ const About = () => {
                <p className="text-6xl md:text-8xl lg:text-[7rem] font-black text-blend uppercase tracking-tighter">Ciò in cui crediamo</p>
             </div>
             
-            <div className="pb-20 relative">
+            <div className="pb-4 md:pb-20 relative">
               {values.map((val, i) => {
                  return <Card key={i} i={i} {...val} progress={scrollYProgress} length={values.length} />
               })}
@@ -309,7 +309,7 @@ const About = () => {
         </section>
 
         {/* --- TEAM CTA (BUTTON VETRO/DARK) --- */}
-        <section className="py-40 md:py-60 bg-blend text-white text-center overflow-hidden relative nav-dark-section z-10">
+        <section className="py-20 md:py-60 bg-blend text-white text-center overflow-hidden relative nav-dark-section z-10">
            <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-5 select-none">
               <ParallaxText baseVelocity={-2}>JOIN THE TEAM JOIN THE TEAM</ParallaxText>
            </div>

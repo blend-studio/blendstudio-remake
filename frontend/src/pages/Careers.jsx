@@ -30,7 +30,7 @@ const Careers = () => {
                 alt="Team Collaboration" 
                 className="w-full h-full object-cover opacity-20 grayscale"
               />
-              <div className="absolute inset-0 bg-gradient-to-r from-blend-dark to-transparent"></div>
+              <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent"></div>
            </div>
            
            <div className="max-w-[90rem] w-full z-10 relative mt-10 md:mt-0 pb-20">
