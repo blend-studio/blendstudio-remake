@@ -106,17 +106,33 @@ const HighlightParagraph = ({ text }) => {
 };
 
 // 5. CARD COMPONENT
-const Card = ({ i, title, desc, progress, range, targetScale }) => {
-  const scale = useTransform(progress, range, [1, targetScale]);
+const Card = ({ i, title, desc, progress, length }) => {
   const isBlueCard = i % 2 === 0;
   const bgColor = isBlueCard ? '#2f6580' : '#ffffff';
   const textColor = isBlueCard ? '#ffffff' : '#2f6580';
 
+  // Ognuna delle 'length' cards ha una porzione di scroll pari a 'step'
+  const step = 1 / length;
+  
+  // startAnim: Iniziamo a piegare la card *non* appena diventa la prima (i * step), 
+  // ma aspettiamo che lo scorrimento dello step corrente sia già un po' avanzato
+  // (es. quando la card successiva sta salendo e coprendo lo schermo)
+  const startAnim = (i * step) + (step * 0.3); // Ritardo del 30% dello spazio di scroll
+  
+  // endAnim: finisce prima che lo step sia completo
+  const endAnim = (i * step) + (step * 0.95); 
+
+  // Vogliamo che arrivi a quasi 90 gradi per "scomparire" visivamente ribaltandosi verso l'alto.
+  const rotateX = useTransform(progress, [startAnim, endAnim], [0, i === length - 1 ? 0 : 90]);
+  
+  // Spring per fluidità
+  const smoothRotateX = useSpring(rotateX, { stiffness: 400, damping: 50 });
+
   return (
-    <div className="h-screen sticky top-0 flex flex-col justify-start">
+    <div className="h-screen sticky top-0 flex flex-col justify-start" style={{ zIndex: length - i, perspective: '1500px', transformStyle: 'preserve-3d' }}>
       <motion.div 
-        style={{ scale, backgroundColor: bgColor, color: textColor }} 
-        className="relative w-full h-full rounded-t-[3rem] shadow-[0_-10px_40px_-10px_rgba(0,0,0,0.15)] overflow-hidden flex flex-col justify-center origin-top border-t border-white/10 will-change-transform"
+        style={{ rotateX: smoothRotateX, backgroundColor: bgColor, color: textColor, transformOrigin: 'top center' }} 
+        className="relative w-full h-full rounded-t-[3rem] shadow-[0_-10px_40px_-10px_rgba(0,0,0,0.15)] overflow-hidden flex flex-col justify-center border-t border-white/10 will-change-transform"
       >
         <div className="relative z-20 container mx-auto px-6 md:px-20 flex flex-col h-full justify-center pointer-events-none">
             <div className="absolute top-8 left-6 right-6 md:left-20 md:right-20 flex justify-between items-center border-b border-current/20 pb-4 md:pb-6">
@@ -131,7 +147,6 @@ const Card = ({ i, title, desc, progress, range, targetScale }) => {
             </div>
             <div className="absolute bottom-8 left-6 md:left-20 opacity-40 text-xs font-bold tracking-widest uppercase">Blend Studio &copy; Values</div>
         </div>
-        <CardWaves variant={isBlueCard ? 'blue' : 'white'} />
       </motion.div>
     </div>
   )
@@ -280,16 +295,15 @@ const About = () => {
         </section>
 
         {/* --- VALUES 3D DECK --- */}
-        <section ref={container} className="relative z-10 bg-white">
+        <section ref={container} className="relative z-10 bg-white" style={{ perspective: '2000px' }}>
             <div className="pt-20 pb-10 text-center bg-white relative z-20">
                <h2 className="text-sm font-bold uppercase tracking-[0.4em] text-gray-400 mb-4">Core Values</h2>
                <p className="text-6xl md:text-8xl lg:text-[7rem] font-black text-blend uppercase tracking-tighter">Ciò in cui crediamo</p>
             </div>
             
-            <div className="pb-20">
+            <div className="pb-20 relative">
               {values.map((val, i) => {
-                 const targetScale = 1 - ( (values.length - i) * 0.04 );
-                 return <Card key={i} i={i} {...val} progress={scrollYProgress} range={[i * .25, 1]} targetScale={targetScale} />
+                 return <Card key={i} i={i} {...val} progress={scrollYProgress} length={values.length} />
               })}
             </div>
         </section>
@@ -301,7 +315,10 @@ const About = () => {
            </div>
            
            <div className="relative z-10 max-w-4xl mx-auto px-6">
-              <h2 className="text-5xl md:text-8xl font-black mb-12 tracking-tighter uppercase">Le persone dietro il codice</h2>
+               <Link to="/careers" className="group relative inline-block">
+                 <h2 className="text-5xl md:text-8xl font-black mb-4 tracking-tighter uppercase group-hover:italic transition-all duration-500">Le persone dietro il codice</h2>
+                 <div className="h-[4px] md:h-[8px] w-0 bg-white group-hover:w-full transition-all duration-700 ease-[0.76,0,0.24,1] mb-12"></div>
+               </Link>
               
               {/* BUTTON MODIFICATO: Glassmorphism / Non bianco solido */}
               <Link 

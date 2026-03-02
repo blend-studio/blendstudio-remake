@@ -5,94 +5,7 @@ import { Link } from "react-router-dom";
 import Footer from "../components/Footer";
 import { RevealText } from "../components/ui/RevealText";
 import backgroundVideo from "../assets/images/sfondo-blend.mp4";
-
-// --- DATI SERVIZI ---
-const services = [
-  {
-    id: 1,
-    title: "Strategy",
-    cat: "Foundation",
-    description: "Definiamo il percorso verso il successo attraverso analisi di mercato, posizionamento di marca e strategie digitali su misura.",
-    tags: ["Market Analysis", "Brand Positioning", "Roadmap", "KPIs"]
-  },
-  {
-    id: 2,
-    title: "Brand Identity",
-    cat: "Visual",
-    description: "Creiamo identità visive uniche che raccontano la tua storia e rimangono impresse nella mente del tuo pubblico.",
-    tags: ["Logo Design", "Visual System", "Rebranding", "Guidelines"]
-  },
-  {
-    id: 3,
-    title: "Web Development",
-    cat: "Technology",
-    description: "Sviluppiamo ecosistemi digitali performanti, sicuri e scalabili, utilizzando le tecnologie più all'avanguardia.",
-    tags: ["Frontend", "Backend", "React/Vue", "Scalability"]
-  },
-  {
-    id: 4,
-    title: "UI/UX Design",
-    cat: "Experience",
-    description: "Progettiamo interfacce intuitive e percorsi utente memorabili che mettono l'emozione al centro dell'interazione.",
-    tags: ["Wireframing", "Prototyping", "User Testing", "Interface"]
-  },
-  {
-    id: 5,
-    title: "E-commerce",
-    cat: "Conversion",
-    description: "Realizziamo shop online ottimizzati per la vendita, focalizzati sulla massimizzazione delle conversioni e della CX.",
-    tags: ["Shopify", "WooCommerce", "Custom Checkout", "CRO"]
-  },
-  {
-    id: 6,
-    title: "Graphic Design",
-    cat: "Visual",
-    description: "Trasformiamo concetti complessi in immagini iconiche attraverso un design grafico pulito e illustrazioni originali.",
-    tags: ["Editorial", "Packaging", "Illustration", "Print"]
-  },
-  {
-    id: 7,
-    title: "Advertising",
-    cat: "Growth",
-    description: "Massimizziamo la visibilità del tuo brand attraverso campagne creative e data-driven sui principali canali digitali.",
-    tags: ["Meta Ads", "Google Ads", "LinkedIn Ads", "Retargeting"]
-  },
-  {
-    id: 8,
-    title: "Social Media",
-    cat: "Engagement",
-    description: "Gestiamo la tua presenza sui social media creando contenuti coinvolgenti e costruendo community fedeli.",
-    tags: ["Content Strategy", "Community Management", "Reels/TikTok", "Copywriting"]
-  },
-  {
-    id: 9,
-    title: "SEO & Performance",
-    cat: "Data",
-    description: "Scaliamo i risultati attraverso l'ottimizzazione per i motori di ricerca e il monitoraggio costante delle performance.",
-    tags: ["On-Page SEO", "Technical Audit", "Speed Opt", "Analytics"]
-  },
-  {
-    id: 10,
-    title: "Foto e Video",
-    cat: "Content",
-    description: "Raccontiamo la tua realtà attraverso produzioni multimediali di alta qualità, dallo shooting allo storytelling video.",
-    tags: ["Shooting", "Corporate Video", "Editing", "Color Grading"]
-  },
-  {
-    id: 11,
-    title: "Motion Design",
-    cat: "Animation",
-    description: "Diamo vita alle tue idee con animazioni fluide e grafiche in movimento che catturano l'attenzione.",
-    tags: ["2D Animation", "3D Motion", "Micro-interactions", "Lottie"]
-  },
-  {
-    id: 12,
-    title: "3D Rendering",
-    cat: "Future",
-    description: "Creiamo mondi digitali tridimensionali e visualizzazioni fotorealistiche per prodotti e architetture d'avanguardia.",
-    tags: ["Product Viz", "Architectural", "3D Assets", "Virtual Sets"]
-  }
-];
+import { servicesData as services } from "../data/servicesData";
 
 // --- COMPONENTE SINGOLO DETTAGLIO (SCROLL SPY) ---
 const ServiceDetailItem = ({ service, index, setActiveIndex }) => {
@@ -147,9 +60,9 @@ const ServiceDetailItem = ({ service, index, setActiveIndex }) => {
                     ))}
                 </div>
 
-                {/* BUTTON: Avvia Progetto (Scritta Bianca) */}
-                <Link to="/contact" className="group inline-flex items-center gap-4 px-10 py-5 bg-blend text-white font-black uppercase tracking-[0.15em] text-xs rounded-full hover:bg-blend-dark hover:shadow-xl transition-all duration-300">
-                    <span>Avvia Progetto</span>
+                {/* BUTTON: Scopri Servizio */}
+                <Link to={`/services/${service.slug}`} className="group inline-flex items-center gap-4 px-10 py-5 bg-blend !text-white font-black uppercase tracking-[0.15em] text-xs rounded-full hover:bg-blend-dark hover:shadow-xl transition-all duration-300">
+                    <span>Scopri il Servizio</span>
                     <div className="w-6 h-6 bg-white/20 rounded-full flex items-center justify-center group-hover:bg-white group-hover:text-blend transition-colors">
                         <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
                     </div>
@@ -330,9 +243,12 @@ const Services = () => {
              transition={{ duration: 10, repeat: Infinity }}
              className="absolute -top-20 -right-20 w-96 h-96 bg-white/5 rounded-full blur-[100px]" 
            />
-           <h2 className="text-5xl md:text-9xl font-black mb-12 tracking-tighter uppercase italic relative z-10">Let's create.</h2>
+           <Link to="/contact" className="group relative inline-block z-10">
+              <h2 className="text-5xl md:text-9xl font-black mb-4 tracking-tighter uppercase italic group-hover:scale-105 transition-transform duration-500">Let's create.</h2>
+              <div className="h-[4px] md:h-[8px] w-0 bg-white group-hover:w-full transition-all duration-700 ease-[0.76,0,0.24,1] mb-12"></div>
+           </Link>
            <div className="relative z-10">
-              <Link to="/contact" className="inline-block px-14 py-6 bg-transparent border-2 border-white text-white rounded-full font-black uppercase tracking-[0.3em] text-xs hover:bg-white hover:text-blend transition-all duration-300 shadow-2xl hover:scale-105">
+              <Link to="/contact" className="inline-block px-14 py-6 bg-transparent border-2 border-white !text-white rounded-full font-black uppercase tracking-[0.3em] text-xs hover:bg-white hover:!text-blend transition-all duration-300 shadow-2xl hover:scale-105">
                   Avvia un progetto
               </Link>
            </div>

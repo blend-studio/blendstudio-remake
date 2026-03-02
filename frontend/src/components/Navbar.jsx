@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import blendLogo from "../assets/images/blend-logo-blu.png";
 import Magnetic from "./ui/Magnetic";
@@ -8,40 +8,64 @@ const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isOverDark, setIsOverDark] = useState(true); // Default true for Hero
   const [forceWhite, setForceWhite] = useState(false); // External override
+  const location = useLocation();
 
   useEffect(() => {
-    const checkColor = () => {
-      const darkSections = document.querySelectorAll('.nav-dark-section');
-      
-      const observer = new IntersectionObserver((entries) => {
+    // Reset to dark on route change (hero sections are typically dark)
+    setIsOverDark(true);
+
+    const activeDarkSections = new Set();
+    let intersectionObserver = null;
+
+    // Setup the IntersectionObserver for dark sections
+    const setupIntersection = () => {
+      if (intersectionObserver) intersectionObserver.disconnect();
+      activeDarkSections.clear();
+
+      intersectionObserver = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
           if (entry.isIntersecting) {
-            setIsOverDark(true);
+            activeDarkSections.add(entry.target);
           } else {
-            setIsOverDark(false);
+            activeDarkSections.delete(entry.target);
           }
         });
+        setIsOverDark(activeDarkSections.size > 0);
       }, {
         threshold: [0, 0.1, 0.9, 1],
         rootMargin: "-80px 0px -90% 0px" 
       });
 
-      darkSections.forEach(section => observer.observe(section));
-
-      return () => observer.disconnect();
+      document.querySelectorAll('.nav-dark-section').forEach(section => {
+        intersectionObserver.observe(section);
+      });
     };
+
+    // Use MutationObserver to detect when .nav-dark-section elements appear in the DOM
+    // This handles page transitions that render content asynchronously
+    const mutationObserver = new MutationObserver(() => {
+      const currentSections = document.querySelectorAll('.nav-dark-section');
+      if (currentSections.length > 0) {
+        setupIntersection();
+      }
+    });
+
+    mutationObserver.observe(document.body, { childList: true, subtree: true });
+
+    // Also run immediately for already-rendered content
+    setupIntersection();
 
     const handleForceWhite = (e) => {
       setForceWhite(e.detail);
     };
-
-    checkColor();
     window.addEventListener("nav-force-white", handleForceWhite);
-    
+
     return () => {
+      mutationObserver.disconnect();
+      if (intersectionObserver) intersectionObserver.disconnect();
       window.removeEventListener("nav-force-white", handleForceWhite);
     };
-  }, []);
+  }, [location.pathname]);
 
   const toggleMenu = () => setIsOpen(!isOpen);
   // ... resto delle varianti e link ...

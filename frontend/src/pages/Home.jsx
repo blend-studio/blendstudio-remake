@@ -26,6 +26,7 @@ import piacenzaNero from "../assets/images/loghi partner/PIACENZA_NERO.png";
 const servicesShort = [
   { 
     title: "Brand Identity", 
+    slug: "brand-identity",
     cat: "Visual", 
     desc: "Creiamo identità visive uniche che rimangono impresse.", 
     details: "Dallo studio del logo alla definizione della palette cromatica e della tipografia, costruiamo un'identità visiva coerente e memorabile.",
@@ -34,6 +35,7 @@ const servicesShort = [
   },
   { 
     title: "Web Experience", 
+    slug: "web-development", // Mappato su "Web Development" in servicesData
     cat: "Technology", 
     desc: "Sviluppiamo ecosistemi digitali d'avanguardia.", 
     details: "Progettiamo e sviluppiamo siti web e applicazioni web che uniscono design emozionale e performance tecniche impeccabili.",
@@ -42,6 +44,7 @@ const servicesShort = [
   },
   { 
     title: "Digital Strategy", 
+    slug: "strategy", // Mappato su "Strategy" in servicesData
     cat: "Foundation", 
     desc: "Definiamo il percorso verso il successo del tuo brand.", 
     details: "Analizziamo il mercato, i competitor e il tuo target per definire una strategia digitale su misura.",
@@ -50,6 +53,7 @@ const servicesShort = [
   },
   { 
     title: "UI/UX Design", 
+    slug: "ui-ux-design",
     cat: "Experience", 
     desc: "Progettiamo interfacce che mettono l'emozione al centro.", 
     details: "Creiamo esperienze utente intuitive e coinvolgenti. Attraverso wireframing, prototipazione e user testing.",
@@ -58,6 +62,7 @@ const servicesShort = [
   },
   { 
     title: "Content Creation", 
+    slug: "foto-video", // Mappato su Foto e Video in servicesData
     cat: "Production", 
     desc: "Raccontiamo la tua realtà attraverso storytelling video.", 
     details: "Produciamo contenuti multimediali di alta qualità che catturano l'attenzione.",
@@ -66,6 +71,7 @@ const servicesShort = [
   },
   { 
     title: "Motion Design", 
+    slug: "motion-design",
     cat: "Animation", 
     desc: "Diamo vita alle tue idee con grafiche in movimento.", 
     details: "Aggiungiamo una dimensione dinamica alla tua comunicazione. Animazioni 2D e 3D che spiegano concetti complessi.",
@@ -74,6 +80,7 @@ const servicesShort = [
   },
   { 
     title: "SEO & Performance", 
+    slug: "seo-performance",
     cat: "Data", 
     desc: "Scaliamo i risultati attraverso dati e ottimizzazione.", 
     details: "Ottimizziamo la tua presenza online per garantire la massima visibilità sui motori di ricerca.",
@@ -82,6 +89,7 @@ const servicesShort = [
   },
   { 
     title: "3D Rendering", 
+    slug: "3d-rendering",
     cat: "Future", 
     desc: "Creiamo mondi tridimensionali e visioni fotorealistiche.", 
     details: "Realizziamo visualizzazioni 3D fotorealistiche per prodotti, architettura e concept design.",
@@ -526,7 +534,7 @@ const Home = () => {
                                   <motion.div key={idx} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 + (idx * 0.1) }} className="flex items-center gap-3"><div className="w-2 h-2 bg-blend-light rounded-full shadow-[0_0_10px_rgba(47,101,128,0.8)]"></div><span className="text-white font-medium text-[12px] md:text-base">{feature}</span></motion.div>
                                 ))}
                               </div>
-                              <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.6 }} className="mt-4 md:mt-14"><Link to="/contact" className="group/modal-btn inline-flex items-center gap-4 px-6 py-3 md:px-8 md:py-4 bg-white text-blend font-black text-[10px] md:text-xs uppercase tracking-[0.2em] rounded-full hover:shadow-[0_0_30px_rgba(255,255,255,0.3)] transition-all duration-300"><span>Start Project</span><div className="w-8 h-8 md:w-10 md:h-10 rounded-full border border-blend/10 flex items-center justify-center group-hover/modal-btn:bg-blend group-hover/modal-btn:text-white transition-all duration-300"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="md:w-4 md:h-4 group-hover/modal-btn:translate-x-0.5 transition-transform"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></div></Link></motion.div>
+                              <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.6 }} className="mt-4 md:mt-14"><Link to={`/services/${servicesShort[activeService].slug}`} className="group/modal-btn inline-flex items-center gap-4 px-6 py-3 md:px-8 md:py-4 bg-white text-blend font-black text-[10px] md:text-xs uppercase tracking-[0.2em] rounded-full hover:shadow-[0_0_30px_rgba(255,255,255,0.3)] transition-all duration-300"><span>Start Project</span><div className="w-8 h-8 md:w-10 md:h-10 rounded-full border border-blend/10 flex items-center justify-center group-hover/modal-btn:bg-blend group-hover/modal-btn:text-white transition-all duration-300"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="md:w-4 md:h-4 group-hover/modal-btn:translate-x-0.5 transition-transform"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></div></Link></motion.div>
                            </motion.div>
                         </div>
                      </div>

@@ -76,7 +76,7 @@ const ProjectDetail = () => {
               <div className="absolute inset-0 bg-gradient-to-t from-blend-dark via-transparent to-transparent" />
            </div>
 
-           <div className="max-w-[90rem] w-full z-10 relative mt-20 px-6 md:px-20 h-full flex flex-col justify-center">
+           <div className="max-w-[90rem] w-full z-10 relative px-6 md:px-20 h-full flex flex-col justify-center pt-[15vh] pb-[12vh]">
               <motion.div
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
@@ -95,7 +95,7 @@ const ProjectDetail = () => {
                 </div>
               </div>
               
-              <div className="mt-16 max-w-2xl">
+              <div className="mt-10 md:mt-16 max-w-2xl relative z-20">
                 <p className="text-xl md:text-3xl text-white/60 leading-tight font-medium uppercase italic tracking-tighter">
                   {project.services || project.cat || "Digital Experience"}
                 </p>
@@ -106,7 +106,7 @@ const ProjectDetail = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1, y: [0, 10, 0] }}
             transition={{ delay: 1.5, duration: 2, repeat: Infinity }}
-            className="absolute bottom-10 left-6 md:left-20 flex flex-col items-center gap-2 z-10"
+            className="hidden md:flex absolute bottom-10 left-6 md:left-20 flex-col items-center gap-2 z-10"
           >
             <span className="text-[10px] uppercase tracking-widest text-white font-bold rotate-90 origin-left translate-x-4">Scroll</span>
             <div className="w-[1px] h-16 bg-white/30 mt-8"></div>
@@ -181,8 +181,9 @@ const ProjectDetail = () => {
               NEXT
            </div>
             <p className="text-white/40 text-sm font-black uppercase tracking-[0.4em] mb-8 relative z-10">Ready for more?</p>
-            <Link to="/projects" className="text-5xl md:text-9xl font-black !text-white hover:italic transition-all uppercase tracking-tighter relative z-10">
+            <Link to="/projects" className="group text-5xl md:text-9xl font-black !text-white hover:italic transition-all duration-500 uppercase tracking-tighter relative z-10 inline-block">
                 Discover More
+                <div className="h-[4px] md:h-[8px] w-0 bg-white group-hover:w-full transition-all duration-700 ease-[0.76,0,0.24,1] mt-2"></div>
             </Link>
         </div>
 
