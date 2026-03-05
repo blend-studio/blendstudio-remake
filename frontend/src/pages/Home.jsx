@@ -21,6 +21,7 @@ import { getProjects } from "../services/api";
 import neroBucato from "../assets/images/loghi partner/aran/NERO-BUCATO.svg";
 import medirocca from "../assets/images/loghi partner/02-logo-vector-medirocca.svg";
 import piacenzaNero from "../assets/images/loghi partner/PIACENZA_NERO.png";
+import showreelVideo from "../assets/images/Blend-Showreel_V5.mp4";
 
 // --- DATI STATICI (Servizi) ---
 const servicesShort = [
@@ -209,11 +210,8 @@ const Home = () => {
 
   const lenis = useLenis();
 
-  // Mobile detection
-  const [isMobile, setIsMobile] = useState(false);
-  useEffect(() => {
-    setIsMobile(window.innerWidth < 768);
-  }, []);
+  // Mobile detection (sync — prevents video flash on first render)
+  const [isMobile] = useState(() => window.innerWidth < 768);
 
   // Parallax Hero Logic (disabled on mobile for perf)
   const { scrollY } = useScroll();
@@ -334,7 +332,7 @@ const Home = () => {
           >
              {!isMobile && (
                <video ref={videoRef} autoPlay loop muted playsInline preload="metadata" className="absolute inset-0 w-full h-full object-cover">
-                 <source src="https://blendstudio.it/wp-content/uploads/2024/01/Blend-Showreel_V5.mp4" type="video/mp4" />
+                 <source src={showreelVideo} type="video/mp4" />
                </video>
              )}
              <motion.div style={isMobile ? { opacity: 0.7 } : { opacity: heroOverlayOpacity }} className="absolute inset-0 bg-black"></motion.div>

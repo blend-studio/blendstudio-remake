@@ -1,5 +1,7 @@
 import React, { useRef, useState, useEffect } from "react";
 
+const isMobileDevice = () => typeof window !== 'undefined' && window.innerWidth < 768;
+
 /**
  * LazyVideo — Skips video entirely on mobile (<768px) for performance.
  * On larger screens, loads the video source only when entering viewport.
@@ -7,14 +9,10 @@ import React, { useRef, useState, useEffect } from "react";
 const LazyVideo = ({ src, className, ...props }) => {
   const ref = useRef(null);
   const [shouldLoad, setShouldLoad] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
+  const mobile = isMobileDevice(); // Sync check — no flash
 
   useEffect(() => {
-    // Check once on mount
-    const mobile = window.innerWidth < 768;
-    setIsMobile(mobile);
-    
-    if (mobile) return; // Don't even setup observer on mobile
+    if (mobile) return;
 
     const el = ref.current;
     if (!el) return;
@@ -26,15 +24,15 @@ const LazyVideo = ({ src, className, ...props }) => {
           observer.disconnect();
         }
       },
-      { rootMargin: "100px" }
+      { rootMargin: "50px" }
     );
 
     observer.observe(el);
     return () => observer.disconnect();
-  }, []);
+  }, [mobile]);
 
-  // On mobile, render nothing (parent bg-black shows through)
-  if (isMobile) return null;
+  // On mobile, render nothing
+  if (mobile) return null;
 
   return (
     <video ref={ref} className={className} {...props}>
