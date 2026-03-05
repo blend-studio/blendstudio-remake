@@ -144,4 +144,26 @@ export const updateContent = async (slug, data) => {
     return response.data;
 };
 
+// -- Admin Utenti --
+
+export const getUsers = async () => {
+    const response = await api.get('/admin/users');
+    return response.data;
+};
+
+export const createUser = async (email, password) => {
+    const response = await api.post('/admin/users', { email, password });
+    return response.data;
+};
+
+export const changeUserPassword = async (id, password) => {
+    const response = await api.patch(`/admin/users/${id}/password`, { password });
+    return response.data;
+};
+
+export const deleteUser = async (id) => {
+    const response = await api.delete(`/admin/users/${id}`);
+    return response.data;
+};
+
 export default api;

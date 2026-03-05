@@ -3,8 +3,14 @@ import PageTransition from "../components/Transition";
 import { RevealText } from "../components/ui/RevealText";
 import { motion } from "framer-motion";
 import LazyVideo from "../components/ui/LazyVideo";
+import usePageContent from "../hooks/usePageContent";
+
+const DEFAULT_CONTACT = {
+  hero: { eyebrow: "Contatti", line1: "LET'S", line2: "TALK", subtitle: "Hai un progetto visionario? O vuoi semplicemente dire ciao? Siamo pronti ad ascoltare." }
+};
 
 const Contact = () => {
+  const { content } = usePageContent('contact', DEFAULT_CONTACT);
   const [formData, setFormData] = useState({ name: "", email: "", phone: "", budget: "", message: "" });
   const [status, setStatus] = useState(null);
 
@@ -51,14 +57,14 @@ const Contact = () => {
               >
                 <div className="h-[2px] w-12 bg-white/60"></div>
                 <span className="text-white/80 font-bold uppercase tracking-[0.3em] text-[10px] md:text-sm">
-                  Contatti
+                  {content.hero.eyebrow}
                 </span>
               </motion.div>
 
               <div className="text-5xl sm:text-7xl md:text-8xl lg:text-[10rem] xl:text-[12rem] font-extrabold leading-[0.85] tracking-tight text-white">
-                <RevealText text="LET'S" delay={0.2} />
+                <RevealText text={content.hero.line1} delay={0.2} />
                 <div className="text-white/30">
-                  <RevealText text="TALK" delay={0.4} />
+                  <RevealText text={content.hero.line2} delay={0.4} />
                 </div>
               </div>
               
@@ -69,8 +75,7 @@ const Contact = () => {
                   transition={{ delay: 1, duration: 1, ease: [0.76, 0, 0.24, 1] }}
                   className="text-xl md:text-3xl text-white/50 leading-tight font-medium"
                 >
-                  Hai un progetto visionario? O vuoi semplicemente dire ciao? 
-                  Siamo pronti ad ascoltare.
+                  {content.hero.subtitle}
                 </motion.p>
               </div>
            </div>

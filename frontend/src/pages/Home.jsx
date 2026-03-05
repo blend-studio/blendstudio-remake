@@ -16,6 +16,7 @@ import PageTransition from "../components/Transition";
 import { RevealText } from "../components/ui/RevealText";
 import Marquee from "../components/ui/Marquee";
 import { getProjects } from "../services/api";
+import usePageContent from "../hooks/usePageContent";
 
 // Import local logos
 import neroBucato from "../assets/images/loghi partner/aran/NERO-BUCATO.svg";
@@ -199,7 +200,21 @@ const HighlightParagraph = ({ text }) => {
 };
 
 // --- MAIN PAGE COMPONENT ---
+const DEFAULT_HOME = {
+  hero: { eyebrow: "Digital Creative Experience", line1: "WE CRAFT", line2: "DIGITAL", line3: "EMOTIONS" },
+  statement: {
+    label: "Lo Studio",
+    highlight: "Non creiamo solo siti web. Costruiamo ecosistemi digitali che trasformano brand ordinari in icone memorabili.",
+    body: "In un mondo rumoroso, il silenzio del buon design è l'unico modo per farsi ascoltare. Lavoriamo all'intersezione tra estetica e funzionalità per garantire risultati misurabili."
+  },
+  clients: { title: "Chi ci ha scelto", subtitle: "Collaboriamo con brand ambiziosi per ridefinire i confini del possibile." },
+  services_preview: { title: "Services", eyebrow: "Innovazione & Design", cta_label: "Esplora expertise" },
+  works: { title: "Works", subtitle: "L'eccellenza in ogni pixel." },
+  cta: { eyebrow: "Hai un progetto in mente?", title: "LET'S TALK" }
+};
+
 const Home = () => {
+  const { content } = usePageContent('home', DEFAULT_HOME);
   const [projects, setProjects] = useState([]);
   const [activeService, setActiveService] = useState(null);
   const scrollRef = useRef(null);
@@ -347,24 +362,24 @@ const Home = () => {
             >
               <div className="h-[2px] w-12 bg-white"></div>
               <span className="text-white/90 font-bold uppercase tracking-[0.3em] text-xs md:text-sm shadow-black drop-shadow-lg">
-                Digital Creative Experience
+                {content.hero.eyebrow}
               </span>
             </motion.div>
 
             <div className="text-5xl sm:text-7xl md:text-8xl lg:text-[11rem] xl:text-[13rem] font-extrabold leading-[0.8] tracking-tighter text-white drop-shadow-2xl">
               <div className="overflow-hidden">
                 <motion.div initial={{ y: "100%" }} animate={{ y: 0 }} transition={{ duration: 1, ease: [0.76, 0, 0.24, 1] }}>
-                  WE CRAFT
+                  {content.hero.line1}
                 </motion.div>
               </div>
               <div className="overflow-hidden text-white/80 my-2">
                 <motion.div initial={{ y: "100%" }} animate={{ y: 0 }} transition={{ duration: 1, delay: 0.1, ease: [0.76, 0, 0.24, 1] }}>
-                  DIGITAL
+                  {content.hero.line2}
                 </motion.div>
               </div>
               <div className="overflow-hidden">
                 <motion.div initial={{ y: "100%" }} animate={{ y: 0 }} transition={{ duration: 1, delay: 0.2, ease: [0.76, 0, 0.24, 1] }}>
-                  EMOTIONS
+                  {content.hero.line3}
                 </motion.div>
               </div>
             </div>
@@ -388,11 +403,11 @@ const Home = () => {
             <div className="md:col-span-4 sticky top-40">
               <div className="flex items-center gap-3 mb-4">
                  <span className="block w-2 h-2 bg-blend rounded-full animate-pulse"></span>
-                 <h3 className="text-xs font-bold uppercase tracking-widest text-gray-400">Lo Studio</h3>
+                 <h3 className="text-xs font-bold uppercase tracking-widest text-gray-400">{content.statement.label}</h3>
               </div>
             </div>
             <div className="md:col-span-8 relative">
-               <HighlightParagraph text="Non creiamo solo siti web. Costruiamo ecosistemi digitali che trasformano brand ordinari in icone memorabili." />
+               <HighlightParagraph text={content.statement.highlight} />
                <motion.div 
                  initial={{ opacity: 0, y: 30 }}
                  whileInView={{ opacity: 1, y: 0 }}
@@ -401,8 +416,7 @@ const Home = () => {
                  className="mt-12 pl-6 border-l-2 border-blend-light/30 relative z-10"
                >
                   <p className="text-xl md:text-2xl text-gray-500 leading-relaxed max-w-2xl font-medium">
-                    In un mondo rumoroso, il silenzio del buon design è l'unico modo per farsi ascoltare. 
-                    Lavoriamo all'intersezione tra estetica e funzionalità per garantire risultati misurabili.
+                    {content.statement.body}
                   </p>
                </motion.div>
             </div>
@@ -414,9 +428,9 @@ const Home = () => {
         <section className="py-12 md:py-32 bg-white text-blend overflow-hidden border-y border-gray-100 relative z-10">
            <div className="px-6 md:px-20 mb-8 md:mb-16 flex flex-col md:flex-row justify-between items-start md:items-end gap-6 md:gap-10">
               <div>
-                  <h2 className="text-5xl md:text-8xl font-black tracking-tighter uppercase italic mb-6">Chi ci ha scelto</h2>
+                  <h2 className="text-5xl md:text-8xl font-black tracking-tighter uppercase italic mb-6">{content.clients.title}</h2>
                   <p className="text-gray-400 text-xl font-medium max-w-md leading-relaxed">
-                      Collaboriamo con brand ambiziosi per ridefinire i confini del possibile.
+                      {content.clients.subtitle}
                   </p>
               </div>
               <div className="hidden md:block h-[1px] flex-grow bg-gray-200 mx-10 mb-4"></div>
@@ -440,14 +454,14 @@ const Home = () => {
 
            <div className="px-6 md:px-20 mb-12 md:mb-32 flex flex-col md:flex-row justify-between items-start md:items-end gap-6 md:gap-10 relative z-10">
               <motion.div initial={{ opacity: 0, x: -30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.8 }}>
-                 <h2 className="text-6xl md:text-8xl lg:text-[9rem] font-black text-blend uppercase tracking-tighter italic leading-none text-left md:text-transparent md:bg-clip-text md:bg-gradient-to-br md:from-blend md:to-blend-light">Services</h2>
+                 <h2 className="text-6xl md:text-8xl lg:text-[9rem] font-black text-blend uppercase tracking-tighter italic leading-none text-left md:text-transparent md:bg-clip-text md:bg-gradient-to-br md:from-blend md:to-blend-light">{content.services_preview.title}</h2>
                  <div className="flex items-center gap-4 mt-6">
                     <div className="h-[2px] w-12 bg-blend-light"></div>
-                    <p className="text-blend-light font-black uppercase tracking-[0.4em] text-xs md:text-sm">Innovazione & Design</p>
+                    <p className="text-blend-light font-black uppercase tracking-[0.4em] text-xs md:text-sm">{content.services_preview.eyebrow}</p>
                  </div>
               </motion.div>
               <Link to="/services" className="group/btn flex items-center gap-6 text-[10px] font-black uppercase tracking-[0.5em] text-blend relative z-10">
-                 <span className="border-b-2 border-blend pb-2 group-hover/btn:border-blend-light transition-colors">Esplora expertise</span>
+                 <span className="border-b-2 border-blend pb-2 group-hover/btn:border-blend-light transition-colors">{content.services_preview.cta_label}</span>
                  <div className="w-12 h-12 rounded-full border border-gray-300 flex items-center justify-center group-hover/btn:bg-blend group-hover/btn:text-white group-hover/btn:scale-110 transition-all duration-300">→</div>
               </Link>
            </div>
@@ -549,8 +563,8 @@ const Home = () => {
                   whileInView={{ opacity: 1, x: 0 }}
                   viewport={{ once: true }}
                 >
-                    <h2 className="text-5xl md:text-8xl font-black text-blend uppercase tracking-tighter italic text-left">Works</h2>
-                    <p className="text-gray-400 mt-4 text-xl font-medium text-left">L'eccellenza in ogni pixel.</p>
+                    <h2 className="text-5xl md:text-8xl font-black text-blend uppercase tracking-tighter italic text-left">{content.works.title}</h2>
+                    <p className="text-gray-400 mt-4 text-xl font-medium text-left">{content.works.subtitle}</p>
                 </motion.div>
             </div>
 
@@ -640,11 +654,11 @@ const Home = () => {
             </div>
 
             <div className="relative z-10">
-              <p className="text-xs md:text-sm font-black uppercase tracking-[0.4em] opacity-70 mb-12">Hai un progetto in mente?</p>
+              <p className="text-xs md:text-sm font-black uppercase tracking-[0.4em] opacity-70 mb-12">{content.cta.eyebrow}</p>
               
               <Link to="/contact" className="group relative inline-block">
                   <h2 className="text-6xl md:text-[10rem] font-black tracking-tighter transition-all duration-500 uppercase group-hover:italic group-hover:scale-105">
-                      LET'S TALK
+                      {content.cta.title}
                   </h2>
                   <div className="h-1 w-0 bg-white group-hover:w-full transition-all duration-500 mt-4 mx-auto"></div>
               </Link>

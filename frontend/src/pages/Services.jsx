@@ -6,6 +6,7 @@ import Footer from "../components/Footer";
 import { RevealText } from "../components/ui/RevealText";
 import LazyVideo from "../components/ui/LazyVideo";
 import { servicesData as services } from "../data/servicesData";
+import usePageContent from "../hooks/usePageContent";
 
 // --- COMPONENTE SINGOLO DETTAGLIO (SCROLL SPY) ---
 const ServiceDetailItem = ({ service, index, setActiveIndex }) => {
@@ -74,7 +75,13 @@ const ServiceDetailItem = ({ service, index, setActiveIndex }) => {
 };
 
 
+const DEFAULT_SERVICES = {
+  hero: { eyebrow: "Our Expertise", line1: "ELEVATING", line2: "BRANDS", subtitle: "Soluzioni digitali integrate per aziende ambiziose. Dalla strategia alla produzione d'eccellenza." },
+  cta: { line1: "Let's create.", button_label: "Avvia un progetto" }
+};
+
 const Services = () => {
+  const { content } = usePageContent('services', DEFAULT_SERVICES);
   const [activeIndex, setActiveIndex] = useState(0);
   
   const totalItems = services.length;
@@ -112,21 +119,20 @@ const Services = () => {
              >
                <div className="h-[2px] w-12 bg-white/60"></div>
                <span className="text-white/80 font-bold uppercase tracking-[0.2em] text-xs md:text-sm">
-                 Our Expertise
+                 {content.hero.eyebrow}
                </span>
              </motion.div>
 
              <div className="text-5xl sm:text-7xl md:text-8xl lg:text-[10rem] xl:text-[12rem] font-extrabold leading-[0.85] tracking-normal text-white">
-               <RevealText text="ELEVATING" delay={0.2} />
+               <RevealText text={content.hero.line1} delay={0.2} />
                <div className="text-white/40">
-                 <RevealText text="BRANDS" delay={0.4} />
+                 <RevealText text={content.hero.line2} delay={0.4} />
                </div>
              </div>
 
              <div className="mt-16 max-w-2xl">
                <p className="text-xl md:text-3xl text-white/60 leading-tight font-medium">
-                 Soluzioni digitali integrate per aziende ambiziose. 
-                 Dalla strategia alla produzione d'eccellenza.
+                 {content.hero.subtitle}
                </p>
              </div>
            </div>
@@ -245,12 +251,12 @@ const Services = () => {
              className="absolute -top-20 -right-20 w-96 h-96 bg-white/5 rounded-full blur-[100px]" 
            />
            <Link to="/contact" className="group relative inline-block z-10">
-              <h2 className="text-5xl md:text-9xl font-black mb-4 tracking-tighter uppercase italic group-hover:scale-105 transition-transform duration-500">Let's create.</h2>
+              <h2 className="text-5xl md:text-9xl font-black mb-4 tracking-tighter uppercase italic group-hover:scale-105 transition-transform duration-500">{content.cta.line1}</h2>
               <div className="h-[4px] md:h-[8px] w-0 bg-white group-hover:w-full transition-all duration-700 ease-[0.76,0,0.24,1] mb-12"></div>
            </Link>
            <div className="relative z-10">
               <Link to="/contact" className="inline-block px-14 py-6 bg-transparent border-2 border-white !text-white rounded-full font-black uppercase tracking-[0.3em] text-xs hover:bg-white hover:!text-blend transition-all duration-300 shadow-2xl hover:scale-105">
-                  Avvia un progetto
+                  {content.cta.button_label}
               </Link>
            </div>
         </div>

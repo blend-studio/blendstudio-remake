@@ -4,6 +4,7 @@ import { RevealText } from "../components/ui/RevealText";
 import { Link } from "react-router-dom";
 import Marquee from "../components/ui/Marquee";
 import { motion, AnimatePresence } from "framer-motion";
+import usePageContent from "../hooks/usePageContent";
 
 const positions = [
   { role: "Frontend Developer (React)", type: "Full Time", loc: "Remote / Hybrid", desc: "Cerchiamo un esperto React con occhio per il design e passione per le animazioni (Framer Motion, GSAP)." },
@@ -11,12 +12,23 @@ const positions = [
   { role: "Backend Developer (PHP/Node)", type: "Freelance", loc: "Remote", desc: "Sviluppo di API robuste, integrazioni complesse e architetture scalabili. Laravel e Node.js sono il tuo pane quotidiano." },
 ];
 
+const DEFAULT_CAREERS = {
+  hero: { eyebrow: "Careers", line1: "JOIN THE", line2: "TEAM", subtitle: "Sempre alla ricerca di talenti tecnici e creativi che vogliano sfidare lo status quo digitale." },
+  perks: ["Lavoro Remoto", "MacBook Pro M3", "Formazione Continua", "Caff\u00e8 Illimitato", "Team Retreats", "Bonus Performance", "Assicurazione Sanitaria"],
+  open_roles: {
+    title: "Open Roles",
+    subtitle: "Nessun ego, solo grandi idee. Siamo un team distribuito unito dalla stessa passione per l'eccellenza.",
+    positions: positions
+  }
+};
+
 const Careers = () => {
+  const { content } = usePageContent('careers', DEFAULT_CAREERS);
   const [expanded, setExpanded] = useState(null);
 
-  const perks = [
-    "Lavoro Remoto", "MacBook Pro M3", "Formazione Continua", "Caffè Illimitato", "Team Retreats", "Bonus Performance", "Assicurazione Sanitaria"
-  ].map((p, i) => <span key={i} className="text-4xl md:text-6xl font-black text-blend/10 mx-12 uppercase italic">{p}</span>);
+  const activePerks = (content.perks ?? DEFAULT_CAREERS.perks)
+    .map((p, i) => <span key={i} className="text-4xl md:text-6xl font-black text-blend/10 mx-12 uppercase italic">{p}</span>);
+  const activePositions = content.open_roles?.positions ?? positions;
 
   return (
     <PageTransition>
@@ -42,20 +54,20 @@ const Careers = () => {
               >
                 <div className="h-[2px] w-12 bg-white/60"></div>
                 <span className="text-white/80 font-bold uppercase tracking-[0.2em] text-xs md:text-sm">
-                  Careers
+                  {content.hero.eyebrow}
                 </span>
               </motion.div>
 
               <div className="text-5xl sm:text-7xl md:text-8xl lg:text-[10rem] xl:text-[12rem] font-extrabold leading-[0.85] tracking-normal text-white">
-                <RevealText text="JOIN THE" delay={0.2} />
+                <RevealText text={content.hero.line1} delay={0.2} />
                 <div className="text-white/40">
-                  <RevealText text="TEAM" delay={0.4} />
+                  <RevealText text={content.hero.line2} delay={0.4} />
                 </div>
               </div>
               
               <div className="mt-16 max-w-2xl">
                 <p className="text-xl md:text-3xl text-white/60 leading-tight font-medium">
-                  Sempre alla ricerca di talenti tecnici e creativi che vogliano sfidare lo status quo digitale.
+                  {content.hero.subtitle}
                 </p>
               </div>
            </div>
@@ -73,21 +85,21 @@ const Careers = () => {
 
         {/* Perks Marquee */}
         <div className="py-20 border-b border-gray-100 overflow-hidden bg-gray-50">
-             <Marquee items={perks} speed={40} />
+             <Marquee items={activePerks} speed={40} />
         </div>
 
         <div className="py-24 md:py-48 px-6 md:px-20">
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-20 mb-16 md:mb-24">
                 <div className="lg:col-span-5">
-                    <h2 className="text-5xl md:text-7xl lg:text-8xl font-black text-blend tracking-tighter uppercase italic">Open Roles</h2>
+                    <h2 className="text-5xl md:text-7xl lg:text-8xl font-black text-blend tracking-tighter uppercase italic">{content.open_roles?.title ?? 'Open Roles'}</h2>
                 </div>
                 <div className="lg:col-span-7">
-                    <p className="text-gray-400 text-lg md:text-2xl font-medium lg:max-w-2xl">Nessun ego, solo grandi idee. Siamo un team distribuito unito dalla stessa passione per l'eccellenza.</p>
+                    <p className="text-gray-400 text-lg md:text-2xl font-medium lg:max-w-2xl">{content.open_roles?.subtitle ?? 'Nessun ego, solo grandi idee.'}</p>
                 </div>
             </div>
 
             <div className="space-y-6 md:space-y-8">
-                {positions.map((job, i) => (
+                {activePositions.map((job, i) => (
                     <motion.div 
                         key={i} 
                         initial={{ opacity: 0, y: 30 }}

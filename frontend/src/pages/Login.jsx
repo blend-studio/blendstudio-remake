@@ -85,7 +85,8 @@ const Login = () => {
           <button 
             type="submit"
             disabled={loading}
-            className="w-full py-5 bg-blend text-white rounded-full font-black uppercase tracking-widest hover:scale-[1.02] active:scale-95 transition-all shadow-xl disabled:opacity-50"
+            className="w-full py-5 text-white rounded-full font-black uppercase tracking-widest hover:scale-[1.02] active:scale-95 transition-all shadow-xl disabled:opacity-50"
+            style={{ backgroundColor: 'var(--color-blend)' }}
           >
             {loading ? 'ACCESSO IN CORSO...' : 'ACCEDI ORA'}
           </button>

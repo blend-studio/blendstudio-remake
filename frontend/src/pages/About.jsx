@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import PageTransition from "../components/Transition";
 import { RevealText } from "../components/ui/RevealText";
 import Marquee from "../components/ui/Marquee";
+import usePageContent from "../hooks/usePageContent";
 
 // --- CSS INJECTED FOR PERFORMANCE ---
 const styles = `
@@ -177,7 +178,28 @@ const values = [
   { title: "Qualità", desc: "L'eccellenza è la nostra unica metrica di successo. Senza compromessi." }
 ];
 
+const DEFAULT_ABOUT = {
+  hero: { eyebrow: "The Studio", line1: "DIGITAL", line2: "ARTISANS" },
+  manifesto: {
+    highlight: "Siamo un collettivo di creativi, sviluppatori e strateghi. Crediamo che il digitale non sia solo codice, ma un'estensione dell'identit\u00e0 umana.",
+    body: "Non ci accontentiamo del \"funzionale\". Cerchiamo il memorabile. Ogni pixel \u00e8 posizionato con intenzione, ogni interazione \u00e8 progettata per evocare un'emozione. Siamo gli architetti della tua presenza digitale."
+  },
+  philosophy: {
+    title: "Il Metodo",
+    body: "Uniamo la precisione ingegneristica e l'intuizione artistica. Ogni progetto nasce da una profonda analisi dei dati e fiorisce attraverso un design emotivo.",
+    steps: ["Ricerca & Strategia", "Design & Prototipazione", "Sviluppo & Tuning", "Lancio & Crescita"]
+  },
+  values: {
+    label: "Core Values",
+    title: "Ci\u00f2 in cui crediamo",
+    items: values
+  },
+  team_cta: { title: "Le persone dietro il codice", button_label: "Unisciti a noi" }
+};
+
 const About = () => {
+  const { content } = usePageContent('about', DEFAULT_ABOUT);
+  const activeValues = content.values?.items ?? values;
   const container = useRef(null);
   const { scrollYProgress } = useScroll({
     target: container,
@@ -225,11 +247,11 @@ const About = () => {
            <motion.div style={{ y: heroY }} className="max-w-[100rem] w-full z-10 relative mt-10 md:mt-0 pb-20 will-change-transform">
              <div className="flex items-center gap-4 mb-6 md:mb-10">
                <div className="h-[2px] w-12 bg-white"></div>
-               <span className="text-white/90 font-bold uppercase tracking-[0.3em] text-xs md:text-sm">The Studio</span>
+               <span className="text-white/90 font-bold uppercase tracking-[0.3em] text-xs md:text-sm">{content.hero.eyebrow}</span>
              </div>
              <div className="text-6xl sm:text-8xl md:text-9xl lg:text-[11rem] font-black leading-[0.85] tracking-tighter text-white">
-               <div className="overflow-hidden"><RevealText text="DIGITAL" delay={0.1} /></div>
-               <div className="overflow-hidden text-white/50"><RevealText text="ARTISANS" delay={0.3} /></div>
+               <div className="overflow-hidden"><RevealText text={content.hero.line1} delay={0.1} /></div>
+               <div className="overflow-hidden text-white/50"><RevealText text={content.hero.line2} delay={0.3} /></div>
              </div>
            </motion.div>
 
@@ -254,9 +276,9 @@ const About = () => {
                    </div>
                 </div>
                 <div className="md:col-span-9">
-                   <HighlightParagraph text="Siamo un collettivo di creativi, sviluppatori e strateghi. Crediamo che il digitale non sia solo codice, ma un'estensione dell'identità umana." />
+                   <HighlightParagraph text={content.manifesto.highlight} />
                    <p className="mt-12 text-lg md:text-xl text-gray-500 max-w-2xl font-medium leading-relaxed">
-                     Non ci accontentiamo del "funzionale". Cerchiamo il memorabile. Ogni pixel è posizionato con intenzione, ogni interazione è progettata per evocare un'emozione. Siamo gli architetti della tua presenza digitale.
+                     {content.manifesto.body}
                    </p>
                 </div>
             </div>
@@ -284,14 +306,13 @@ const About = () => {
                viewport={{ once: true }}
                transition={{ duration: 0.8 }}
              >
-                 <h2 className="text-6xl md:text-8xl font-black text-blend mb-8 tracking-tighter uppercase italic">Il Metodo</h2>
+                 <h2 className="text-6xl md:text-8xl font-black text-blend mb-8 tracking-tighter uppercase italic">{content.philosophy.title}</h2>
                  <div className="h-1 w-20 bg-blend mb-8"></div>
                  <p className="text-gray-500 text-xl md:text-2xl leading-relaxed mb-8 font-medium">
-                    Uniamo la precisione ingegneristica e l'intuizione artistica. 
-                    Ogni progetto nasce da una profonda analisi dei dati e fiorisce attraverso un design emotivo.
+                    {content.philosophy.body}
                  </p>
                  <ul className="space-y-4">
-                    {["Ricerca & Strategia", "Design & Prototipazione", "Sviluppo & Tuning", "Lancio & Crescita"].map((step, i) => (
+                    {(content.philosophy.steps ?? DEFAULT_ABOUT.philosophy.steps).map((step, i) => (
                       <li key={i} className="flex items-center gap-4 text-blend font-bold uppercase tracking-widest text-xs md:text-sm">
                         <span className="w-6 h-6 border border-blend rounded-full flex items-center justify-center text-[10px]">{i+1}</span>
                         {step}
@@ -318,15 +339,15 @@ const About = () => {
 
         {/* --- VALUES TITLE --- */}
         <section className="pt-20 md:pt-32 pb-10 bg-[#f7f9fa] relative z-10 text-center">
-             <h2 className="text-xs md:text-sm font-bold uppercase tracking-[0.4em] text-gray-400 mb-3">Core Values</h2>
-             <p className="text-5xl md:text-7xl lg:text-[7rem] font-black text-blend uppercase tracking-tighter leading-none">Ciò in cui crediamo</p>
+             <h2 className="text-xs md:text-sm font-bold uppercase tracking-[0.4em] text-gray-400 mb-3">{content.values.label}</h2>
+             <p className="text-5xl md:text-7xl lg:text-[7rem] font-black text-blend uppercase tracking-tighter leading-none">{content.values.title}</p>
         </section>
 
         {/* --- VALUES 3D DECK --- */}
         <section ref={container} className="relative z-10 bg-[#f7f9fa] h-[400vh] lg:h-[250vh]">
             <div className="sticky top-0 h-screen w-full overflow-hidden flex flex-col justify-center items-center bg-[#f7f9fa]">
                 <div className="absolute inset-0 w-full h-full perspective-[2000px] p-0 md:p-6 lg:p-12">
-                  {values.map((val, i) => {
+                  {activeValues.map((val, i) => {
                      return <Card key={i} i={i} {...val} progress={scrollYProgress} length={values.length} />
                   })}
                 </div>
@@ -341,7 +362,7 @@ const About = () => {
            
            <div className="relative z-10 max-w-4xl mx-auto px-6">
                <Link to="/careers" className="group relative inline-block">
-                 <h2 className="text-5xl md:text-8xl font-black mb-4 tracking-tighter uppercase group-hover:italic transition-all duration-500">Le persone dietro il codice</h2>
+                 <h2 className="text-5xl md:text-8xl font-black mb-4 tracking-tighter uppercase group-hover:italic transition-all duration-500">{content.team_cta.title}</h2>
                  <div className="h-[4px] md:h-[8px] w-0 bg-white group-hover:w-full transition-all duration-700 ease-[0.76,0,0.24,1] mb-12"></div>
                </Link>
               
@@ -351,7 +372,7 @@ const About = () => {
                 className="group relative inline-flex items-center gap-4 px-14 py-6 bg-white/5 backdrop-blur-lg border border-white/20 text-white rounded-full font-black uppercase tracking-[0.2em] text-xs hover:bg-white/10 transition-all duration-500 hover:shadow-[0_0_24px_rgba(255,255,255,0.12)]"
                 style={{ forcedColorAdjust: 'none' }}
               >
-                  <span className="relative z-10">Unisciti a noi</span>
+                  <span className="relative z-10">{content.team_cta.button_label}</span>
                   <span className="relative z-10 group-hover:translate-x-1 transition-transform duration-300">→</span>
               </Link>
            </div>
