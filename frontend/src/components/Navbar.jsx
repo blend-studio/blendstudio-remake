@@ -11,8 +11,9 @@ const Navbar = () => {
   const location = useLocation();
 
   useEffect(() => {
-    // Reset to dark on route change (hero sections are typically dark)
+    // Reset states on route change (hero sections are typically dark)
     setIsOverDark(true);
+    setForceWhite(false);
 
     const activeDarkSections = new Set();
     let intersectionObserver = null;
@@ -102,7 +103,7 @@ const Navbar = () => {
 
   return (
     <>
-      <nav className="fixed top-0 left-0 w-full p-6 md:px-20 md:py-10 flex justify-between items-center z-50 pointer-events-none transition-colors duration-500">
+      <nav className="fixed top-0 left-0 w-full py-6 pl-6 pr-0 md:px-20 md:py-10 flex justify-between items-center z-50 pointer-events-none transition-colors duration-500">
         {/* Background della Navbar che appare solo se scrollato (opzionale, per leggibilità) */}
         {/* <div className={`absolute inset-0 bg-white transition-opacity duration-500 -z-10 ${isScrolled ? "opacity-90 backdrop-blur-md" : "opacity-0"}`} /> */}
 

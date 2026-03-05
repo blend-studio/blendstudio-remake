@@ -3,7 +3,6 @@ import PageTransition from "../components/Transition";
 import { RevealText } from "../components/ui/RevealText";
 import { motion } from "framer-motion";
 import LazyVideo from "../components/ui/LazyVideo";
-import backgroundVideo from "../assets/images/sfondo-blend.mp4";
 
 const Contact = () => {
   const [formData, setFormData] = useState({ name: "", email: "", phone: "", budget: "", message: "" });
@@ -35,7 +34,8 @@ const Contact = () => {
         <div className="relative h-screen flex flex-col justify-center px-6 md:px-20 overflow-hidden bg-black text-white nav-dark-section">
            <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden bg-black">
               <LazyVideo 
-                src={backgroundVideo}
+                src={`${import.meta.env.BASE_URL}videos/sfondo.mp4`}
+                mobileSrc={`${import.meta.env.BASE_URL}videos/sfondo-mobile.mp4`}
                 autoPlay loop muted playsInline 
                 className="absolute top-1/2 left-1/2 min-w-full min-h-full w-auto h-auto -translate-x-1/2 -translate-y-1/2 object-cover scale-[1.1] opacity-40"
               />

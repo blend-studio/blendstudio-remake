@@ -21,7 +21,6 @@ import { getProjects } from "../services/api";
 import neroBucato from "../assets/images/loghi partner/aran/NERO-BUCATO.svg";
 import medirocca from "../assets/images/loghi partner/02-logo-vector-medirocca.svg";
 import piacenzaNero from "../assets/images/loghi partner/PIACENZA_NERO.png";
-import showreelVideo from "../assets/images/Blend-Showreel_V5.mp4";
 
 // --- DATI STATICI (Servizi) ---
 const servicesShort = [
@@ -330,11 +329,9 @@ const Home = () => {
             style={isMobile ? {} : { scale: heroVideoScale }} 
             className="absolute inset-0 w-full h-full z-0 will-change-transform"
           >
-             {!isMobile && (
-               <video ref={videoRef} autoPlay loop muted playsInline preload="metadata" className="absolute inset-0 w-full h-full object-cover">
-                 <source src={showreelVideo} type="video/mp4" />
+               <video ref={videoRef} autoPlay loop muted playsInline preload="none" className="absolute inset-0 w-full h-full object-cover">
+                 <source src={isMobile ? `${import.meta.env.BASE_URL}videos/showreel-mobile.mp4` : `${import.meta.env.BASE_URL}videos/showreel.mp4`} type="video/mp4" />
                </video>
-             )}
              <motion.div style={isMobile ? { opacity: 0.7 } : { opacity: heroOverlayOpacity }} className="absolute inset-0 bg-black"></motion.div>
           </motion.div>
 
@@ -432,7 +429,7 @@ const Home = () => {
 
         {/* --- SERVICES PREVIEW (NO BLUR) --- */}
         <section 
-          className="py-20 md:py-60 bg-white/50 border-y border-gray-100 relative overflow-hidden group/section z-10"
+          className={`py-20 md:py-60 bg-white/50 border-y border-gray-100 relative lg:overflow-hidden group/section ${activeService !== null ? 'z-[100]' : 'z-10'}`}
           onMouseMove={handleMouseMoveSection}
         >
            <motion.div 
@@ -496,7 +493,7 @@ const Home = () => {
                  ) : (
                    <motion.div
                      layoutId={`card-${activeService}`}
-                     className="fixed inset-0 z-[9999] w-full h-full overflow-y-auto bg-[#2f6580] rounded-none lg:relative lg:inset-auto lg:w-full lg:h-auto lg:rounded-[3rem] lg:overflow-hidden lg:z-20 cursor-default"
+                     className="fixed inset-0 z-[9999] w-full h-[100dvh] overflow-y-auto bg-[#2f6580] rounded-none lg:relative lg:inset-auto lg:w-full lg:h-auto lg:rounded-[3rem] lg:overflow-hidden lg:z-20 cursor-default"
                      initial={{ borderRadius: "2.5rem" }}
                      animate={{ borderRadius: window.innerWidth >= 1024 ? "3rem" : "0px" }}
                      transition={{ type: "spring", stiffness: 300, damping: 30 }}
@@ -622,12 +619,12 @@ const Home = () => {
                    ))}
                 </div>
                 {/* Mobile arrows below slider */}
-                <div className="flex justify-center gap-4 mt-6 lg:hidden">
-                  <button onClick={() => scroll('left')} className="w-12 h-12 bg-white text-blend rounded-full flex items-center justify-center shadow-lg border border-gray-100 active:scale-90 transition-transform cursor-pointer">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+                <div className="flex justify-center gap-6 -mt-4 pb-12 lg:hidden relative z-20">
+                  <button onClick={() => scroll('left')} className="w-14 h-14 bg-white text-blend rounded-full flex items-center justify-center shadow-[0_8px_30px_rgba(47,101,128,0.15)] border-2 border-blend/20 active:scale-90 transition-transform cursor-pointer">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
                   </button>
-                  <button onClick={() => scroll('right')} className="w-12 h-12 bg-white text-blend rounded-full flex items-center justify-center shadow-lg border border-gray-100 active:scale-90 transition-transform cursor-pointer">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                  <button onClick={() => scroll('right')} className="w-14 h-14 bg-white text-blend rounded-full flex items-center justify-center shadow-[0_8px_30px_rgba(47,101,128,0.15)] border-2 border-blend/20 active:scale-90 transition-transform cursor-pointer">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
                   </button>
                 </div>
             </div>

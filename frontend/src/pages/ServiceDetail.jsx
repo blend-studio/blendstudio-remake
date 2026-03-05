@@ -168,8 +168,8 @@ const ServiceDetail = () => {
 
         {/* --- BENEFITS SECTION --- */}
         {service.benefits && (
-          <div className="px-6 md:px-20 py-32 md:py-48 bg-gray-50 relative z-10 overflow-hidden">
-            <motion.h2 variants={fadeUpVariant} initial="hidden" whileInView="visible" viewport={{ once: true }} className="text-5xl md:text-8xl font-black uppercase tracking-tighter italic text-blend mb-16 md:mb-24">I Vantaggi per te</motion.h2>
+          <div className="px-6 md:px-20 py-20 md:py-48 bg-gray-50 relative z-10 overflow-hidden">
+            <motion.h2 variants={fadeUpVariant} initial="hidden" whileInView="visible" viewport={{ once: true }} className="text-3xl md:text-8xl font-black uppercase tracking-tighter italic text-blend mb-12 md:mb-24">I Vantaggi per te</motion.h2>
             <motion.div 
                variants={staggerContainer} 
                initial="hidden" 
@@ -184,10 +184,10 @@ const ServiceDetail = () => {
                     whileHover={{ y: -10, boxShadow: "0 20px 40px -10px rgba(0,0,0,0.1)" }}
                     className="bg-white p-10 md:p-12 rounded-[2rem] shadow-sm border border-gray-100 flex flex-col justify-start transition-shadow duration-500"
                  >
-                    <div className="w-16 h-16 rounded-full bg-blend/5 flex items-center justify-center text-blend font-black mb-8 border border-blend/10">
-                      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                    <div className="w-14 h-14 rounded-full bg-blend/5 flex items-center justify-center text-blend font-black mb-6 md:mb-8 border border-blend/10">
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
                     </div>
-                    <p className="text-blend font-bold text-xl md:text-2xl leading-snug">{benefit}</p>
+                    <p className="text-blend font-bold text-lg md:text-2xl leading-snug">{benefit}</p>
                  </motion.div>
               ))}
             </motion.div>
@@ -196,9 +196,9 @@ const ServiceDetail = () => {
 
         {/* --- PROCESS SECTION --- */}
         {service.process && (
-          <div className="px-6 md:px-20 py-32 md:py-48 bg-white relative z-10 border-t border-gray-100">
-             <div className="mb-24 flex flex-col md:flex-row md:items-end justify-between gap-8">
-                <motion.h2 variants={fadeUpVariant} initial="hidden" whileInView="visible" viewport={{ once: true }} className="text-5xl md:text-8xl font-black text-blend uppercase tracking-tighter italic m-0 line-clamp-1">Il Metodo</motion.h2>
+          <div className="px-6 md:px-20 py-20 md:py-48 bg-white relative z-10 border-t border-gray-100">
+             <div className="mb-16 md:mb-24 flex flex-col md:flex-row md:items-end justify-between gap-8">
+                <motion.h2 variants={fadeUpVariant} initial="hidden" whileInView="visible" viewport={{ once: true }} className="text-3xl md:text-8xl font-black text-blend uppercase tracking-tighter italic m-0 line-clamp-1">Il Metodo</motion.h2>
                 <div className="hidden md:block w-32 h-[2px] bg-blend/10 mb-4 flex-grow mx-8"></div>
              </div>
              <motion.div 

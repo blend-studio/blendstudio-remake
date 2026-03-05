@@ -1,42 +1,47 @@
 import React, { useRef, useState, useEffect } from "react";
 
-const isMobileDevice = () => typeof window !== 'undefined' && window.innerWidth < 768;
+const isMobileDevice = () => window.innerWidth < 768;
 
 /**
- * LazyVideo — Skips video entirely on mobile (<768px) for performance.
- * On larger screens, loads the video source only when entering viewport.
+ * LazyVideo — Loads the video source only when entering viewport (tablet+).
+ * On mobile, uses `mobileSrc` (if provided) to serve a much lighter video.
  */
-const LazyVideo = ({ src, className, ...props }) => {
+const LazyVideo = ({ src, mobileSrc, className, poster, ...props }) => {
   const ref = useRef(null);
   const [shouldLoad, setShouldLoad] = useState(false);
-  const mobile = isMobileDevice(); // Sync check — no flash
+  // Re-check on mount to be strictly accurate
+  const [mobile, setMobile] = useState(false);
 
   useEffect(() => {
-    if (mobile) return;
+    const isMob = isMobileDevice();
+    setMobile(isMob);
 
     const el = ref.current;
     if (!el) return;
 
+    // We do immediate load for mobile to ensure autoplay works immediately, 
+    // or we can lazy load there too. Let's lazy load mobile as well!
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
           setShouldLoad(true);
+          // Trigger play after source is loaded
+          setTimeout(() => el.play?.().catch(() => {}), 100);
           observer.disconnect();
         }
       },
-      { rootMargin: "50px" }
+      { rootMargin: "200px" }
     );
 
     observer.observe(el);
     return () => observer.disconnect();
-  }, [mobile]);
+  }, []);
 
-  // On mobile, render nothing
-  if (mobile) return null;
+  const videoSrc = mobile && mobileSrc ? mobileSrc : src;
 
   return (
-    <video ref={ref} className={className} {...props}>
-      {shouldLoad && <source src={src} type="video/mp4" />}
+    <video ref={ref} className={className} preload="none" {...props}>
+      {shouldLoad && <source src={videoSrc} type="video/mp4" />}
     </video>
   );
 };

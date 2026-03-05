@@ -5,7 +5,6 @@ import { RevealText } from "../components/ui/RevealText";
 import { motion, AnimatePresence } from "framer-motion";
 import { getProjects } from "../services/api";
 import LazyVideo from "../components/ui/LazyVideo";
-import backgroundVideo from "../assets/images/sfondo-blend.mp4";
 
 const categories = ["All", "Web Design", "Branding", "Development", "Marketing"];
 
@@ -54,7 +53,8 @@ const Projects = () => {
         <div className="relative h-screen flex flex-col justify-center px-6 md:px-20 overflow-hidden bg-black nav-dark-section">
            <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden bg-black">
               <LazyVideo 
-                src={backgroundVideo}
+                src={`${import.meta.env.BASE_URL}videos/sfondo.mp4`}
+                mobileSrc={`${import.meta.env.BASE_URL}videos/sfondo-mobile.mp4`}
                 autoPlay loop muted playsInline 
                 className="absolute top-1/2 left-1/2 min-w-full min-h-full w-auto h-auto -translate-x-1/2 -translate-y-1/2 object-cover scale-[1.1] opacity-60"
               />

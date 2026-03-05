@@ -132,7 +132,7 @@ const Careers = () => {
                                         <p className="text-lg md:text-2xl text-gray-500 leading-relaxed max-w-4xl border-t border-gray-100 pt-8 md:pt-12">
                                             {job.desc}
                                         </p>
-                                        <button className="mt-10 md:mt-14 inline-block px-8 md:px-14 py-4 md:py-6 bg-blend !text-white rounded-full font-black uppercase tracking-[0.2em] text-[10px] hover:scale-105 transition-transform shadow-xl">
+                                        <button className="mt-10 md:mt-14 inline-block px-8 md:px-14 py-4 md:py-6 !bg-blend !text-white rounded-full font-black uppercase tracking-[0.2em] text-[10px] hover:scale-105 transition-transform shadow-xl">
                                             Invia Candidatura Ora
                                         </button>
                                     </div>

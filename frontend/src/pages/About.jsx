@@ -1,5 +1,5 @@
 import React, { useRef } from "react";
-import { motion, useScroll, useTransform, useMotionValue, useVelocity, useAnimationFrame, useSpring } from "framer-motion";
+import { motion, useScroll, useTransform, useMotionValue, useVelocity, useAnimationFrame, useSpring, useMotionValueEvent } from "framer-motion";
 import { Link } from "react-router-dom";
 import PageTransition from "../components/Transition";
 import { RevealText } from "../components/ui/RevealText";
@@ -44,16 +44,19 @@ const BlendWaves = () => {
   );
 };
 
-// 2. Onde Interne Card
+// 2. Onde Interne Card (Ottimizzate per Performance)
 const CardWaves = ({ variant }) => {
     const isBlue = variant === 'blue';
-    const bgClass1 = isBlue ? 'bg-white/5' : 'bg-blend/5';
-    const bgClass2 = isBlue ? 'bg-blend-light/10' : 'bg-blend-light/5';
+    const fromBg1 = isBlue ? 'from-white/10' : 'from-blend/10';
+    const fromBg2 = isBlue ? 'from-blend-light/20' : 'from-blend-light/10';
 
+    // Rimossi i filtri "blur-[...]" e le animazioni continue "animate-blob-..." da dentro le card.
+    // Combinare blur CSS + rotateX 3D + scroll uccide le performance della GPU su desktop.
+    // Sostituito con background radial gradient statici e leggeri.
     return (
         <div className="absolute inset-0 overflow-hidden pointer-events-none z-0 rounded-[3rem]">
-            <div className={`absolute -bottom-[20%] -left-[20%] w-[90%] h-[90%] rounded-full blur-[80px] animate-blob-spin ${bgClass1}`} />
-            <div className={`absolute top-[10%] -right-[10%] w-[70%] h-[70%] rounded-full blur-[60px] animate-blob-float ${bgClass2}`} />
+            <div className={`absolute -bottom-[20%] -left-[20%] w-[90%] h-[90%] rounded-full bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] ${fromBg1} to-transparent`} />
+            <div className={`absolute top-[10%] -right-[10%] w-[70%] h-[70%] rounded-full bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] ${fromBg2} to-transparent`} />
         </div>
     );
 };
@@ -111,41 +114,46 @@ const Card = ({ i, title, desc, progress, length }) => {
   const bgColor = isBlueCard ? '#2f6580' : '#ffffff';
   const textColor = isBlueCard ? '#ffffff' : '#2f6580';
 
-  // Ognuna delle 'length' cards ha una porzione di scroll pari a 'step'
   const step = 1 / length;
   
-  // startAnim: Iniziamo a piegare la card *non* appena diventa la prima (i * step), 
-  // ma aspettiamo che lo scorrimento dello step corrente sia già un po' avanzato
-  // (es. quando la card successiva sta salendo e coprendo lo schermo)
-  const startAnim = (i * step) + (step * 0.3); // Ritardo del 30% dello spazio di scroll
-  
-  // endAnim: finisce prima che lo step sia completo
-  const endAnim = (i * step) + (step * 0.95); 
+  // Adjusted timing for the pinned layout:
+  // Each card is active for 'step' duration of the scroll progress.
+  const startAnim = (i * step) + (step * 0.1);
+  const endAnim = (i * step) + (step * 0.9); 
 
-  // Vogliamo che arrivi a quasi 90 gradi per "scomparire" visivamente ribaltandosi verso l'alto.
   const rotateX = useTransform(progress, [startAnim, endAnim], [0, i === length - 1 ? 0 : 90]);
-  
-  // Spring per fluidità
-  const smoothRotateX = useSpring(rotateX, { stiffness: 400, damping: 50 });
+  const opacity = useTransform(progress, [startAnim + (step * 0.5), endAnim], [1, i === length - 1 ? 1 : 0]); // Fade out smoothly as it flips, but keep last card
+  // Spring più reattivo per desktop
+  const smoothRotateX = useSpring(rotateX, { stiffness: 600, damping: 40 });
 
   return (
-    <div className="h-screen sticky top-0 flex flex-col justify-start" style={{ zIndex: length - i, perspective: '1500px', transformStyle: 'preserve-3d' }}>
+    <div className="absolute inset-0 flex flex-col justify-center p-0 md:p-6" style={{ zIndex: length - i, perspective: '1500px', transformStyle: 'preserve-3d' }}>
       <motion.div 
-        style={{ rotateX: smoothRotateX, backgroundColor: bgColor, color: textColor, transformOrigin: 'top center' }} 
-        className="relative w-full h-full rounded-t-[3rem] shadow-[0_-10px_40px_-10px_rgba(0,0,0,0.15)] overflow-hidden flex flex-col justify-center border-t border-white/10 will-change-transform"
+        style={{ 
+          rotateX: smoothRotateX, 
+          opacity, 
+          backgroundColor: bgColor, 
+          color: textColor, 
+          transformOrigin: 'top center',
+          backfaceVisibility: 'hidden',
+          WebkitBackfaceVisibility: 'hidden',
+          WebkitFontSmoothing: 'subpixel-antialiased'
+        }} 
+        className="relative w-full h-full md:rounded-[3rem] shadow-[0_20px_50px_rgba(0,0,0,0.15)] overflow-hidden flex flex-col justify-center border border-gray-200/50 will-change-transform"
       >
-        <div className="relative z-20 container mx-auto px-6 md:px-20 flex flex-col h-full justify-center pointer-events-none">
-            <div className="absolute top-8 left-6 right-6 md:left-20 md:right-20 flex justify-between items-center border-b border-current/20 pb-4 md:pb-6">
-               <span className="text-sm md:text-xl font-bold tracking-widest uppercase opacity-60">Principio 0{i + 1}</span>
+        <CardWaves variant={isBlueCard ? 'blue' : 'white'} />
+        <div className="relative z-20 container mx-auto px-6 md:px-20 flex flex-col h-full justify-center pointer-events-none pb-12 pt-16 md:pt-0">
+            <div className="absolute top-24 left-6 right-6 md:top-10 md:left-20 md:right-20 flex justify-between items-center border-b border-current/20 pb-4 md:pb-6">
+               <span className="text-xs md:text-xl font-bold tracking-widest uppercase opacity-60">Principio 0{i + 1}</span>
                <div className="h-2 w-2 rounded-full bg-current"></div>
             </div>
-            <div className="mb-6 md:mb-10">
-               <h2 className="text-[12vw] md:text-[9vw] font-black uppercase tracking-tighter leading-[0.85] italic">{title}</h2>
+            <div className="mb-4 md:mb-10 mt-16 md:mt-12">
+               <h2 className="text-4xl sm:text-6xl md:text-[8vw] font-black uppercase tracking-tighter leading-[0.85] italic">{title}</h2>
             </div>
             <div className="max-w-4xl">
-               <p className="text-xl md:text-3xl font-medium leading-tight opacity-90">{desc}</p>
+               <p className="text-base md:text-3xl font-medium leading-tight opacity-90">{desc}</p>
             </div>
-            <div className="absolute bottom-8 left-6 md:left-20 opacity-40 text-xs font-bold tracking-widest uppercase">Blend Studio &copy; Values</div>
+            <div className="absolute bottom-6 left-6 md:bottom-10 md:left-20 opacity-40 text-[10px] md:text-xs font-bold tracking-widest uppercase">Blend Studio &copy; Values</div>
         </div>
       </motion.div>
     </div>
@@ -180,10 +188,24 @@ const About = () => {
   const heroY = useTransform(scrollY, [0, 800], [0, 200]);
   const heroScale = useTransform(scrollY, [0, 800], [1, 1.05]);
 
+  // Handle Navbar color over the pinned Values section
+  useMotionValueEvent(scrollYProgress, "change", (latest) => {
+    // Only apply logic while the container is pinned to the screen
+    if (latest > 0.001 && latest < 0.999) {
+      // Calculate which card is currently taking up the screen
+      const activeIndex = Math.min(values.length - 1, Math.floor(latest * values.length + 0.5));
+      const activeCardIsBlue = activeIndex % 2 === 0;
+      window.dispatchEvent(new CustomEvent("nav-force-white", { detail: activeCardIsBlue }));
+    } else {
+      // Release control when section is not pinned
+      window.dispatchEvent(new CustomEvent("nav-force-white", { detail: false }));
+    }
+  });
+
   return (
     <PageTransition>
       <style>{styles}</style>
-      <div className="w-full bg-white min-h-screen relative overflow-hidden">
+      <div className="w-full bg-white min-h-screen relative overflow-x-clip">
         
         <BlendWaves />
 
@@ -223,7 +245,7 @@ const About = () => {
         </div>
 
         {/* --- MANIFESTO --- */}
-        <div className="py-32 md:py-48 px-6 md:px-20 relative z-10 bg-white">
+        <div className="py-20 md:py-48 px-6 md:px-20 relative z-10 bg-white">
             <div className="grid grid-cols-1 md:grid-cols-12 gap-10">
                 <div className="md:col-span-3 sticky top-40 h-fit">
                    <div className="flex items-center gap-3">
@@ -241,7 +263,7 @@ const About = () => {
         </div>
 
         {/* --- GALLERY MARQUEE --- */}
-        <section className="py-20 bg-white border-y border-gray-100 relative z-10">
+        <section className="py-12 md:py-20 bg-white border-y border-gray-100 relative z-10">
             <Marquee 
               speed={40} 
               items={galleryImages.map((src, i) => (
@@ -254,7 +276,7 @@ const About = () => {
         </section>
 
         {/* --- PHILOSOPHY --- */}
-        <section className="py-32 md:py-48 px-6 md:px-20 bg-white relative z-10">
+        <section className="py-20 md:py-48 px-6 md:px-20 bg-white relative z-10">
            <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-32 items-center">
              <motion.div 
                initial={{ opacity: 0, x: -30 }}
@@ -294,22 +316,25 @@ const About = () => {
            </div>
         </section>
 
+        {/* --- VALUES TITLE --- */}
+        <section className="pt-20 md:pt-32 pb-10 bg-[#f7f9fa] relative z-10 text-center">
+             <h2 className="text-xs md:text-sm font-bold uppercase tracking-[0.4em] text-gray-400 mb-3">Core Values</h2>
+             <p className="text-5xl md:text-7xl lg:text-[7rem] font-black text-blend uppercase tracking-tighter leading-none">Ciò in cui crediamo</p>
+        </section>
+
         {/* --- VALUES 3D DECK --- */}
-        <section ref={container} className="relative z-10 bg-white" style={{ perspective: '2000px' }}>
-            <div className="pt-20 pb-10 text-center bg-white relative z-20">
-               <h2 className="text-sm font-bold uppercase tracking-[0.4em] text-gray-400 mb-4">Core Values</h2>
-               <p className="text-6xl md:text-8xl lg:text-[7rem] font-black text-blend uppercase tracking-tighter">Ciò in cui crediamo</p>
-            </div>
-            
-            <div className="pb-4 md:pb-20 relative">
-              {values.map((val, i) => {
-                 return <Card key={i} i={i} {...val} progress={scrollYProgress} length={values.length} />
-              })}
+        <section ref={container} className="relative z-10 bg-[#f7f9fa] h-[400vh] lg:h-[250vh]">
+            <div className="sticky top-0 h-screen w-full overflow-hidden flex flex-col justify-center items-center bg-[#f7f9fa]">
+                <div className="absolute inset-0 w-full h-full perspective-[2000px] p-0 md:p-6 lg:p-12">
+                  {values.map((val, i) => {
+                     return <Card key={i} i={i} {...val} progress={scrollYProgress} length={values.length} />
+                  })}
+                </div>
             </div>
         </section>
 
         {/* --- TEAM CTA (BUTTON VETRO/DARK) --- */}
-        <section className="py-20 md:py-60 bg-blend text-white text-center overflow-hidden relative nav-dark-section z-10">
+        <section className="py-16 md:py-60 bg-blend text-white text-center overflow-hidden relative nav-dark-section z-10">
            <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-5 select-none">
               <ParallaxText baseVelocity={-2}>JOIN THE TEAM JOIN THE TEAM</ParallaxText>
            </div>
