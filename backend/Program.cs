@@ -1,42 +1,58 @@
+using System.Text;
 using backend.Data;
-using Microsoft.AspNetCore.Authentication.Cookies;
+using backend.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using MongoDB.Driver;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// JSON Configuration
 builder.Services.AddControllers().AddJsonOptions(options =>
 {
     options.JsonSerializerOptions.PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.SnakeCaseLower;
 });
 builder.Services.AddOpenApi();
 
+// SQL Server Configuration
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") 
+    ?? builder.Configuration["DB_CONNECTION_STRING"]
     ?? "Server=db;Database=blendstudio;User Id=sa;Password=Your_Strong_Password123;TrustServerCertificate=True;";
 
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(connectionString));
 
-builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-    .AddCookie(options =>
+// MongoDB Configuration
+var mongoConnectionString = builder.Configuration["MONGO_CONNECTION_STRING"] ?? "mongodb://admin:Blend2024!@localhost:27017";
+builder.Services.AddSingleton<IMongoClient>(_ => new MongoClient(mongoConnectionString));
+builder.Services.AddScoped<MongoService>();
+
+// JWT Authentication Configuration
+var jwtSecret = builder.Configuration["JWT_SECRET"] ?? "super_secret_key_blend_studio_2024_make_it_longer_later";
+var key = Encoding.ASCII.GetBytes(jwtSecret);
+
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    options.RequireHttpsMetadata = false;
+    options.SaveToken = true;
+    options.TokenValidationParameters = new TokenValidationParameters
     {
-        options.Cookie.Name = "BlendStudioSession";
-        options.Cookie.HttpOnly = true;
-
-        var isDevelopment = builder.Environment.IsDevelopment();
-        options.Cookie.SameSite = isDevelopment ? SameSiteMode.Lax : SameSiteMode.None;
-        options.Cookie.SecurePolicy = isDevelopment ? CookieSecurePolicy.SameAsRequest : CookieSecurePolicy.Always;
-
-        options.Events.OnRedirectToLogin = context =>
-        {
-            context.Response.StatusCode = StatusCodes.Status401Unauthorized;
-            return Task.CompletedTask;
-        };
-        options.Events.OnRedirectToAccessDenied = context =>
-        {
-            context.Response.StatusCode = StatusCodes.Status403Forbidden;
-            return Task.CompletedTask;
-        };
-    });
+        ValidateIssuerSigningKey = true,
+        IssuerSigningKey = new SymmetricSecurityKey(key),
+        ValidateIssuer = true,
+        ValidIssuer = builder.Configuration["JWT_ISSUER"] ?? "blendstudio-api",
+        ValidateAudience = true,
+        ValidAudience = builder.Configuration["JWT_AUDIENCE"] ?? "blendstudio-frontend",
+        ValidateLifetime = true,
+        ClockSkew = TimeSpan.Zero
+    };
+});
 
 builder.Services.AddCors(options =>
 {

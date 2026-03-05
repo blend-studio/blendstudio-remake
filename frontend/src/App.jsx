@@ -17,6 +17,11 @@ const ServiceDetail = lazy(() => import("./pages/ServiceDetail"));
 const Careers = lazy(() => import("./pages/Careers"));
 const Contact = lazy(() => import("./pages/Contact"));
 
+import { AuthProvider } from "./context/AuthContext";
+import AdminLayout from "./admin/AdminLayout";
+import AdminDashboard from "./admin/AdminDashboard";
+import Login from "./pages/Login";
+
 // Minimal loading fallback
 const PageLoader = () => (
   <div className="h-screen w-full flex items-center justify-center bg-white">
@@ -31,6 +36,7 @@ const AnimatedRoutes = () => {
     <Suspense fallback={<PageLoader />}>
       <AnimatePresence mode="wait">
         <Routes location={location} key={location.pathname}>
+          {/* Public Routes */}
           <Route path="/" element={<Home />} />
           <Route path="/about" element={<About />} />
           <Route path="/projects" element={<Projects />} />
@@ -39,6 +45,15 @@ const AnimatedRoutes = () => {
           <Route path="/services/:slug" element={<ServiceDetail />} />
           <Route path="/careers" element={<Careers />} />
           <Route path="/contact" element={<Contact />} />
+          <Route path="/login" element={<Login />} />
+
+          {/* Protected Admin Routes */}
+          <Route path="/admin" element={<AdminLayout />}>
+            <Route index element={<AdminDashboard />} />
+            <Route path="projects" element={<div className="text-center py-20 text-gray-400 italic">Gestione Progetti in arrivo...</div>} />
+            <Route path="content" element={<div className="text-center py-20 text-gray-400 italic">Gestione Contenuti MongoDB in arrivo...</div>} />
+            <Route path="analytics" element={<div className="text-center py-20 text-gray-400 italic">Dettaglio Analitico in arrivo...</div>} />
+          </Route>
         </Routes>
       </AnimatePresence>
     </Suspense>
@@ -48,16 +63,18 @@ const AnimatedRoutes = () => {
 function App() {
   return (
     <Router basename={import.meta.env.BASE_URL}>
-      <SmoothScroll>
-        <ScrollToTop />
-        <GrainOverlay />
-        
-        <div className="antialiased text-gray-900 bg-white min-h-screen selection:bg-blend-light selection:text-white">
-          <Navbar />
-          <AnimatedRoutes />
-          <Footer />
-        </div>
-      </SmoothScroll>
+      <AuthProvider>
+        <SmoothScroll>
+          <ScrollToTop />
+          <GrainOverlay />
+          
+          <div className="antialiased text-gray-900 bg-white min-h-screen selection:bg-blend-light selection:text-white">
+            <Navbar />
+            <AnimatedRoutes />
+            <Footer />
+          </div>
+        </SmoothScroll>
+      </AuthProvider>
     </Router>
   );
 }
