@@ -20,6 +20,8 @@ const Contact = lazy(() => import("./pages/Contact"));
 import { AuthProvider } from "./context/AuthContext";
 import AdminLayout from "./admin/AdminLayout";
 import AdminDashboard from "./admin/AdminDashboard";
+import AdminProjects from "./admin/AdminProjects";
+import AdminMessages from "./admin/AdminMessages";
 import Login from "./pages/Login";
 
 // Minimal loading fallback
@@ -50,13 +52,27 @@ const AnimatedRoutes = () => {
           {/* Protected Admin Routes */}
           <Route path="/admin" element={<AdminLayout />}>
             <Route index element={<AdminDashboard />} />
-            <Route path="projects" element={<div className="text-center py-20 text-gray-400 italic">Gestione Progetti in arrivo...</div>} />
+            <Route path="projects" element={<AdminProjects />} />
+            <Route path="messages" element={<AdminMessages />} />
             <Route path="content" element={<div className="text-center py-20 text-gray-400 italic">Gestione Contenuti MongoDB in arrivo...</div>} />
             <Route path="analytics" element={<div className="text-center py-20 text-gray-400 italic">Dettaglio Analitico in arrivo...</div>} />
           </Route>
         </Routes>
       </AnimatePresence>
     </Suspense>
+  );
+};
+
+const PublicLayout = ({ children }) => {
+  const location = useLocation();
+  const isAdminOrLogin = location.pathname.startsWith("/admin") || location.pathname === "/login";
+
+  return (
+    <div className="antialiased text-gray-900 bg-white min-h-screen selection:bg-blend-light selection:text-white">
+      {!isAdminOrLogin && <Navbar />}
+      {children}
+      {!isAdminOrLogin && <Footer />}
+    </div>
   );
 };
 
@@ -67,12 +83,9 @@ function App() {
         <SmoothScroll>
           <ScrollToTop />
           <GrainOverlay />
-          
-          <div className="antialiased text-gray-900 bg-white min-h-screen selection:bg-blend-light selection:text-white">
-            <Navbar />
+          <PublicLayout>
             <AnimatedRoutes />
-            <Footer />
-          </div>
+          </PublicLayout>
         </SmoothScroll>
       </AuthProvider>
     </Router>

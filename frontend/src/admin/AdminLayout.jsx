@@ -14,15 +14,15 @@ const AdminLayout = () => {
     { name: 'Dashboard', path: '/admin', icon: '📊' },
     { name: 'Progetti', path: '/admin/projects', icon: '📁' },
     { name: 'Contenuti', path: '/admin/content', icon: '📝' },
+    { name: 'Messaggi', path: '/admin/messages', icon: '✉️' },
     { name: 'Analytics', path: '/admin/analytics', icon: '📈' },
-    { name: 'Newsletter', path: '/admin/newsletter', icon: '✉️' },
   ];
 
   return (
     <div className="flex h-screen bg-gray-50 overflow-hidden">
       {/* Sidebar */}
       <aside className="w-64 bg-blend-dark text-white flex flex-col">
-        <div className="p-8 border-b border-white/10">
+        <div className="p-8 border-b border-[#2c5f7a]">
           <h1 className="text-xl font-bold tracking-tighter uppercase italic">Blend Admin</h1>
         </div>
         
@@ -33,8 +33,8 @@ const AdminLayout = () => {
               to={item.path}
               className={`flex items-center gap-4 px-4 py-3 rounded-xl transition-all ${
                 location.pathname === item.path 
-                ? 'bg-white/10 text-white font-bold' 
-                : 'text-white/60 hover:text-white hover:bg-white/5'
+                ? 'bg-[#2c5f7a] text-white font-bold' 
+                : 'text-slate-300 hover:text-white hover:bg-[#254f68]'
               }`}
             >
               <span>{item.icon}</span>
@@ -43,14 +43,17 @@ const AdminLayout = () => {
           ))}
         </nav>
 
-        <div className="p-4 border-t border-white/10 space-y-4">
+        <div className="p-4 border-t border-[#2c5f7a] space-y-4">
            <div className="px-4">
-              <p className="text-xs text-white/40 uppercase font-black tracking-widest">Utente</p>
+              <p className="text-xs text-slate-400 uppercase font-black tracking-widest">Utente</p>
               <p className="text-sm font-bold truncate">{user?.email}</p>
            </div>
            <button 
              onClick={logout}
-             className="w-full flex items-center gap-4 px-4 py-3 rounded-xl text-red-300 hover:bg-red-500/10 transition-all font-bold"
+             className="w-full flex items-center gap-4 px-4 py-3 rounded-xl font-bold transition-all"
+             style={{ color: '#fca5a5' }}
+             onMouseEnter={e => e.currentTarget.style.backgroundColor = '#7f1d1d30'}
+             onMouseLeave={e => e.currentTarget.style.backgroundColor = 'transparent'}
            >
              🚪 Esci
            </button>
@@ -58,7 +61,7 @@ const AdminLayout = () => {
       </aside>
 
       {/* Main Content */}
-      <main className="flex-grow overflow-auto p-8 md:p-12">
+      <main className="flex-grow overflow-auto p-8 md:p-12" data-lenis-prevent>
         <motion.div
            key={location.pathname}
            initial={{ opacity: 0, y: 10 }}

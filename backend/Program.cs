@@ -28,6 +28,9 @@ var mongoConnectionString = builder.Configuration["MONGO_CONNECTION_STRING"] ?? 
 builder.Services.AddSingleton<IMongoClient>(_ => new MongoClient(mongoConnectionString));
 builder.Services.AddScoped<MongoService>();
 
+// Mailer Service
+builder.Services.AddScoped<IMailerService, MailerService>();
+
 // JWT Authentication Configuration
 var jwtSecret = builder.Configuration["JWT_SECRET"] ?? "super_secret_key_blend_studio_2024_make_it_longer_later";
 var key = Encoding.ASCII.GetBytes(jwtSecret);
@@ -58,7 +61,7 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
     {
-        policy.WithOrigins("http://localhost:5173", "http://127.0.0.1:5173", "https://giustefoodtruck.com")
+        policy.WithOrigins("http://localhost:5173", "http://127.0.0.1:5173")
               .AllowAnyHeader()
               .AllowAnyMethod()
               .AllowCredentials();

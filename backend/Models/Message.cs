@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-
+using System.Text.Json.Serialization;
 namespace backend.Models;
 
 [Table("messages")]
@@ -26,6 +26,7 @@ public class Message
 
     [Required]
     [Column("message")]
+    [JsonPropertyName("message")]
     public string MessageText { get; set; } = string.Empty;
 
     [Column("created_at")]

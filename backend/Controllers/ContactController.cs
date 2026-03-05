@@ -1,7 +1,9 @@
 using backend.Data;
 using backend.Models;
 using backend.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace backend.Controllers;
 
@@ -20,47 +22,33 @@ public class ContactController : ControllerBase
         _config = config;
     }
 
-    public class ContactRequest
-    {
-        public string Name { get; set; } = string.Empty;
-        public string Email { get; set; } = string.Empty;
-        public string? Phone { get; set; }
-        public string Message { get; set; } = string.Empty;
-    }
-
     [HttpPost]
     // Consente chiamate anche a /api/contact per compatibilità totale
     [Route("/api/contact")]
-    public async Task<IActionResult> Submit([FromBody] ContactRequest request)
+    public async Task<IActionResult> Submit([FromBody] Message request)
     {
-        if (string.IsNullOrWhiteSpace(request.Email) || string.IsNullOrWhiteSpace(request.Message))
+        if (string.IsNullOrWhiteSpace(request.Email) || string.IsNullOrWhiteSpace(request.MessageText))
         {
             return BadRequest(new { status = "error", message = "Dati mancanti" });
         }
 
         try
         {
-            var message = new Message
-            {
-                Name = request.Name,
-                Email = request.Email,
-                Phone = request.Phone,
-                MessageText = request.Message,
-                CreatedAt = DateTime.UtcNow,
-                IsRead = false
-            };
+            request.Id = 0;
+            request.CreatedAt = DateTime.UtcNow;
+            request.IsRead = false;
 
-            _context.Messages.Add(message);
+            _context.Messages.Add(request);
             await _context.SaveChangesAsync();
 
-            var adminEmail = _config["SMTP_USER"]; // Oppure una mail specifica
+            var adminEmail = _config["SMTP_USER"];
             var subject = $"Nuovo contatto da Blend Studio: {request.Name}";
             var body = $@"
                 <h3>Hai ricevuto un nuovo messaggio</h3>
                 <p><strong>Nome:</strong> {request.Name}</p>
                 <p><strong>Email:</strong> {request.Email}</p>
                 <p><strong>Telefono:</strong> {request.Phone ?? "N/A"}</p>
-                <p><strong>Messaggio:</strong><br>{request.Message}</p>
+                <p><strong>Messaggio:</strong><br>{request.MessageText}</p>
             ";
 
             var mailSent = await _mailer.SendEmailAsync(adminEmail!, subject, body);
@@ -77,5 +65,71 @@ public class ContactController : ControllerBase
             Console.WriteLine($"Errore salvataggio contatto: {ex.Message}");
             return StatusCode(500, new { status = "error", message = "Errore server" });
         }
+    }
+
+    // ── Admin endpoints ────────────────────────────────────────────────────
+
+    [Authorize]
+    [HttpGet]
+    [Route("/api/admin/messages")]
+    public async Task<IActionResult> GetMessages()
+    {
+        var messages = await _context.Messages
+            .OrderByDescending(m => m.CreatedAt)
+            .ToListAsync();
+        return Ok(new { status = "success", data = messages });
+    }
+
+    [Authorize]
+    [HttpPatch]
+    [Route("/api/admin/messages/{id:int}/read")]
+    public async Task<IActionResult> MarkRead(int id)
+    {
+        var msg = await _context.Messages.FindAsync(id);
+        if (msg == null) return NotFound(new { status = "error", message = "Messaggio non trovato" });
+        msg.IsRead = true;
+        await _context.SaveChangesAsync();
+        return Ok(new { status = "success" });
+    }
+
+    [Authorize]
+    [HttpDelete]
+    [Route("/api/admin/messages/{id:int}")]
+    public async Task<IActionResult> DeleteMessage(int id)
+    {
+        var msg = await _context.Messages.FindAsync(id);
+        if (msg == null) return NotFound(new { status = "error", message = "Messaggio non trovato" });
+        _context.Messages.Remove(msg);
+        await _context.SaveChangesAsync();
+        return Ok(new { status = "success", message = "Messaggio eliminato" });
+    }
+
+    public class ReplyRequest { public string Body { get; set; } = string.Empty; }
+
+    [Authorize]
+    [HttpPost]
+    [Route("/api/admin/messages/{id:int}/reply")]
+    public async Task<IActionResult> Reply(int id, [FromBody] ReplyRequest request)
+    {
+        var msg = await _context.Messages.FindAsync(id);
+        if (msg == null) return NotFound(new { status = "error", message = "Messaggio non trovato" });
+        if (string.IsNullOrWhiteSpace(request.Body))
+            return BadRequest(new { status = "error", message = "Testo risposta mancante" });
+
+        var subject = $"Re: Il tuo messaggio a Blend Studio";
+        var body = $@"
+            <p>Ciao {msg.Name},</p>
+            <p>{request.Body.Replace("\n", "<br>")}</p>
+            <br>
+            <p style='color:#888;font-size:12px'>— Team Blend Studio</p>
+        ";
+
+        var sent = await _mailer.SendEmailAsync(msg.Email, subject, body);
+        if (!sent) return StatusCode(500, new { status = "error", message = "Invio email fallito" });
+
+        msg.IsRead = true;
+        await _context.SaveChangesAsync();
+
+        return Ok(new { status = "success", message = "Risposta inviata" });
     }
 }

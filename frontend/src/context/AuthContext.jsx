@@ -9,8 +9,13 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const savedUser = localStorage.getItem('blend_admin_user');
     const token = localStorage.getItem('blend_admin_token');
-    if (savedUser && token) {
+    const isValidToken = token && token !== 'undefined' && token !== 'null';
+    if (savedUser && isValidToken) {
       setUser(JSON.parse(savedUser));
+    } else {
+      // Pulizia sessione invalida (da vecchio sistema cookie)
+      localStorage.removeItem('blend_admin_user');
+      localStorage.removeItem('blend_admin_token');
     }
     setLoading(false);
   }, []);
