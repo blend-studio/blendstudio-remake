@@ -13,7 +13,7 @@ services:
     deploy:
       resources:
         limits:
-          memory: 2G # Requisito minimo per MSSQL ma evita che consumi tutto il resto
+          memory: 2G 
 
   backend:
     build:
@@ -26,11 +26,12 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT:-Development}
       - ConnectionStrings__DefaultConnection=${DB_CONNECTION_STRING}
+      - MONGO_CONNECTION_STRING=${MONGO_CONNECTION_STRING}
       - DOTNET_USE_POLLING_FILE_WATCHER=1
     volumes:
       - ./backend:/app
-      - /app/bin # Anonymous volume per isolare la build da Windows (velocizza I/O)
-      - /app/obj # Anonymous volume per isolare la build da Windows (velocizza I/O)
+      - /app/bin 
+      - /app/obj 
     depends_on:
       - db
       - mongodb
@@ -40,9 +41,7 @@ services:
     image: mongo:7.0
     container_name: blendstudio_mongo
     restart: always
-    environment:
-      - MONGO_INITDB_ROOT_USERNAME=${MONGO_INITDB_ROOT_USERNAME}
-      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_INITDB_ROOT_PASSWORD}
+    command: ["--noauth"]
     ports:
       - "27017:27017"
     volumes:
@@ -56,7 +55,9 @@ services:
     ports:
       - "5000:5000"
     volumes:
-      - mlflow_data:/app
+      # MODIFICATO: Mappa il volume solo dove MLFlow salva gli esperimenti, 
+      # non su tutta l'app (assicurati che corrisponda alla config di MLFlow)
+      - mlflow_data:/mlruns 
 
   analytics:
     build:
@@ -83,12 +84,13 @@ services:
     ports:
       - "5173:5173"
     environment:
-      - VITE_API_BASE_URL=${VITE_API_BASE_URL:-http://localhost:8000}
+      # Corretto così. Il browser risolverà localhost.
+      - VITE_API_BASE_URL=${VITE_API_BASE_URL:-http://localhost:8000} 
     depends_on:
       - backend
     volumes:
       - ./frontend:/app
-      - frontend_node_modules:/app/node_modules # Named volume per velocizzare I/O dei moduli
+      - frontend_node_modules:/app/node_modules
 
 volumes:
   db_data:

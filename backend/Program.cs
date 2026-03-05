@@ -87,4 +87,24 @@ app.UseAuthorization();
 
 app.MapControllers();
 
+// Auto-migrate: crea il database e applica le migration all'avvio
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    var retries = 10;
+    while (retries-- > 0)
+    {
+        try
+        {
+            db.Database.Migrate();
+            break;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"[Startup] DB not ready, retrying... ({retries} left): {ex.Message}");
+            Thread.Sleep(3000);
+        }
+    }
+}
+
 app.Run();

@@ -22,6 +22,7 @@ import AdminLayout from "./admin/AdminLayout";
 import AdminDashboard from "./admin/AdminDashboard";
 import AdminProjects from "./admin/AdminProjects";
 import AdminMessages from "./admin/AdminMessages";
+import AdminContent from "./admin/AdminContent";
 import Login from "./pages/Login";
 
 // Minimal loading fallback
@@ -54,7 +55,7 @@ const AnimatedRoutes = () => {
             <Route index element={<AdminDashboard />} />
             <Route path="projects" element={<AdminProjects />} />
             <Route path="messages" element={<AdminMessages />} />
-            <Route path="content" element={<div className="text-center py-20 text-gray-400 italic">Gestione Contenuti MongoDB in arrivo...</div>} />
+            <Route path="content" element={<AdminContent />} />
             <Route path="analytics" element={<div className="text-center py-20 text-gray-400 italic">Dettaglio Analitico in arrivo...</div>} />
           </Route>
         </Routes>

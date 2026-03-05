@@ -127,4 +127,21 @@ export const replyMessage = async (id, body) => {
     return response.data;
 };
 
+// ── Contenuti MongoDB ──────────────────────────────────────────────────────
+
+export const getContent = async (slug) => {
+    const response = await api.get(`/content/${slug}`);
+    return response.data;
+};
+
+export const getAllContent = async () => {
+    const response = await api.get('/admin/content');
+    return response.data;
+};
+
+export const updateContent = async (slug, data) => {
+    const response = await api.put(`/admin/content/${slug}`, { slug, data });
+    return response.data;
+};
+
 export default api;
