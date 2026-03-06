@@ -41,3 +41,16 @@ def get_col():
     db_name = urlparse(MONGO_URI).path.lstrip("/") or "blendstudio"
     db = client[db_name]
     return db["telemetry"]
+
+
+def get_wrike_col(collection: str = "wrike_tasks"):
+    """Restituisce una collection Wrike da MongoDB.
+
+    Collezioni disponibili:
+      - "wrike_tasks"    : snapshot dei task Wrike (popolato da .NET)
+      - "wrike_contacts" : membri del team con ID e nome
+    """
+    client = MongoClient(MONGO_URI)
+    db_name = urlparse(MONGO_URI).path.lstrip("/") or "blendstudio"
+    db = client[db_name]
+    return db[collection]

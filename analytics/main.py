@@ -23,7 +23,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from config import MLFLOW_URI                  # noqa: F401 — inizializza MLflow come side-effect
-from routers import advanced, stats, training
+from routers import advanced, stats, training, wrike
 
 # ── App ───────────────────────────────────────────────────────────────────────
 app = FastAPI(
@@ -49,6 +49,7 @@ app.add_middleware(
 app.include_router(stats.router)
 app.include_router(advanced.router)
 app.include_router(training.router)
+app.include_router(wrike.router)
 
 
 # ── Health check ──────────────────────────────────────────────────────────────

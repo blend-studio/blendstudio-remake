@@ -27,6 +27,7 @@ services:
       - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT:-Development}
       - ConnectionStrings__DefaultConnection=${DB_CONNECTION_STRING}
       - MONGO_CONNECTION_STRING=${MONGO_CONNECTION_STRING}
+      - WRIKE_ACCESS_TOKEN=${WRIKE_ACCESS_TOKEN}
       - DOTNET_USE_POLLING_FILE_WATCHER=1
     volumes:
       - ./backend:/app

@@ -30,6 +30,10 @@ var mongoConnectionString = builder.Configuration["MONGO_CONNECTION_STRING"] ?? 
 builder.Services.AddSingleton<IMongoClient>(_ => new MongoClient(mongoConnectionString));
 builder.Services.AddScoped<MongoService>();
 
+// Wrike Integration
+builder.Services.AddScoped<backend.Services.WrikeService>();
+builder.Services.AddHostedService<backend.Services.WrikeSyncJob>();
+
 // Mailer Service
 builder.Services.AddScoped<IMailerService, MailerService>();
 
