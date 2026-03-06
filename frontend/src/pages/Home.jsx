@@ -17,6 +17,7 @@ import { RevealText } from "../components/ui/RevealText";
 import Marquee from "../components/ui/Marquee";
 import { getProjects } from "../services/api";
 import usePageContent from "../hooks/usePageContent";
+import { useTelemetry, useScrollDepth } from "../hooks/useTelemetry";
 
 // Import local logos
 import neroBucato from "../assets/images/loghi partner/aran/NERO-BUCATO.svg";
@@ -221,6 +222,8 @@ const Home = () => {
   const servicesScrollRef = useRef(null);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
   const videoRef = useRef(null);
+  const { track } = useTelemetry();
+  useScrollDepth();
 
   const lenis = useLenis();
 
@@ -460,7 +463,7 @@ const Home = () => {
                     <p className="text-blend-light font-black uppercase tracking-[0.4em] text-xs md:text-sm">{content.services_preview.eyebrow}</p>
                  </div>
               </motion.div>
-              <Link to="/services" className="group/btn flex items-center gap-6 text-[10px] font-black uppercase tracking-[0.5em] text-blend relative z-10">
+              <Link to="/services" onClick={() => track('services_explore_click')} className="group/btn flex items-center gap-6 text-[10px] font-black uppercase tracking-[0.5em] text-blend relative z-10">
                  <span className="border-b-2 border-blend pb-2 group-hover/btn:border-blend-light transition-colors">{content.services_preview.cta_label}</span>
                  <div className="w-12 h-12 rounded-full border border-gray-300 flex items-center justify-center group-hover/btn:bg-blend group-hover/btn:text-white group-hover/btn:scale-110 transition-all duration-300">→</div>
               </Link>
@@ -484,7 +487,7 @@ const Home = () => {
                        <motion.div
                          layoutId={`card-${i}`}
                          key={i}
-                         onClick={() => setActiveService(i)}
+                         onClick={() => { setActiveService(i); track('service_card_click', { service: service.title }); }}
                          initial={{ opacity: 0, y: 40 }}
                          whileInView={{ opacity: 1, y: 0 }}
                          viewport={{ once: true }}
@@ -538,7 +541,7 @@ const Home = () => {
                                   <motion.div key={idx} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 + (idx * 0.1) }} className="flex items-center gap-3"><div className="w-2 h-2 bg-blend-light rounded-full shadow-[0_0_10px_rgba(47,101,128,0.8)]"></div><span className="text-white font-medium text-[12px] md:text-base">{feature}</span></motion.div>
                                 ))}
                               </div>
-                              <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.6 }} className="mt-4 md:mt-14"><Link to={`/services/${servicesShort[activeService].slug}`} className="group/modal-btn inline-flex items-center gap-4 px-6 py-3 md:px-8 md:py-4 bg-white text-blend font-black text-[10px] md:text-xs uppercase tracking-[0.2em] rounded-full hover:shadow-[0_0_30px_rgba(255,255,255,0.3)] transition-all duration-300"><span>Start Project</span><div className="w-8 h-8 md:w-10 md:h-10 rounded-full border border-blend/10 flex items-center justify-center group-hover/modal-btn:bg-blend group-hover/modal-btn:text-white transition-all duration-300"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="md:w-4 md:h-4 group-hover/modal-btn:translate-x-0.5 transition-transform"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></div></Link></motion.div>
+                              <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.6 }} className="mt-4 md:mt-14"><Link to={`/services/${servicesShort[activeService].slug}`} onClick={() => track('service_cta_click', { service: servicesShort[activeService].title })} className="group/modal-btn inline-flex items-center gap-4 px-6 py-3 md:px-8 md:py-4 bg-white text-blend font-black text-[10px] md:text-xs uppercase tracking-[0.2em] rounded-full hover:shadow-[0_0_30px_rgba(255,255,255,0.3)] transition-all duration-300"><span>Start Project</span><div className="w-8 h-8 md:w-10 md:h-10 rounded-full border border-blend/10 flex items-center justify-center group-hover/modal-btn:bg-blend group-hover/modal-btn:text-white transition-all duration-300"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="md:w-4 md:h-4 group-hover/modal-btn:translate-x-0.5 transition-transform"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></div></Link></motion.div>
                            </motion.div>
                         </div>
                      </div>
@@ -656,7 +659,7 @@ const Home = () => {
             <div className="relative z-10">
               <p className="text-xs md:text-sm font-black uppercase tracking-[0.4em] opacity-70 mb-12">{content.cta.eyebrow}</p>
               
-              <Link to="/contact" className="group relative inline-block">
+              <Link to="/contact" onClick={() => track('home_cta_click')} className="group relative inline-block">
                   <h2 className="text-6xl md:text-[10rem] font-black tracking-tighter transition-all duration-500 uppercase group-hover:italic group-hover:scale-105">
                       {content.cta.title}
                   </h2>

@@ -5,6 +5,7 @@ import { RevealText } from "../components/ui/RevealText";
 import { motion, AnimatePresence } from "framer-motion";
 import { getProjects } from "../services/api";
 import LazyVideo from "../components/ui/LazyVideo";
+import { useTelemetry, useScrollDepth } from "../hooks/useTelemetry";
 
 const categories = ["All", "Web Design", "Branding", "Development", "Marketing"];
 
@@ -14,6 +15,8 @@ const Projects = () => {
   const [loading, setLoading] = useState(true);
   const [showFilterModal, setShowFilterModal] = useState(false);
   const [showFilterFab, setShowFilterFab] = useState(false);
+  const { track } = useTelemetry();
+  useScrollDepth();
 
   useEffect(() => {
     const fetchProjects = async () => {
@@ -105,7 +108,7 @@ const Projects = () => {
                     {categories.map((cat) => (
                         <button
                           key={cat}
-                          onClick={() => setFilter(cat)}
+                          onClick={() => { setFilter(cat); track('project_filter', { category: cat }); }}
                           className={`px-6 py-2 rounded-full text-[10px] font-black uppercase tracking-widest transition-all duration-500 cursor-pointer ${
                               filter === cat 
                               ? "!bg-[#4a8fa3] !text-white shadow-lg shadow-cyan-900/20 scale-105" 
@@ -140,7 +143,7 @@ const Projects = () => {
                         viewport={{ once: true }}
                         className="group"
                     >
-                        <Link to={`/project/${project.id}`} className="block">
+                        <Link to={`/project/${project.id}`} className="block" onClick={() => track('project_click', { project_id: project.id, title: project.title })}>
                           <div className="relative aspect-[16/10] overflow-hidden bg-gray-100 rounded-3xl shadow-xl">
                               {/* Overlay on hover */}
                               <motion.div 
@@ -216,7 +219,7 @@ const Projects = () => {
 
             {/* Load More */}
             <div className="mt-40 text-center">
-                <Link to="/contact" className="group relative inline-block">
+                <Link to="/contact" className="group relative inline-block" onClick={() => track('cta_contact_click', { source: 'projects' })}>
                     <span className="text-5xl md:text-8xl font-black text-blend/10 group-hover:text-blend/20 transition-colors uppercase tracking-tighter">
                        Your project here?
                     </span>

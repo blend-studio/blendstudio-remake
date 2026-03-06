@@ -6,6 +6,7 @@ import Footer from "./components/Footer";
 import SmoothScroll from "./components/SmoothScroll";
 import ScrollToTop from "./components/ScrollToTop";
 import GrainOverlay from "./components/ui/GrainOverlay";
+import { useTelemetry } from "./hooks/useTelemetry";
 
 // Lazy-loaded pages — each page is a separate JS chunk
 const Home = lazy(() => import("./pages/Home"));
@@ -24,20 +25,30 @@ import AdminProjects from "./admin/AdminProjects";
 import AdminMessages from "./admin/AdminMessages";
 import AdminContent from "./admin/AdminContent";
 import AdminUsers from "./admin/AdminUsers";
+import AdminAnalytics from "./admin/AdminAnalytics";
 import Login from "./pages/Login";
 
 // Minimal loading fallback
 const PageLoader = () => (
   <div className="h-screen w-full flex items-center justify-center bg-white">
-    <div className="w-8 h-8 border-4 border-[#2f6580] border-t-transparent rounded-full animate-spin"></div>
+    <div className="w-8 h-8 border-4 border-blend border-t-transparent rounded-full animate-spin"></div>
   </div>
 );
+
+// Attiva il tracking automatico delle page view (solo pagine pubbliche)
+function TelemetryTracker() {
+  const location = useLocation();
+  const isPublic = !location.pathname.startsWith('/admin') && location.pathname !== '/login';
+  useTelemetry(); // il hook traccia le page_view automaticamente
+  return null;
+}
 
 const AnimatedRoutes = () => {
   const location = useLocation();
 
   return (
     <Suspense fallback={<PageLoader />}>
+      <TelemetryTracker />
       <AnimatePresence mode="wait">
         <Routes location={location} key={location.pathname}>
           {/* Public Routes */}
@@ -58,7 +69,7 @@ const AnimatedRoutes = () => {
             <Route path="messages" element={<AdminMessages />} />
             <Route path="content" element={<AdminContent />} />
             <Route path="users" element={<AdminUsers />} />
-            <Route path="analytics" element={<div className="text-center py-20 text-gray-400 italic">Dettaglio Analitico in arrivo...</div>} />
+            <Route path="analytics" element={<AdminAnalytics />} />
           </Route>
         </Routes>
       </AnimatePresence>

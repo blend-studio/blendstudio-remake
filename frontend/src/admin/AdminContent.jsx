@@ -1,181 +1,224 @@
 ﻿import React, { useState, useEffect, useCallback } from 'react';
 import { getAllContent, updateContent } from '../services/api';
+import {
+  AdminBadge,
+  AdminButton,
+  AdminInput,
+  AdminNotice,
+  AdminPage,
+  AdminPanel,
+  AdminTextarea,
+} from './AdminUI';
 
-// ─── Metadati pagine ────────────────────────────────────────────────────────
 const KNOWN_SLUGS = [
-  { slug: 'globals',  label: 'Globals',  icon: '\uD83C\uDF10', desc: 'Navbar, Footer, Socials, Info azienda' },
-  { slug: 'home',     label: 'Home',     icon: '\uD83C\uDFE0', desc: 'Hero, Statement, Clienti, Preview servizi, CTA' },
-  { slug: 'about',    label: 'About',    icon: '\uD83D\uDC65', desc: 'Hero, Manifesto, Gallery, Valori, Team CTA' },
-  { slug: 'services', label: 'Services', icon: '\u2699\uFE0F',  desc: 'Hero, Lista servizi, CTA' },
-  { slug: 'contact',  label: 'Contact',  icon: '\u2709\uFE0F',  desc: 'Hero, Socials, Form, Info, Mappa' },
-  { slug: 'careers',  label: 'Careers',  icon: '\uD83D\uDCBC', desc: 'Hero, Perks, Posizioni aperte' },
+  { slug: 'globals', label: 'Globals', icon: '🌐', desc: 'Navbar, Footer, Socials, Info azienda' },
+  { slug: 'home', label: 'Home', icon: '🏠', desc: 'Hero, Statement, Clienti, Preview servizi, CTA' },
+  { slug: 'about', label: 'About', icon: '👥', desc: 'Hero, Manifesto, Gallery, Valori, Team CTA' },
+  { slug: 'services', label: 'Services', icon: '⚙️', desc: 'Hero, Lista servizi, CTA' },
+  { slug: 'contact', label: 'Contact', icon: '✉️', desc: 'Hero, Socials, Form, Info, Mappa' },
+  { slug: 'careers', label: 'Careers', icon: '💼', desc: 'Hero, Perks, Posizioni aperte' },
 ];
 
 function prettyJson(val) {
-  try { return JSON.stringify(val, null, 2); } catch { return '{}'; }
-}
-function tryParseJson(str) {
-  try { return { ok: true, value: JSON.parse(str) }; } catch (e) { return { ok: false, error: e.message }; }
+  try {
+    return JSON.stringify(val, null, 2);
+  } catch {
+    return '{}';
+  }
 }
 
-// --- Campo singolo ---
+function tryParseJson(str) {
+  try {
+    return { ok: true, value: JSON.parse(str) };
+  } catch (e) {
+    return { ok: false, error: e.message };
+  }
+}
+
+function IcoLayers() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <polygon points="12 2 2 7 12 12 22 7 12 2" />
+      <polyline points="2 17 12 22 22 17" />
+      <polyline points="2 12 12 17 22 12" />
+    </svg>
+  );
+}
+
+function IcoCode() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <polyline points="16 18 22 12 16 6" />
+      <polyline points="8 6 2 12 8 18" />
+    </svg>
+  );
+}
+
+function IcoSparkles() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9L12 3Z" />
+      <path d="M5 3v4" />
+      <path d="M3 5h4" />
+      <path d="M19 17v4" />
+      <path d="M17 19h4" />
+    </svg>
+  );
+}
+
 function FieldInput({ value, onChange, label }) {
   if (typeof value === 'boolean') {
     return (
-      <div className="flex items-center justify-between py-3 border-b border-gray-100 last:border-0">
-        <span className="text-sm font-semibold text-gray-600 capitalize">{label}</span>
+      <div className="flex items-center justify-between rounded-2xl border border-slate-200 bg-white px-4 py-3 shadow-sm">
+        <span className="text-sm font-semibold capitalize text-slate-700">{label}</span>
         <button
+          type="button"
           onClick={() => onChange(!value)}
-          className="relative inline-flex h-6 w-11 items-center rounded-full transition-colors"
-          style={{ backgroundColor: value ? '#1e4659' : '#e5e7eb' }}
+          className={`relative inline-flex h-7 w-12 items-center rounded-full transition-colors ${value ? 'bg-slate-950' : 'bg-slate-200'}`}
         >
-          <span className={`inline-block h-4 w-4 rounded-full bg-white shadow transform transition-transform ${value ? 'translate-x-6' : 'translate-x-1'}`} />
+          <span className={`inline-block h-5 w-5 rounded-full bg-white shadow transition-transform ${value ? 'translate-x-6' : 'translate-x-1'}`} />
         </button>
       </div>
     );
   }
+
   if (typeof value === 'number') {
     return (
-      <div className="flex flex-col gap-1 mb-4">
-        <label className="text-xs font-black uppercase tracking-widest text-gray-400">{label}</label>
-        <input
-          type="number"
-          value={value}
-          onChange={e => onChange(Number(e.target.value))}
-          className="border border-gray-200 rounded-xl px-4 py-2.5 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-100 bg-white"
-        />
+      <div className="flex flex-col gap-2">
+        <label className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400">{label}</label>
+        <AdminInput type="number" value={value} onChange={(e) => onChange(Number(e.target.value))} />
       </div>
     );
   }
+
   if (typeof value === 'string') {
     const isLong = value.length > 80 || value.includes('\n');
     return (
-      <div className="flex flex-col gap-1 mb-4">
-        <label className="text-xs font-black uppercase tracking-widest text-gray-400">{label}</label>
+      <div className="flex flex-col gap-2">
+        <label className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400">{label}</label>
         {isLong ? (
-          <textarea
-            value={value}
-            onChange={e => onChange(e.target.value)}
-            rows={3}
-            className="border border-gray-200 rounded-xl px-4 py-2.5 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-100 bg-white resize-y"
-          />
+          <AdminTextarea value={value} onChange={(e) => onChange(e.target.value)} rows={4} className="resize-y" />
         ) : (
-          <input
-            type="text"
-            value={value}
-            onChange={e => onChange(e.target.value)}
-            className="border border-gray-200 rounded-xl px-4 py-2.5 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-100 bg-white"
-          />
+          <AdminInput type="text" value={value} onChange={(e) => onChange(e.target.value)} />
         )}
       </div>
     );
   }
+
   return null;
 }
 
-// --- Editor ricorsivo ---
 function ObjectEditor({ data, onChange, depth = 0 }) {
   if (!data || typeof data !== 'object') return null;
 
-  // Array di primitive
-  if (Array.isArray(data) && data.every(i => typeof i !== 'object' || i === null)) {
+  if (Array.isArray(data) && data.every((item) => typeof item !== 'object' || item === null)) {
     return (
-      <div className="space-y-2">
+      <div className="space-y-3">
         {data.map((item, idx) => (
-          <div key={idx} className="flex items-center gap-2">
-            <input
+          <div key={idx} className="flex flex-col gap-2 rounded-2xl border border-slate-200 bg-white p-3 shadow-sm sm:flex-row sm:items-center">
+            <AdminInput
               type="text"
               value={item ?? ''}
-              onChange={e => { const n = [...data]; n[idx] = e.target.value; onChange(n); }}
-              className="flex-grow border border-gray-200 rounded-xl px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-100 bg-white"
+              onChange={(e) => {
+                const next = [...data];
+                next[idx] = e.target.value;
+                onChange(next);
+              }}
+              className="flex-1"
             />
-            <button
-              onClick={() => onChange(data.filter((_, i) => i !== idx))}
-              className="w-8 h-8 flex items-center justify-center rounded-lg text-gray-400 hover:bg-red-50 hover:text-red-500 transition-colors"
-            >&#x2715;</button>
+            <AdminButton type="button" variant="danger" className="sm:px-3 sm:py-2" onClick={() => onChange(data.filter((_, i) => i !== idx))}>
+              Rimuovi
+            </AdminButton>
           </div>
         ))}
-        <button
-          onClick={() => onChange([...data, ''])}
-          className="mt-1 text-xs font-bold px-3 py-1.5 rounded-lg border border-dashed border-gray-300 text-gray-400 hover:border-blue-300 hover:text-blue-500 transition-colors"
-        >+ Aggiungi</button>
+
+        <AdminButton type="button" variant="secondary" onClick={() => onChange([...data, ''])}>
+          + Aggiungi valore
+        </AdminButton>
       </div>
     );
   }
 
-  // Array di oggetti
   if (Array.isArray(data)) {
     return (
-      <div className="space-y-3">
+      <div className="space-y-4">
         {data.map((item, idx) => (
-          <div key={idx} className="bg-gray-50 border border-gray-200 rounded-2xl p-4">
-            <div className="flex items-center justify-between mb-3">
-              <span className="text-xs font-black uppercase tracking-widest text-gray-400">#{idx + 1}</span>
-              <button
-                onClick={() => onChange(data.filter((_, i) => i !== idx))}
-                className="text-xs font-bold px-2 py-1 rounded-lg text-red-400 hover:bg-red-50 transition-colors"
-              >Rimuovi</button>
+          <div key={idx} className="rounded-3xl border border-slate-200 bg-slate-50/80 p-4 shadow-sm">
+            <div className="mb-4 flex items-center justify-between gap-3">
+              <AdminBadge tone="slate">Elemento #{idx + 1}</AdminBadge>
+              <AdminButton type="button" variant="danger" className="px-3 py-2 text-xs" onClick={() => onChange(data.filter((_, i) => i !== idx))}>
+                Rimuovi
+              </AdminButton>
             </div>
             <ObjectEditor
               data={item}
-              onChange={newItem => { const n = [...data]; n[idx] = newItem; onChange(n); }}
+              onChange={(newItem) => {
+                const next = [...data];
+                next[idx] = newItem;
+                onChange(next);
+              }}
               depth={depth + 1}
             />
           </div>
         ))}
-        <button
+
+        <AdminButton
+          type="button"
+          variant="secondary"
           onClick={() => {
-            const tmpl = data[0] ? Object.fromEntries(Object.keys(data[0]).map(k => [k, typeof data[0][k] === 'number' ? 0 : ''])) : {};
-            onChange([...data, tmpl]);
+            const template = data[0]
+              ? Object.fromEntries(Object.keys(data[0]).map((key) => [key, typeof data[0][key] === 'number' ? 0 : '']))
+              : {};
+            onChange([...data, template]);
           }}
-          className="w-full text-xs font-bold px-3 py-2.5 rounded-xl border border-dashed border-gray-300 text-gray-400 hover:border-blue-300 hover:text-blue-500 transition-colors"
-        >+ Aggiungi elemento</button>
+        >
+          + Aggiungi elemento
+        </AdminButton>
       </div>
     );
   }
 
-  // Oggetto normale
   return (
-    <div>
+    <div className="space-y-4">
       {Object.entries(data).map(([key, val]) => {
         const isComplex = typeof val === 'object' && val !== null;
+
         if (isComplex) {
           return (
-            <div key={key} className={`mb-5 ${depth === 0 ? 'bg-white border border-gray-100 rounded-2xl p-5 shadow-sm' : ''}`}>
-              <p className="text-xs font-black uppercase tracking-widest text-gray-400 mb-3">{key}</p>
+            <div
+              key={key}
+              className={`space-y-4 rounded-[26px] border border-slate-200 ${depth === 0 ? 'bg-white p-5 shadow-[0_16px_34px_rgba(15,23,42,0.06)]' : 'bg-slate-50/70 p-4'}`}
+            >
+              <div className="flex items-center justify-between gap-3">
+                <p className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400">{key}</p>
+                <AdminBadge tone="slate">Struttura</AdminBadge>
+              </div>
               <ObjectEditor
                 data={val}
-                onChange={newVal => onChange({ ...data, [key]: newVal })}
+                onChange={(newVal) => onChange({ ...data, [key]: newVal })}
                 depth={depth + 1}
               />
             </div>
           );
         }
-        return (
-          <FieldInput
-            key={key}
-            label={key}
-            value={val}
-            onChange={newVal => onChange({ ...data, [key]: newVal })}
-          />
-        );
+
+        return <FieldInput key={key} label={key} value={val} onChange={(newVal) => onChange({ ...data, [key]: newVal })} />;
       })}
     </div>
   );
 }
 
-// --- Componente principale ---
 export default function AdminContent() {
-  const [contents, setContents]     = useState({});
-  const [loading, setLoading]       = useState(true);
+  const [contents, setContents] = useState({});
+  const [loading, setLoading] = useState(true);
   const [selectedSlug, setSelected] = useState('globals');
   const [activeSection, setSection] = useState(null);
-  const [localData, setLocalData]   = useState({});
-  const [isDirty, setIsDirty]       = useState(false);
-  const [saving, setSaving]         = useState(false);
-  const [jsonMode, setJsonMode]     = useState(false);
-  const [jsonText, setJsonText]     = useState('');
-  const [jsonError, setJsonError]   = useState(null);
+  const [localData, setLocalData] = useState({});
+  const [isDirty, setIsDirty] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [jsonMode, setJsonMode] = useState(false);
+  const [jsonText, setJsonText] = useState('');
+  const [jsonError, setJsonError] = useState(null);
   const [successMsg, setSuccessMsg] = useState(null);
 
   const load = useCallback(async () => {
@@ -183,13 +226,20 @@ export default function AdminContent() {
     try {
       const res = await getAllContent();
       const map = {};
-      (res.data ?? []).forEach(item => { map[item.slug] = item.data ?? {}; });
+      (res.data ?? []).forEach((item) => {
+        map[item.slug] = item.data ?? {};
+      });
       setContents(map);
-    } catch { /* vuoto */ }
-    finally { setLoading(false); }
+    } catch {
+      // silent
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
-  useEffect(() => { load(); }, [load]);
+  useEffect(() => {
+    load();
+  }, [load]);
 
   useEffect(() => {
     const data = contents[selectedSlug] ?? {};
@@ -202,11 +252,14 @@ export default function AdminContent() {
   }, [selectedSlug, contents]);
 
   useEffect(() => {
-    if (jsonMode) { setJsonText(prettyJson(localData)); setJsonError(null); }
-  }, [jsonMode]);
+    if (jsonMode) {
+      setJsonText(prettyJson(localData));
+      setJsonError(null);
+    }
+  }, [jsonMode, localData]);
 
   const handleFieldChange = (newSectionData) => {
-    setLocalData(prev => ({ ...prev, [activeSection]: newSectionData }));
+    setLocalData((prev) => ({ ...prev, [activeSection]: newSectionData }));
     setIsDirty(true);
     setSuccessMsg(null);
   };
@@ -216,8 +269,12 @@ export default function AdminContent() {
     setJsonText(text);
     setIsDirty(true);
     const result = tryParseJson(text);
-    if (result.ok) { setLocalData(result.value); setJsonError(null); }
-    else { setJsonError(result.error); }
+    if (result.ok) {
+      setLocalData(result.value);
+      setJsonError(null);
+    } else {
+      setJsonError(result.error);
+    }
   };
 
   const handleSave = async () => {
@@ -226,13 +283,15 @@ export default function AdminContent() {
     setSuccessMsg(null);
     try {
       await updateContent(selectedSlug, localData);
-      setContents(prev => ({ ...prev, [selectedSlug]: localData }));
+      setContents((prev) => ({ ...prev, [selectedSlug]: localData }));
       setIsDirty(false);
-      setSuccessMsg('Salvato con successo \u2713');
+      setSuccessMsg('Salvato con successo ✓');
       setTimeout(() => setSuccessMsg(null), 3000);
     } catch (err) {
       setJsonError(err?.response?.data?.message ?? 'Errore durante il salvataggio.');
-    } finally { setSaving(false); }
+    } finally {
+      setSaving(false);
+    }
   };
 
   const handleDiscard = () => {
@@ -245,188 +304,222 @@ export default function AdminContent() {
 
   const isSeeded = (slug) => !!contents[slug] && Object.keys(contents[slug]).length > 0;
   const sectionKeys = Object.keys(localData);
-  const selectedMeta = KNOWN_SLUGS.find(s => s.slug === selectedSlug);
+  const selectedMeta = KNOWN_SLUGS.find((item) => item.slug === selectedSlug);
+  const seededCount = KNOWN_SLUGS.filter((item) => isSeeded(item.slug)).length;
 
   return (
-    <div className="flex flex-col" style={{ minHeight: 'calc(100vh - 80px)' }}>
-
-      {/* Header */}
-      <div className="flex items-center justify-between mb-6">
-        <div>
-          <h1 className="text-3xl font-black tracking-tighter">Contenuti</h1>
-          <p className="text-gray-400 mt-1 text-sm">Modifica i contenuti del sito memorizzati su MongoDB.</p>
-        </div>
-        <div className="flex items-center gap-3">
-          {isDirty && (
-            <button
-              onClick={handleDiscard}
-              className="px-4 py-2 text-sm font-bold text-gray-500 border border-gray-200 rounded-xl hover:bg-gray-50 transition-colors"
-            >Annulla</button>
-          )}
-          <button
-            onClick={handleSave}
-            disabled={saving || !!jsonError || !isDirty}
-            className="px-6 py-2.5 text-sm font-black rounded-xl text-white transition-opacity disabled:opacity-40"
-            style={{ backgroundColor: '#1e4659' }}
-          >
-            {saving ? 'Salvataggio\u2026' : isDirty ? '\uD83D\uDCBE Salva modifiche' : 'Salvato'}
-          </button>
-        </div>
-      </div>
-
-      {/* Notifiche */}
-      {jsonError && (
-        <div className="mb-4 px-4 py-3 bg-red-50 border border-red-200 text-red-600 rounded-xl text-xs font-mono">
-          &#x2715; JSON non valido: {jsonError}
-        </div>
-      )}
-      {successMsg && (
-        <div className="mb-4 px-4 py-3 bg-green-50 border border-green-200 text-green-700 rounded-xl text-sm font-bold">
-          {successMsg}
-        </div>
-      )}
-      {isDirty && !jsonError && !successMsg && (
-        <div className="mb-4 px-4 py-3 bg-amber-50 border border-amber-200 text-amber-700 rounded-xl text-sm font-medium">
-          &#x26A0;&#xFE0F; Hai modifiche non salvate
-        </div>
-      )}
+    <AdminPage
+      eyebrow="Area riservata / Contenuti"
+      title="Content editor"
+      description="Modifica i contenuti di ciascuna pagina del sito. Seleziona la pagina, scegli la sezione e modifica i campi nel pannello a destra."
+      stats={[
+        { label: 'Pagine gestite', value: KNOWN_SLUGS.length },
+        { label: 'Pagine con contenuti', value: seededCount },
+        { label: 'Pagina attiva', value: selectedMeta?.label ?? '—', meta: isDirty ? 'bozza' : 'sync' },
+      ]}
+      actions={
+        <>
+          {isDirty && <AdminBadge tone="amber">● Modifiche non salvate</AdminBadge>}
+        </>
+      }
+    >
+      {jsonError && <AdminNotice tone="danger">JSON non valido: {jsonError}</AdminNotice>}
+      {successMsg && <AdminNotice tone="success">{successMsg}</AdminNotice>}
 
       {loading ? (
-        <div className="flex justify-center items-center h-64">
-          <div className="w-8 h-8 border-4 rounded-full animate-spin" style={{ borderColor: '#1e4659', borderTopColor: 'transparent' }} />
-        </div>
+        <AdminPanel title="Caricamento\u2026" description="Recupero struttura dal backend.">
+          <div className="flex items-center justify-center py-16">
+            <div className="h-9 w-9 animate-spin rounded-full border-4 border-cyan-500 border-t-transparent" />
+          </div>
+        </AdminPanel>
       ) : (
-        <div className="flex gap-6 flex-grow min-h-0">
+        <div className="grid grid-cols-1 gap-6 xl:grid-cols-[280px_minmax(0,1fr)]">
 
-          {/* Sidebar */}
-          <div className="w-52 flex-shrink-0 space-y-1">
-            {KNOWN_SLUGS.map(({ slug, label, icon }) => {
-              const seeded = isSeeded(slug);
-              const active = selectedSlug === slug;
-              return (
-                <button
-                  key={slug}
-                  onClick={() => setSelected(slug)}
-                  className="w-full text-left flex items-center gap-3 px-4 py-3.5 rounded-2xl transition-all"
-                  style={{ backgroundColor: active ? '#1e4659' : 'transparent' }}
-                  onMouseEnter={e => { if (!active) e.currentTarget.style.backgroundColor = '#f3f4f6'; }}
-                  onMouseLeave={e => { if (!active) e.currentTarget.style.backgroundColor = 'transparent'; }}
-                >
-                  <span className="text-lg">{icon}</span>
-                  <div className="flex-grow min-w-0">
-                    <p className={`text-sm font-black leading-none truncate ${active ? 'text-white' : 'text-gray-700'}`}>{label}</p>
-                    <p className={`text-[10px] mt-0.5 truncate ${active ? 'text-blue-200' : 'text-gray-400'}`}>
-                      {seeded ? `${Object.keys(contents[slug]).length} sezioni` : 'Non in DB'}
-                    </p>
-                  </div>
-                  <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ backgroundColor: seeded ? '#22c55e' : '#d1d5db' }} />
-                </button>
-              );
-            })}
+          {/* \u2500\u2500 Left: Page navigator \u2500\u2500 */}
+          <div className="space-y-5">
+            <AdminPanel title="Pagine del sito" description="Seleziona la pagina da modificare.">
+              <div className="space-y-2">
+                {KNOWN_SLUGS.map(({ slug, label, icon }) => {
+                  const seeded = isSeeded(slug);
+                  const active = selectedSlug === slug;
+                  const sectionCount = seeded ? Object.keys(contents[slug]).length : 0;
+                  return (
+                    <button
+                      key={slug}
+                      type="button"
+                      onClick={() => setSelected(slug)}
+                      className={`w-full rounded-3xl border px-4 py-4 text-left transition-all ${
+                        active
+                          ? 'border-slate-950 bg-slate-950 text-white shadow-[0_18px_40px_rgba(15,23,42,0.18)]'
+                          : 'border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50'
+                      }`}
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl text-xl ${active ? 'bg-white/10' : 'bg-slate-100'}`}>{icon}</div>
+                        <div className="min-w-0 flex-1">
+                          <p className={`text-sm font-black ${active ? 'text-white' : 'text-slate-900'}`}>{label}</p>
+                          <p className={`mt-0.5 text-[11px] ${active ? 'text-slate-300' : 'text-slate-500'}`}>
+                            {seeded ? `${sectionCount} sezioni` : 'Non seedata'}
+                          </p>
+                        </div>
+                        <span className={`h-2.5 w-2.5 shrink-0 rounded-full ${
+                          seeded ? (active ? 'bg-emerald-300' : 'bg-emerald-400') : active ? 'bg-slate-500' : 'bg-slate-200'
+                        }`} />
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+            </AdminPanel>
 
-            {/* Seed shortcut */}
-            <div className="pt-4 mt-2 border-t border-gray-100">
-              <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-2 px-2">Seed DB</p>
-              <button
-                onClick={() => navigator.clipboard?.writeText('docker exec blendstudio_analytics python /app/seed_content.py --force')}
-                className="w-full text-left px-3 py-2 bg-gray-900 text-green-400 rounded-xl font-mono text-[9px] leading-snug hover:bg-gray-800 transition-colors"
-                title="Clicca per copiare"
-              >
-                docker exec ...<br />seed_content.py --force
-              </button>
-              <p className="text-[9px] text-gray-400 mt-1 px-2">Clicca per copiare</p>
-            </div>
           </div>
 
-          {/* Area principale */}
-          <div className="flex-grow flex flex-col min-w-0">
+          {/* \u2500\u2500 Right: Content editor \u2500\u2500 */}
+          <div className="min-w-0">
+            <div className="overflow-hidden rounded-[28px] border border-slate-200 bg-white shadow-[0_18px_50px_rgba(15,23,42,0.08)]">
 
-            {/* Intestazione pagina + toggle JSON */}
-            <div className="flex items-center justify-between mb-5">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-2xl flex items-center justify-center text-xl" style={{ backgroundColor: '#f0f6f9' }}>
-                  {selectedMeta?.icon}
+              {/* Editor top bar */}
+              <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 bg-slate-50/80 px-5 py-4">
+                <div className="flex items-center gap-2 text-sm">
+                  <span className="text-xl">{selectedMeta?.icon}</span>
+                  <span className="font-black text-slate-900">{selectedMeta?.label ?? 'Pagina'}</span>
+                  {activeSection && (
+                    <>
+                      <span className="text-slate-300">/</span>
+                      <span className="font-semibold text-slate-500">{activeSection}</span>
+                    </>
+                  )}
+                  {isDirty && (
+                    <span className="ml-2 inline-flex items-center gap-1 rounded-full border border-amber-200 bg-amber-50 px-2.5 py-0.5 text-[10px] font-black uppercase tracking-[0.15em] text-amber-700">
+                      <span className="h-1.5 w-1.5 rounded-full bg-amber-400" />\u25cf Non salvato
+                    </span>
+                  )}
                 </div>
-                <div>
-                  <h2 className="text-xl font-black text-gray-900">{selectedMeta?.label}</h2>
-                  <p className="text-xs text-gray-400">{selectedMeta?.desc}</p>
-                </div>
-              </div>
-              <button
-                onClick={() => setJsonMode(m => !m)}
-                className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold border transition-colors ${
-                  jsonMode ? 'bg-gray-900 text-green-400 border-gray-700' : 'bg-gray-50 text-gray-500 border-gray-200 hover:border-gray-300'
-                }`}
-              >
-                <span>{'{ }'}</span> {jsonMode ? 'Modalit\u00E0 JSON' : 'Vista JSON'}
-              </button>
-            </div>
-
-            {!isSeeded(selectedSlug) ? (
-              /* Stato vuoto */
-              <div className="flex-grow flex flex-col items-center justify-center bg-gray-50 rounded-3xl border-2 border-dashed border-gray-200 p-12 text-center">
-                <div className="text-5xl mb-4">\uD83D\uDDC4\uFE0F</div>
-                <h3 className="text-xl font-black text-gray-700 mb-2">Nessun contenuto in DB</h3>
-                <p className="text-gray-400 text-sm mb-6 max-w-xs">Esegui il seed per popolare la pagina <strong>{selectedMeta?.label}</strong>.</p>
-                <code
-                  className="block text-xs bg-gray-900 text-green-400 px-4 py-3 rounded-xl font-mono cursor-pointer hover:bg-gray-800 transition-colors"
-                  onClick={() => navigator.clipboard?.writeText('docker exec blendstudio_analytics python /app/seed_content.py --force')}
-                >
-                  docker exec blendstudio_analytics python /app/seed_content.py --force
-                </code>
-                <p className="text-xs text-gray-400 mt-3">Clicca per copiare</p>
-              </div>
-            ) : jsonMode ? (
-              /* JSON raw editor */
-              <div className="flex-grow flex flex-col">
-                <textarea
-                  value={jsonText}
-                  onChange={handleJsonChange}
-                  spellCheck={false}
-                  data-lenis-prevent
-                  className="flex-grow font-mono text-sm resize-none border rounded-2xl p-6 focus:outline-none bg-gray-900 text-green-300 leading-relaxed"
-                  style={{ minHeight: '500px', borderColor: jsonError ? '#fca5a5' : '#374151' }}
-                />
-                <p className="text-[10px] text-gray-400 mt-2 text-right font-mono">{jsonText.length} chars</p>
-              </div>
-            ) : (
-              /* Visual editor */
-              <div className="flex-grow flex flex-col min-h-0">
-                {/* Tab sezioni */}
-                {sectionKeys.length > 1 && (
-                  <div className="flex gap-2 mb-5 flex-wrap">
-                    {sectionKeys.map(key => (
-                      <button
-                        key={key}
-                        onClick={() => setSection(key)}
-                        className="px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all"
-                        style={activeSection === key ? { backgroundColor: '#1e4659', color: '#fff' } : { backgroundColor: '#f3f4f6', color: '#6b7280' }}
-                        onMouseEnter={e => { if (activeSection !== key) e.currentTarget.style.backgroundColor = '#e5e7eb'; }}
-                        onMouseLeave={e => { if (activeSection !== key) e.currentTarget.style.backgroundColor = '#f3f4f6'; }}
-                      >
-                        {key}
-                      </button>
-                    ))}
+                <div className="flex flex-wrap items-center gap-2">
+                  <div className="flex rounded-2xl border border-slate-200 bg-slate-100 p-1">
+                    <button
+                      type="button"
+                      onClick={() => setJsonMode(false)}
+                      className={`rounded-xl px-3 py-1.5 text-xs font-black transition ${!jsonMode ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+                    >
+                      Visuale
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setJsonMode(true)}
+                      className={`rounded-xl px-3 py-1.5 text-xs font-black transition ${jsonMode ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+                    >
+                      JSON
+                    </button>
                   </div>
-                )}
+                  {isDirty && (
+                    <button type="button" onClick={handleDiscard} className="rounded-2xl border border-slate-300 bg-slate-100 px-3 py-2 text-xs font-black text-slate-600 transition hover:bg-slate-200">
+                      Ripristina
+                    </button>
+                  )}
+                  <button
+                    type="button"
+                    onClick={handleSave}
+                    disabled={saving || !!jsonError || !isDirty}
+                    className="rounded-2xl bg-slate-950 px-4 py-2 text-xs font-black text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-40"
+                  >
+                    {saving ? 'Salvataggio\u2026' : 'Salva'}
+                  </button>
+                </div>
+              </div>
 
-                {/* Form */}
-                {activeSection && localData[activeSection] !== undefined && (
-                  <div className="flex-grow overflow-y-auto pr-1" data-lenis-prevent>
-                    <ObjectEditor
-                      data={localData[activeSection]}
-                      onChange={handleFieldChange}
+              {/* Editor body */}
+              <div className="px-5 py-5">
+                {!isSeeded(selectedSlug) ? (
+                  <div className="flex flex-col items-center justify-center rounded-[22px] border border-dashed border-slate-200 bg-slate-50/80 px-6 py-16 text-center">
+                    <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-3xl bg-slate-950 text-4xl text-white shadow-[0_16px_40px_rgba(15,23,42,0.22)]">\ud83d\uddc3\ufe0f</div>
+                    <p className="text-lg font-black text-slate-900">{selectedMeta?.label ?? 'Pagina'} non disponibile</p>
+                    <p className="mt-2 max-w-sm text-sm leading-6 text-slate-500">
+                      Questa pagina non è ancora stata seedata. Avvia il seed dal container analytics per popolare i contenuti.
+                    </p>
+                  </div>
+                ) : jsonMode ? (
+                  <div className="space-y-3">
+                    <AdminTextarea
+                      value={jsonText}
+                      onChange={handleJsonChange}
+                      spellCheck={false}
+                      data-lenis-prevent
+                      rows={24}
+                      className="min-h-[60vh] resize-y bg-slate-950 font-mono text-sm leading-7 text-emerald-300 placeholder:text-emerald-700 focus:border-slate-700 focus:ring-slate-800"
                     />
+                    <div className="flex items-center justify-between">
+                      <span className="font-mono text-[11px] text-slate-400">{jsonText.length} caratteri</span>
+                      {jsonError && <span className="text-xs font-semibold text-red-500">\u26a0\ufe0f {jsonError}</span>}
+                    </div>
+                  </div>
+                ) : (
+                  <div className="space-y-5">
+                    {sectionKeys.length > 0 && (
+                      <div>
+                        <p className="mb-3 text-[10px] font-black uppercase tracking-[0.22em] text-slate-400">Sezioni di {selectedMeta?.label}</p>
+                        <div className="flex flex-wrap gap-2">
+                          {sectionKeys.map((key) => {
+                            const sectionData = localData[key];
+                            const fieldCount = sectionData && typeof sectionData === 'object' ? Object.keys(sectionData).length : 0;
+                            const isActive = activeSection === key;
+                            return (
+                              <button
+                                key={key}
+                                type="button"
+                                onClick={() => setSection(key)}
+                                className={`inline-flex items-center gap-2 rounded-2xl border px-4 py-2 text-xs font-black transition ${
+                                  isActive
+                                    ? 'border-slate-950 bg-slate-950 text-white shadow-[0_8px_20px_rgba(15,23,42,0.16)]'
+                                    : 'border-slate-200 bg-slate-100 text-slate-600 hover:border-slate-300 hover:bg-slate-200'
+                                }`}
+                              >
+                                <span className="uppercase tracking-[0.15em]">{key}</span>
+                                <span className={`rounded-full px-1.5 py-0.5 text-[10px] font-black ${isActive ? 'bg-white/15 text-slate-200' : 'bg-white text-slate-500'}`}>
+                                  {fieldCount}
+                                </span>
+                              </button>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    )}
+
+                    {activeSection && localData[activeSection] !== undefined ? (
+                      <div className="max-h-[66vh] overflow-y-auto pr-1" data-lenis-prevent>
+                        <ObjectEditor data={localData[activeSection]} onChange={handleFieldChange} />
+                      </div>
+                    ) : (
+                      <div className="flex flex-col items-center justify-center rounded-[22px] border border-dashed border-slate-200 bg-slate-50 px-6 py-12 text-center">
+                        <p className="text-sm font-black text-slate-500">Seleziona una sezione per iniziare a modificare</p>
+                      </div>
+                    )}
+
+                    {isDirty && !jsonError && (
+                      <div className="flex items-center justify-between rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3">
+                        <p className="text-sm font-semibold text-amber-700">\u25cf Modifiche non salvate in <strong>{selectedMeta?.label}</strong></p>
+                        <div className="flex items-center gap-2">
+                          <button type="button" onClick={handleDiscard} className="rounded-2xl border border-amber-300 bg-white px-3 py-1.5 text-xs font-black text-amber-700 transition hover:bg-amber-50">
+                            Annulla
+                          </button>
+                          <button
+                            type="button"
+                            onClick={handleSave}
+                            disabled={saving}
+                            className="rounded-2xl bg-slate-950 px-4 py-1.5 text-xs font-black text-white transition hover:bg-slate-800 disabled:opacity-45"
+                          >
+                            {saving ? 'Salvataggio\u2026' : 'Salva ora'}
+                          </button>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 )}
               </div>
-            )}
+            </div>
           </div>
         </div>
       )}
-    </div>
+    </AdminPage>
   );
 }
-
-
-

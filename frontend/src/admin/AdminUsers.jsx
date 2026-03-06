@@ -1,21 +1,63 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import { getUsers, createUser, changeUserPassword, deleteUser } from '../services/api';
 import { useAuth } from '../context/AuthContext';
+import {
+  AdminBadge,
+  AdminButton,
+  AdminDialog,
+  AdminDialogHeader,
+  AdminEmptyState,
+  AdminField,
+  AdminInput,
+  AdminKpiCard,
+  AdminNotice,
+  AdminPage,
+  AdminPanel,
+} from './AdminUI';
+
+function IcoUsers() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+      <circle cx="9" cy="7" r="4" />
+      <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+      <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+    </svg>
+  );
+}
+
+function IcoShield() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10" />
+    </svg>
+  );
+}
+
+function IcoKey() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="7.5" cy="15.5" r="5.5" />
+      <path d="m21 2-9.6 9.6" />
+      <path d="m15.5 7.5 3 3L22 7l-3-3" />
+    </svg>
+  );
+}
 
 export default function AdminUsers() {
   const { user: currentUser } = useAuth();
-  const [users, setUsers]           = useState([]);
-  const [loading, setLoading]       = useState(true);
+  const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [showCreate, setShowCreate] = useState(false);
-  const [editingPwd, setEditingPwd] = useState(null); // user id
-  const [newEmail, setNewEmail]     = useState('');
-  const [newPwd, setNewPwd]         = useState('');
-  const [pwdValue, setPwdValue]     = useState('');
-  const [error, setError]           = useState(null);
-  const [success, setSuccess]       = useState(null);
-  const [saving, setSaving]         = useState(false);
-  const [deleteConfirm, setDeleteConfirm] = useState(null); // user id
+  const [editingPwd, setEditingPwd] = useState(null);
+  const [newEmail, setNewEmail] = useState('');
+  const [newPwd, setNewPwd] = useState('');
+  const [pwdValue, setPwdValue] = useState('');
+  const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(null);
+  const [saving, setSaving] = useState(false);
+  const [deleteConfirm, setDeleteConfirm] = useState(null);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -29,251 +71,300 @@ export default function AdminUsers() {
     }
   }, []);
 
-  useEffect(() => { load(); }, [load]);
+  useEffect(() => {
+    load();
+  }, [load]);
 
   const flash = (msg, isError = false) => {
-    if (isError) { setError(msg); setTimeout(() => setError(null), 4000); }
-    else { setSuccess(msg); setTimeout(() => setSuccess(null), 3000); }
+    if (isError) {
+      setError(msg);
+      setTimeout(() => setError(null), 4000);
+    } else {
+      setSuccess(msg);
+      setTimeout(() => setSuccess(null), 3000);
+    }
   };
 
   const handleCreate = async (e) => {
     e.preventDefault();
-    if (!newEmail || !newPwd) { flash('Email e password obbligatorie', true); return; }
+    if (!newEmail || !newPwd) {
+      flash('Email e password obbligatorie', true);
+      return;
+    }
+
     setSaving(true);
     try {
       const res = await createUser(newEmail, newPwd);
-      setUsers(prev => [...prev, res.data]);
+      setUsers((prev) => [...prev, res.data]);
       setShowCreate(false);
-      setNewEmail(''); setNewPwd('');
+      setNewEmail('');
+      setNewPwd('');
       flash('Utente creato con successo');
     } catch (err) {
       flash(err?.response?.data?.message ?? 'Errore nella creazione', true);
-    } finally { setSaving(false); }
+    } finally {
+      setSaving(false);
+    }
   };
 
   const handleChangePassword = async (id) => {
-    if (!pwdValue) { flash('Inserisci la nuova password', true); return; }
+    if (!pwdValue) {
+      flash('Inserisci la nuova password', true);
+      return;
+    }
+
     setSaving(true);
     try {
       await changeUserPassword(id, pwdValue);
-      setEditingPwd(null); setPwdValue('');
+      setEditingPwd(null);
+      setPwdValue('');
       flash('Password aggiornata');
     } catch (err) {
       flash(err?.response?.data?.message ?? 'Errore aggiornamento password', true);
-    } finally { setSaving(false); }
+    } finally {
+      setSaving(false);
+    }
   };
 
   const handleDelete = async (id) => {
     setSaving(true);
     try {
       await deleteUser(id);
-      setUsers(prev => prev.filter(u => u.id !== id));
+      setUsers((prev) => prev.filter((u) => u.id !== id));
       setDeleteConfirm(null);
       flash('Utente eliminato');
     } catch (err) {
       flash(err?.response?.data?.message ?? 'Errore eliminazione', true);
-    } finally { setSaving(false); }
+    } finally {
+      setSaving(false);
+    }
   };
 
-  const formatDate = (d) => new Date(d).toLocaleDateString('it-IT', { day: '2-digit', month: 'short', year: 'numeric' });
+  const formatDate = (d) =>
+    new Date(d).toLocaleDateString('it-IT', { day: '2-digit', month: 'short', year: 'numeric' });
+
+  const currentUserCount = users.filter((u) => u.email === currentUser?.email).length;
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-black tracking-tighter">Utenti</h1>
-          <p className="text-gray-400 mt-1 text-sm">Gestisci gli account amministratori.</p>
-        </div>
-        <button
-          onClick={() => { setShowCreate(true); setError(null); }}
-          className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-black text-white transition-opacity hover:opacity-90"
-          style={{ backgroundColor: '#1e4659' }}
-        >
-          + Nuovo utente
-        </button>
-      </div>
-
-      {/* Notifiche */}
+    <AdminPage
+      eyebrow="Area riservata / Utenti"
+      title="Gestione amministratori"
+      description="Una schermata più pulita per governare accessi, credenziali e account attivi della piattaforma amministrativa."
+      stats={[
+        { label: 'Utenti totali', value: users.length },
+        { label: 'Il tuo account', value: currentUserCount ? 'Attivo' : '—', meta: currentUser?.email ?? 'nessun utente' },
+        { label: 'Sicurezza', value: 'Presidiata', meta: 'gestione password interna' },
+      ]}
+      actions={
+        <>
+          <AdminBadge tone="emerald">Accesso protetto</AdminBadge>
+          <AdminButton
+            type="button"
+            variant="dark"
+            onClick={() => {
+              setShowCreate(true);
+              setError(null);
+            }}
+          >
+            + Nuovo utente
+          </AdminButton>
+        </>
+      }
+    >
       <AnimatePresence>
         {error && (
-          <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
-            className="px-4 py-3 bg-red-50 border border-red-200 text-red-600 rounded-xl text-sm font-medium">
-            &#x26A0;&#xFE0F; {error}
+          <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>
+            <AdminNotice tone="danger">{error}</AdminNotice>
           </motion.div>
         )}
         {success && (
-          <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
-            className="px-4 py-3 bg-green-50 border border-green-200 text-green-700 rounded-xl text-sm font-bold">
-            &#x2713; {success}
+          <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>
+            <AdminNotice tone="success">{success}</AdminNotice>
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* Modale crea utente */}
-      <AnimatePresence>
-        {showCreate && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm"
-            onClick={() => setShowCreate(false)}
-          >
-            <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.95, opacity: 0 }}
-              className="bg-white rounded-3xl shadow-2xl p-8 w-full max-w-sm mx-4"
-              onClick={e => e.stopPropagation()}
-            >
-              <h2 className="text-xl font-black tracking-tighter mb-6">Crea nuovo utente</h2>
-              <form onSubmit={handleCreate} className="space-y-4">
-                <div>
-                  <label className="block text-xs font-black uppercase tracking-widest text-gray-400 mb-1">Email</label>
-                  <input
-                    type="email" required autoFocus
-                    value={newEmail} onChange={e => setNewEmail(e.target.value)}
-                    placeholder="nome@blendstudio.it"
-                    className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-100"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-black uppercase tracking-widest text-gray-400 mb-1">Password</label>
-                  <input
-                    type="password" required
-                    value={newPwd} onChange={e => setNewPwd(e.target.value)}
-                    placeholder="min. 8 caratteri"
-                    className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-100"
-                  />
-                </div>
-                <div className="flex gap-3 pt-2">
-                  <button type="button" onClick={() => setShowCreate(false)}
-                    className="flex-1 py-2.5 rounded-xl border border-gray-200 text-sm font-bold text-gray-500 hover:bg-gray-50 transition-colors">
-                    Annulla
-                  </button>
-                  <button type="submit" disabled={saving}
-                    className="flex-1 py-2.5 rounded-xl text-sm font-black text-white disabled:opacity-40 transition-opacity"
-                    style={{ backgroundColor: '#1e4659' }}>
-                    {saving ? 'Creazione...' : 'Crea utente'}
-                  </button>
-                </div>
-              </form>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+        <AdminKpiCard label="Admin attivi" value={users.length} subtitle="Account registrati nel backend" tone="cyan" icon={<IcoUsers />} />
+        <AdminKpiCard label="Protezione" value="100%" subtitle="Cambio password dedicato" tone="violet" icon={<IcoShield />} />
+        <AdminKpiCard label="Credenziali" value={editingPwd ? 'Update' : 'Stabili'} subtitle="Modifica rapida inline" tone="amber" icon={<IcoKey />} />
+      </div>
 
-      {/* Modale conferma elimina */}
-      <AnimatePresence>
-        {deleteConfirm !== null && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm"
-            onClick={() => setDeleteConfirm(null)}
-          >
-            <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.95, opacity: 0 }}
-              className="bg-white rounded-3xl shadow-2xl p-8 w-full max-w-sm mx-4 text-center"
-              onClick={e => e.stopPropagation()}
-            >
-              <div className="text-5xl mb-4">&#x1F6AB;</div>
-              <h2 className="text-xl font-black tracking-tighter mb-2">Elimina utente?</h2>
-              <p className="text-gray-400 text-sm mb-6">
-                Stai per eliminare <strong>{users.find(u => u.id === deleteConfirm)?.email}</strong>. L&apos;operazione &egrave; irreversibile.
-              </p>
-              <div className="flex gap-3">
-                <button onClick={() => setDeleteConfirm(null)}
-                  className="flex-1 py-2.5 rounded-xl border border-gray-200 text-sm font-bold text-gray-500 hover:bg-gray-50 transition-colors">
-                  Annulla
-                </button>
-                <button onClick={() => handleDelete(deleteConfirm)} disabled={saving}
-                  className="flex-1 py-2.5 rounded-xl text-sm font-black text-white bg-red-500 hover:bg-red-600 disabled:opacity-40 transition-colors">
-                  {saving ? 'Eliminazione...' : 'Elimina'}
-                </button>
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      <AdminPanel
+        title="Account amministratori"
+        description="Elenco completo degli utenti con badge, data di creazione e strumenti rapidi per la manutenzione delle credenziali."
+        action={<AdminButton type="button" variant="secondary" onClick={load}>Ricarica elenco</AdminButton>}
+      >
+        {loading ? (
+          <div className="flex items-center justify-center py-16">
+            <div className="h-9 w-9 animate-spin rounded-full border-4 border-cyan-500 border-t-transparent" />
+          </div>
+        ) : users.length === 0 ? (
+          <AdminEmptyState
+            icon="👥"
+            title="Nessun utente trovato"
+            description="Crea il primo account amministratore per iniziare a gestire l’area riservata con il nuovo layout." 
+            action={<AdminButton type="button" onClick={() => setShowCreate(true)}>Crea primo utente</AdminButton>}
+          />
+        ) : (
+          <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
+            {users.map((u) => {
+              const isSelf = u.email === currentUser?.email;
+              const isEditingPassword = editingPwd === u.id;
 
-      {/* Tabella utenti */}
-      {loading ? (
-        <div className="flex justify-center items-center h-48">
-          <div className="w-8 h-8 border-4 rounded-full animate-spin" style={{ borderColor: '#1e4659', borderTopColor: 'transparent' }} />
-        </div>
-      ) : users.length === 0 ? (
-        <div className="text-center py-20 text-gray-400">
-          <div className="text-5xl mb-4">&#x1F465;</div>
-          <p className="font-medium">Nessun utente trovato</p>
-        </div>
-      ) : (
-        <div className="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden">
-          <table className="w-full">
-            <thead>
-              <tr className="border-b border-gray-100">
-                <th className="text-left px-6 py-4 text-xs font-black uppercase tracking-widest text-gray-400">Utente</th>
-                <th className="text-left px-6 py-4 text-xs font-black uppercase tracking-widest text-gray-400">Creato il</th>
-                <th className="text-left px-6 py-4 text-xs font-black uppercase tracking-widest text-gray-400">Password</th>
-                <th className="px-6 py-4 text-xs font-black uppercase tracking-widest text-gray-400 text-right">Azioni</th>
-              </tr>
-            </thead>
-            <tbody>
-              {users.map((u, i) => {
-                const isSelf = u.email === currentUser?.email;
-                return (
-                  <tr key={u.id} className={`border-b border-gray-50 last:border-0 transition-colors hover:bg-gray-50/50 ${i % 2 === 0 ? '' : 'bg-gray-50/30'}`}>
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-3">
-                        <div className="w-9 h-9 rounded-2xl flex items-center justify-center text-sm font-black text-white"
-                          style={{ backgroundColor: '#1e4659' }}>
-                          {u.email[0].toUpperCase()}
-                        </div>
-                        <div>
-                          <p className="text-sm font-bold text-gray-800">{u.email}</p>
-                          {isSelf && <span className="text-[10px] font-black uppercase tracking-widest text-blue-500">Tu</span>}
+              return (
+                <div
+                  key={u.id}
+                  className="rounded-[28px] border border-slate-200 bg-linear-to-br from-white via-white to-slate-50 px-5 py-5 shadow-[0_16px_42px_rgba(15,23,42,0.06)]"
+                >
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="flex min-w-0 items-center gap-4">
+                      <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-slate-950 text-sm font-black text-white shadow-[0_12px_30px_rgba(15,23,42,0.18)]">
+                        {u.email[0].toUpperCase()}
+                      </div>
+                      <div className="min-w-0">
+                        <p className="truncate text-base font-black text-slate-900">{u.email}</p>
+                        <div className="mt-2 flex flex-wrap items-center gap-2">
+                          {isSelf && <AdminBadge tone="cyan">Tu</AdminBadge>}
+                          <AdminBadge tone="slate">Creato {formatDate(u.createdAt)}</AdminBadge>
                         </div>
                       </div>
-                    </td>
-                    <td className="px-6 py-4 text-sm text-gray-400">{formatDate(u.createdAt)}</td>
-                    <td className="px-6 py-4">
-                      {editingPwd === u.id ? (
-                        <div className="flex items-center gap-2">
-                          <input
-                            type="password" autoFocus
-                            value={pwdValue} onChange={e => setPwdValue(e.target.value)}
-                            placeholder="Nuova password"
-                            className="border border-gray-200 rounded-xl px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-100 w-40"
-                          />
-                          <button onClick={() => handleChangePassword(u.id)} disabled={saving}
-                            className="px-3 py-1.5 rounded-xl text-xs font-black text-white disabled:opacity-40"
-                            style={{ backgroundColor: '#1e4659' }}>
-                            Salva
-                          </button>
-                          <button onClick={() => { setEditingPwd(null); setPwdValue(''); }}
-                            className="px-3 py-1.5 rounded-xl text-xs font-bold text-gray-500 border border-gray-200 hover:bg-gray-50 transition-colors">
-                            &#x2715;
-                          </button>
-                        </div>
-                      ) : (
-                        <button onClick={() => { setEditingPwd(u.id); setPwdValue(''); }}
-                          className="text-xs font-bold px-3 py-1.5 rounded-xl border border-gray-200 text-gray-500 hover:border-blue-300 hover:text-blue-600 transition-colors">
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() => !isSelf && setDeleteConfirm(u.id)}
+                      disabled={isSelf}
+                      title={isSelf ? 'Non puoi eliminare il tuo account' : 'Elimina utente'}
+                      className="flex h-10 w-10 items-center justify-center rounded-2xl border border-red-200 bg-red-50 text-lg text-red-500 transition hover:bg-red-100 disabled:cursor-not-allowed disabled:border-slate-200 disabled:bg-slate-100 disabled:text-slate-300"
+                    >
+                      ×
+                    </button>
+                  </div>
+
+                  <div className="mt-5 rounded-2xl border border-slate-200 bg-white p-4">
+                    <div className="mb-3 flex items-center justify-between gap-3">
+                      <p className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400">Password</p>
+                      {!isEditingPassword && (
+                        <AdminButton
+                          type="button"
+                          variant="secondary"
+                          className="px-3 py-2 text-xs"
+                          onClick={() => {
+                            setEditingPwd(u.id);
+                            setPwdValue('');
+                          }}
+                        >
                           Cambia password
-                        </button>
+                        </AdminButton>
                       )}
-                    </td>
-                    <td className="px-6 py-4 text-right">
-                      <button
-                        onClick={() => !isSelf && setDeleteConfirm(u.id)}
-                        disabled={isSelf}
-                        title={isSelf ? 'Non puoi eliminare il tuo account' : 'Elimina utente'}
-                        className="px-3 py-1.5 rounded-xl text-xs font-bold border transition-colors ml-auto flex items-center gap-1.5 disabled:opacity-30 disabled:cursor-not-allowed"
-                        style={{ borderColor: '#fca5a5', color: '#ef4444' }}
-                        onMouseEnter={e => { if (!isSelf) e.currentTarget.style.backgroundColor = '#fef2f2'; }}
-                        onMouseLeave={e => { e.currentTarget.style.backgroundColor = 'transparent'; }}
-                      >
-                        Elimina
-                      </button>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
-      )}
-    </div>
+                    </div>
+
+                    {isEditingPassword ? (
+                      <div className="space-y-3">
+                        <AdminInput
+                          type="password"
+                          autoFocus
+                          value={pwdValue}
+                          onChange={(e) => setPwdValue(e.target.value)}
+                          placeholder="Inserisci la nuova password"
+                        />
+                        <div className="flex flex-wrap justify-end gap-3">
+                          <AdminButton
+                            type="button"
+                            variant="secondary"
+                            onClick={() => {
+                              setEditingPwd(null);
+                              setPwdValue('');
+                            }}
+                          >
+                            Annulla
+                          </AdminButton>
+                          <AdminButton type="button" onClick={() => handleChangePassword(u.id)} disabled={saving}>
+                            {saving ? 'Salvataggio…' : 'Salva password'}
+                          </AdminButton>
+                        </div>
+                      </div>
+                    ) : (
+                      <p className="text-sm leading-6 text-slate-500">
+                        Mantieni aggiornate le credenziali per garantire l’accesso sicuro al team amministrativo.
+                      </p>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </AdminPanel>
+
+      <AnimatePresence>
+        {showCreate && (
+          <AdminDialog onClose={() => setShowCreate(false)} maxWidth="max-w-lg">
+            <AdminDialogHeader
+              title="Crea nuovo utente"
+              description="Aggiungi un nuovo amministratore con credenziali dedicate."
+              onClose={() => setShowCreate(false)}
+            />
+            <form onSubmit={handleCreate} className="space-y-5 px-6 py-6">
+              <AdminField label="Email">
+                <AdminInput
+                  type="email"
+                  required
+                  autoFocus
+                  value={newEmail}
+                  onChange={(e) => setNewEmail(e.target.value)}
+                  placeholder="nome@blendstudio.it"
+                />
+              </AdminField>
+
+              <AdminField label="Password" hint="Usa una password forte e unica per il nuovo account.">
+                <AdminInput
+                  type="password"
+                  required
+                  value={newPwd}
+                  onChange={(e) => setNewPwd(e.target.value)}
+                  placeholder="Minimo 8 caratteri"
+                />
+              </AdminField>
+
+              <div className="flex justify-end gap-3 pt-2">
+                <AdminButton type="button" variant="secondary" onClick={() => setShowCreate(false)}>
+                  Annulla
+                </AdminButton>
+                <AdminButton type="submit" disabled={saving}>
+                  {saving ? 'Creazione…' : 'Crea utente'}
+                </AdminButton>
+              </div>
+            </form>
+          </AdminDialog>
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {deleteConfirm !== null && (
+          <AdminDialog onClose={() => setDeleteConfirm(null)} maxWidth="max-w-md">
+            <AdminDialogHeader
+              title="Elimina utente"
+              description="Rimuovi definitivamente l’account selezionato."
+              onClose={() => setDeleteConfirm(null)}
+            />
+            <div className="space-y-6 px-6 py-6">
+              <p className="text-sm leading-6 text-slate-600">
+                Stai per eliminare <span className="font-black text-slate-900">{users.find((u) => u.id === deleteConfirm)?.email}</span>. L’operazione è irreversibile.
+              </p>
+              <div className="flex justify-end gap-3">
+                <AdminButton type="button" variant="secondary" onClick={() => setDeleteConfirm(null)}>
+                  Annulla
+                </AdminButton>
+                <AdminButton type="button" variant="danger" onClick={() => handleDelete(deleteConfirm)} disabled={saving}>
+                  {saving ? 'Eliminazione…' : 'Elimina'}
+                </AdminButton>
+              </div>
+            </div>
+          </AdminDialog>
+        )}
+      </AnimatePresence>
+    </AdminPage>
   );
 }

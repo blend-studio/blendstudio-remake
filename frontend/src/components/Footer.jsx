@@ -1,9 +1,11 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import blendLogo from "../assets/images/blend-logo-blu.png";
+import { useTelemetry } from "../hooks/useTelemetry";
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
+  const { track } = useTelemetry();
 
   return (
     <footer className="bg-white border-t border-gray-100 pt-20 pb-10 px-6 md:px-20">
@@ -37,9 +39,9 @@ const Footer = () => {
           <div className="md:col-span-2">
             <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-blend mb-6">Social</h4>
             <ul className="space-y-4 text-sm font-bold text-gray-500 uppercase tracking-widest">
-              <li><a href="#" className="hover:text-blend transition-colors">Instagram</a></li>
-              <li><a href="#" className="hover:text-blend transition-colors">LinkedIn</a></li>
-              <li><a href="#" className="hover:text-blend transition-colors">Facebook</a></li>
+              <li><a href="#" onClick={() => track('social_click', { network: 'instagram' })} className="hover:text-blend transition-colors">Instagram</a></li>
+              <li><a href="#" onClick={() => track('social_click', { network: 'linkedin' })} className="hover:text-blend transition-colors">LinkedIn</a></li>
+              <li><a href="#" onClick={() => track('social_click', { network: 'facebook' })} className="hover:text-blend transition-colors">Facebook</a></li>
             </ul>
           </div>
 
@@ -48,7 +50,7 @@ const Footer = () => {
              <p className="text-xl md:text-2xl font-black text-blend uppercase tracking-tighter italic mb-6 md:text-right">
                 Ready to blend <br /> excellence with us?
              </p>
-             <Link to="/contact" className="text-[10px] font-black uppercase tracking-[0.3em] text-blend border-b-2 border-blend pb-1 hover:text-blend-light hover:border-blend-light transition-colors">
+             <Link to="/contact" onClick={() => track('footer_cta_click')} className="text-[10px] font-black uppercase tracking-[0.3em] text-blend border-b-2 border-blend pb-1 hover:text-blend-light hover:border-blend-light transition-colors">
                 Let's work together
              </Link>
           </div>

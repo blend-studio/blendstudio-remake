@@ -86,6 +86,7 @@ services:
     environment:
       # Corretto così. Il browser risolverà localhost.
       - VITE_API_BASE_URL=${VITE_API_BASE_URL:-http://localhost:8000} 
+      - VITE_ANALYTICS_BASE_URL=${VITE_ANALYTICS_BASE_URL:-http://localhost:8001}
     depends_on:
       - backend
     volumes:

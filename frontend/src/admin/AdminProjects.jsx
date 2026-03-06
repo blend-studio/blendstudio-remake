@@ -1,5 +1,20 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { getProjects, createProject, updateProject, deleteProject } from '../services/api';
+import {
+  AdminBadge,
+  AdminButton,
+  AdminDialog,
+  AdminDialogHeader,
+  AdminEmptyState,
+  AdminField,
+  AdminInput,
+  AdminKpiCard,
+  AdminNotice,
+  AdminPage,
+  AdminPanel,
+  AdminSelect,
+  AdminTextarea,
+} from './AdminUI';
 
 const EMPTY_FORM = {
   title: '',
@@ -13,6 +28,35 @@ const EMPTY_FORM = {
 };
 
 const LAYOUT_TYPES = ['default', 'wide', 'minimal'];
+
+function IcoFolder() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
+    </svg>
+  );
+}
+
+function IcoGrid() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="3" y="3" width="7" height="7" />
+      <rect x="14" y="3" width="7" height="7" />
+      <rect x="14" y="14" width="7" height="7" />
+      <rect x="3" y="14" width="7" height="7" />
+    </svg>
+  );
+}
+
+function IcoImage() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+      <circle cx="8.5" cy="8.5" r="1.5" />
+      <path d="m21 15-5-5L5 21" />
+    </svg>
+  );
+}
 
 function GalleryEditor({ images, onChange }) {
   const [newUrl, setNewUrl] = useState('');
@@ -41,61 +85,54 @@ function GalleryEditor({ images, onChange }) {
   };
 
   return (
-    <div className="col-span-2 space-y-3">
-      <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider">
-        Gallery ({images.length} immagini)
-      </label>
+    <div className="col-span-2 space-y-4">
+      <div className="flex items-center justify-between gap-3">
+        <p className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400">Gallery visual ({images.length})</p>
+        {images.length > 0 && <AdminBadge tone="slate">Ordina drag-like</AdminBadge>}
+      </div>
 
-      {/* Existing items */}
       {images.length > 0 && (
-        <div className="space-y-2">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           {images.map((url, idx) => (
-            <div key={idx} className="flex items-center gap-3 bg-gray-50 border border-gray-200 rounded-xl px-3 py-2">
-              {/* Thumbnail */}
-              <img
-                src={url}
-                alt=""
-                className="w-12 h-12 object-cover rounded-lg flex-shrink-0 bg-gray-200"
-                onError={e => { e.target.style.display = 'none'; }}
-              />
-              {/* URL */}
-              <span className="flex-grow text-xs text-gray-600 truncate font-mono">{url}</span>
-              {/* Controls */}
-              <div className="flex items-center gap-1 flex-shrink-0">
-                <button type="button" onClick={() => moveUp(idx)}
-                  disabled={idx === 0}
-                  className="w-7 h-7 flex items-center justify-center rounded-lg text-gray-400 hover:bg-gray-200 disabled:opacity-30 transition-colors text-xs">
-                  ▲
-                </button>
-                <button type="button" onClick={() => moveDown(idx)}
-                  disabled={idx === images.length - 1}
-                  className="w-7 h-7 flex items-center justify-center rounded-lg text-gray-400 hover:bg-gray-200 disabled:opacity-30 transition-colors text-xs">
-                  ▼
-                </button>
-                <button type="button" onClick={() => remove(idx)}
-                  className="w-7 h-7 flex items-center justify-center rounded-lg text-red-400 hover:bg-red-50 transition-colors text-sm font-bold">
-                  ×
-                </button>
+            <div key={`${url}-${idx}`} className="overflow-hidden rounded-3xl border border-slate-200 bg-slate-50/80 shadow-sm">
+              <div className="aspect-video bg-slate-100">
+                <img
+                  src={url}
+                  alt="Anteprima gallery"
+                  className="h-full w-full object-cover"
+                  onError={(e) => {
+                    e.currentTarget.style.display = 'none';
+                  }}
+                />
+              </div>
+              <div className="space-y-3 p-4">
+                <p className="truncate text-xs font-medium text-slate-500">{url}</p>
+                <div className="flex flex-wrap gap-2">
+                  <AdminButton type="button" variant="secondary" className="px-3 py-2 text-xs" onClick={() => moveUp(idx)} disabled={idx === 0}>
+                    ↑ Su
+                  </AdminButton>
+                  <AdminButton type="button" variant="secondary" className="px-3 py-2 text-xs" onClick={() => moveDown(idx)} disabled={idx === images.length - 1}>
+                    ↓ Giù
+                  </AdminButton>
+                  <AdminButton type="button" variant="danger" className="px-3 py-2 text-xs" onClick={() => remove(idx)}>
+                    Rimuovi
+                  </AdminButton>
+                </div>
               </div>
             </div>
           ))}
         </div>
       )}
 
-      {/* Add new URL */}
-      <div className="flex gap-2">
-        <input
+      <div className="flex flex-col gap-3 sm:flex-row">
+        <AdminInput
           value={newUrl}
-          onChange={e => setNewUrl(e.target.value)}
-          onKeyDown={e => e.key === 'Enter' && (e.preventDefault(), add())}
+          onChange={(e) => setNewUrl(e.target.value)}
+          onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), add())}
           placeholder="https://... URL immagine"
-          className="flex-grow border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#1e4659]"
+          className="flex-1"
         />
-        <button type="button" onClick={add}
-          className="px-4 py-2.5 rounded-xl text-sm font-bold transition-opacity whitespace-nowrap"
-          style={{ backgroundColor: '#1e4659', color: '#ffffff' }}>
-          + Aggiungi
-        </button>
+        <AdminButton type="button" onClick={add}>+ Aggiungi immagine</AdminButton>
       </div>
     </div>
   );
@@ -105,21 +142,20 @@ export default function AdminProjects() {
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
-  // Modal state
-  const [modal, setModal] = useState(null); // null | 'create' | 'edit'
-  const [editing, setEditing] = useState(null); // project object
+  const [search, setSearch] = useState('');
+  const [filterLayout, setFilterLayout] = useState('all');
+  const [modal, setModal] = useState(null);
+  const [editing, setEditing] = useState(null);
   const [form, setForm] = useState(EMPTY_FORM);
-  const [gallery, setGallery] = useState([]); // array of URL strings
+  const [gallery, setGallery] = useState([]);
   const [saving, setSaving] = useState(false);
   const [formError, setFormError] = useState(null);
-
-  // Delete confirm
-  const [confirmDelete, setConfirmDelete] = useState(null); // project object
+  const [confirmDelete, setConfirmDelete] = useState(null);
   const [deleting, setDeleting] = useState(false);
 
   const load = async () => {
     setLoading(true);
+    setError(null);
     try {
       const res = await getProjects();
       setProjects(res.data ?? []);
@@ -130,7 +166,9 @@ export default function AdminProjects() {
     }
   };
 
-  useEffect(() => { load(); }, []);
+  useEffect(() => {
+    load();
+  }, []);
 
   const openCreate = () => {
     setForm(EMPTY_FORM);
@@ -153,9 +191,9 @@ export default function AdminProjects() {
         ? project.projectDate.split('T')[0]
         : project.project_date?.split('T')[0] ?? new Date().toISOString().split('T')[0],
     });
-    // parse gallery: supporta sia array di stringhe che array di oggetti { src }
+
     const raw = project.gallery_images ?? [];
-    setGallery(raw.map(item => (typeof item === 'string' ? item : item?.src ?? item?.url ?? '')).filter(Boolean));
+    setGallery(raw.map((item) => (typeof item === 'string' ? item : item?.src ?? item?.url ?? '')).filter(Boolean));
     setFormError(null);
     setEditing(project);
     setModal('edit');
@@ -170,13 +208,17 @@ export default function AdminProjects() {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setForm(prev => ({ ...prev, [name]: value }));
+    setForm((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSave = async (e) => {
     e.preventDefault();
     setFormError(null);
-    if (!form.title.trim()) { setFormError('Il titolo è obbligatorio.'); return; }
+
+    if (!form.title.trim()) {
+      setFormError('Il titolo è obbligatorio.');
+      return;
+    }
 
     setSaving(true);
     try {
@@ -221,202 +263,247 @@ export default function AdminProjects() {
     }
   };
 
+  const filteredProjects = useMemo(() => {
+    let list = projects;
+    if (filterLayout !== 'all') list = list.filter((p) => (p.layoutType ?? p.layout_type ?? 'default') === filterLayout);
+    if (search.trim()) {
+      const q = search.toLowerCase();
+      list = list.filter(
+        (p) =>
+          p.title?.toLowerCase().includes(q) ||
+          p.client?.toLowerCase().includes(q) ||
+          p.services?.toLowerCase().includes(q) ||
+          p.slug?.toLowerCase().includes(q),
+      );
+    }
+    return list;
+  }, [projects, search, filterLayout]);
+
+  const safeDate = (value) => {
+    if (!value) return '—';
+    const date = new Date(value);
+    return Number.isNaN(date.getTime()) ? '—' : date.toLocaleDateString('it-IT');
+  };
+
   return (
-    <div>
-      {/* Header */}
-      <div className="flex items-center justify-between mb-8">
-        <div>
-          <h1 className="text-3xl font-black tracking-tighter">Progetti</h1>
-          <p className="text-gray-400 mt-1">{projects.length} progett{projects.length === 1 ? 'o' : 'i'}</p>
-        </div>
-        <button
-          onClick={openCreate}
-          className="flex items-center gap-2 px-5 py-3 rounded-xl font-bold transition-opacity"
-          style={{ backgroundColor: '#1e4659', color: '#ffffff' }}
-        >
-          + Nuovo progetto
-        </button>
+    <AdminPage
+      eyebrow="Area riservata / Progetti"
+      title="Portfolio management"
+      description="Una griglia editoriale più premium per monitorare lavori, copertine, layout e metadati di ciascun progetto pubblicato."
+      stats={[
+        { label: 'Totale progetti', value: projects.length },
+        { label: 'Layout supportati', value: LAYOUT_TYPES.length },
+        { label: 'Media gallery', value: projects.reduce((acc, item) => acc + (item.gallery_images?.length ?? 0), 0), meta: 'immagini collegate' },
+      ]}
+      actions={
+        <>
+          <AdminBadge tone="violet">Portfolio live</AdminBadge>
+          <AdminButton type="button" variant="dark" onClick={openCreate}>+ Nuovo progetto</AdminButton>
+        </>
+      }
+    >
+      {error && <AdminNotice tone="danger">{error}</AdminNotice>}
+
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+        <AdminKpiCard label="Schede attive" value={projects.length} subtitle="Voci pubblicabili dal portfolio" tone="cyan" icon={<IcoFolder />} />
+        <AdminKpiCard label="Layout design" value={LAYOUT_TYPES.length} subtitle="Template gestiti dall’editor" tone="violet" icon={<IcoGrid />} />
+        <AdminKpiCard label="Asset visivi" value={projects.reduce((acc, item) => acc + (item.gallery_images?.length ?? 0), 0)} subtitle="Immagini aggregate dalle gallery" tone="amber" icon={<IcoImage />} />
       </div>
 
-      {/* Table */}
-      {loading ? (
-        <div className="flex justify-center py-20">
-          <div className="w-8 h-8 border-4 border-blend-dark border-t-transparent rounded-full animate-spin" />
+      <AdminPanel
+        title="Archivio progetti"
+        description="Ogni card mostra una vista più editoriale del portfolio, con cover, slug, cliente e azioni rapide di gestione."
+        action={<AdminButton type="button" variant="secondary" onClick={load}>Aggiorna</AdminButton>}
+      >
+        {/* Filter bar */}
+        <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex items-center gap-2 rounded-2xl border border-slate-200 bg-slate-100 px-3 py-2 focus-within:border-cyan-400 focus-within:ring-4 focus-within:ring-cyan-100 sm:w-72">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-slate-400"><circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" /></svg>
+            <input
+              type="text"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Cerca per titolo, cliente, servizi…"
+              className="flex-1 bg-transparent text-sm text-slate-800 outline-none placeholder:text-slate-400"
+            />
+            {search && (
+              <button type="button" onClick={() => setSearch('')} className="text-slate-400 hover:text-slate-600">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
+              </button>
+            )}
+          </div>
+          <div className="flex flex-wrap items-center gap-2">
+            {['all', ...LAYOUT_TYPES].map((lt) => (
+              <button
+                key={lt}
+                type="button"
+                onClick={() => setFilterLayout(lt)}
+                className={`rounded-2xl border px-3 py-1.5 text-xs font-black uppercase tracking-[0.15em] transition ${filterLayout === lt ? 'border-slate-950 bg-slate-950 text-white' : 'border-slate-300 bg-slate-100 text-slate-600 hover:bg-slate-200'}`}
+              >
+                {lt === 'all' ? 'Tutti' : lt}
+              </button>
+            ))}
+            {(search || filterLayout !== 'all') && (
+              <button
+                type="button"
+                onClick={() => { setSearch(''); setFilterLayout('all'); }}
+                className="rounded-2xl border border-red-200 bg-red-50 px-3 py-1.5 text-xs font-black text-red-600 transition hover:bg-red-100"
+              >
+                Resetta filtri
+              </button>
+            )}
+          </div>
         </div>
-      ) : error ? (
-        <p className="text-red-500 text-center py-20">{error}</p>
-      ) : projects.length === 0 ? (
-        <p className="text-center text-gray-400 py-20 italic">Nessun progetto. Creane uno!</p>
-      ) : (
-        <div className="bg-white rounded-2xl shadow-sm overflow-hidden border border-gray-100">
-          <table className="w-full text-sm">
-            <thead className="bg-gray-50 border-b border-gray-100">
-              <tr>
-                <th className="text-left px-6 py-4 font-bold text-gray-500 uppercase tracking-wider text-xs">Titolo</th>
-                <th className="text-left px-6 py-4 font-bold text-gray-500 uppercase tracking-wider text-xs">Cliente</th>
-                <th className="text-left px-6 py-4 font-bold text-gray-500 uppercase tracking-wider text-xs">Layout</th>
-                <th className="text-left px-6 py-4 font-bold text-gray-500 uppercase tracking-wider text-xs">Data</th>
-                <th className="px-6 py-4" />
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-50">
-              {projects.map(p => (
-                <tr key={p.id} className="hover:bg-gray-50 transition-colors">
-                  <td className="px-6 py-4">
-                    <p className="font-bold text-gray-900">{p.title}</p>
-                    <p className="text-gray-400 text-xs mt-0.5">/{p.slug}</p>
-                  </td>
-                  <td className="px-6 py-4 text-gray-600">{p.client || '—'}</td>
-                  <td className="px-6 py-4">
-                    <span className="px-2 py-1 bg-gray-100 rounded-lg text-xs font-mono text-gray-600">
-                      {p.layoutType ?? p.layout_type ?? '—'}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 text-gray-500">
-                    {new Date(p.projectDate ?? p.project_date).toLocaleDateString('it-IT')}
-                  </td>
-                  <td className="px-6 py-4 text-right">
-                    <div className="flex items-center justify-end gap-2">
-                      <button
-                        onClick={() => openEdit(p)}
-                        className="px-3 py-1.5 text-xs font-bold rounded-lg transition-all"
-                        style={{ backgroundColor: '#1e4659', color: '#ffffff', border: '1px solid #1e4659' }}
-                        onMouseEnter={e => e.currentTarget.style.backgroundColor = '#2c5f7a'}
-                        onMouseLeave={e => e.currentTarget.style.backgroundColor = '#1e4659'}
-                      >
-                        Modifica
-                      </button>
-                      <button
-                        onClick={() => setConfirmDelete(p)}
-                        className="px-3 py-1.5 text-xs font-bold rounded-lg transition-all"
-                        style={{ backgroundColor: '#ffffff', color: '#ef4444', border: '1px solid #fca5a5' }}
-                        onMouseEnter={e => { e.currentTarget.style.backgroundColor = '#ef4444'; e.currentTarget.style.color = '#ffffff'; }}
-                        onMouseLeave={e => { e.currentTarget.style.backgroundColor = '#ffffff'; e.currentTarget.style.color = '#ef4444'; }}
-                      >
-                        Elimina
-                      </button>
+
+        {loading ? (
+          <div className="flex justify-center py-16">
+            <div className="h-9 w-9 animate-spin rounded-full border-4 border-cyan-500 border-t-transparent" />
+          </div>
+        ) : projects.length === 0 ? (
+          <AdminEmptyState
+            icon="🗂️"
+            title="Nessun progetto presente"
+            description="Aggiungi il primo case study per popolare il portfolio e gestirlo dal nuovo pannello visuale."
+            action={<AdminButton type="button" onClick={openCreate}>Crea progetto</AdminButton>}
+          />
+        ) : filteredProjects.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-12 text-center">
+            <div className="mb-3 text-4xl">🔍</div>
+            <p className="text-sm font-black text-slate-600">Nessun risultato</p>
+            <p className="mt-1 text-xs text-slate-400">Prova a modificare la ricerca o i filtri attivi.</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 gap-5 lg:grid-cols-2 2xl:grid-cols-3">
+            {filteredProjects.map((p) => {
+              const cover = p.coverImage ?? p.cover_image;
+              const layout = p.layoutType ?? p.layout_type ?? 'default';
+              const projectDate = p.projectDate ?? p.project_date;
+              const galleryCount = p.gallery_images?.length ?? 0;
+
+              return (
+                <article
+                  key={p.id}
+                  className="group overflow-hidden rounded-[30px] border border-slate-200 bg-white shadow-[0_18px_45px_rgba(15,23,42,0.07)] transition hover:-translate-y-1 hover:shadow-[0_26px_60px_rgba(15,23,42,0.11)]"
+                >
+                  <div className="relative aspect-16/10 overflow-hidden bg-linear-to-br from-slate-900 via-slate-800 to-cyan-900">
+                    {cover ? (
+                      <img src={cover} alt={p.title} loading="lazy" decoding="async" className="h-full w-full object-cover transition duration-500 group-hover:scale-105" />
+                    ) : (
+                      <div className="flex h-full w-full items-center justify-center text-5xl text-white/70">🖼️</div>
+                    )}
+                    <div className="absolute inset-0 bg-linear-to-t from-slate-950/70 via-slate-950/10 to-transparent" />
+                    <div className="absolute left-4 top-4 flex flex-wrap gap-2">
+                      <AdminBadge tone="slate" className="border-white/15 bg-white/10 text-white">{layout}</AdminBadge>
+                      <AdminBadge tone="slate" className="border-white/15 bg-white/10 text-white">{galleryCount} gallery</AdminBadge>
                     </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
+                  </div>
 
-      {/* Create / Edit Modal */}
+                  <div className="space-y-4 p-5">
+                    <div>
+                      <p className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400">/{p.slug}</p>
+                      <h3 className="mt-2 text-xl font-black tracking-tight text-slate-900">{p.title}</h3>
+                      <p className="mt-2 line-clamp-3 text-sm leading-6 text-slate-500">{p.description || 'Nessuna descrizione disponibile.'}</p>
+                    </div>
+
+                    <div className="flex flex-wrap gap-2">
+                      <AdminBadge tone="cyan">{p.client || 'Cliente non indicato'}</AdminBadge>
+                      {p.services && <AdminBadge tone="amber">{p.services}</AdminBadge>}
+                      <AdminBadge tone="slate">{safeDate(projectDate)}</AdminBadge>
+                    </div>
+
+                    <div className="flex flex-wrap gap-3 pt-2">
+                      <AdminButton type="button" className="flex-1" onClick={() => openEdit(p)}>Modifica</AdminButton>
+                      <AdminButton type="button" variant="danger" className="flex-1" onClick={() => setConfirmDelete(p)}>Elimina</AdminButton>
+                    </div>
+                  </div>
+                </article>
+              );
+            })}
+          </div>
+        )}
+      </AdminPanel>
+
       {modal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
-          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-            <div className="p-6 border-b border-gray-100 flex items-center justify-between sticky top-0 bg-white z-10">
-              <h2 className="text-xl font-black">
-                {modal === 'create' ? 'Nuovo progetto' : 'Modifica progetto'}
-              </h2>
-              <button onClick={closeModal} className="text-gray-400 hover:text-gray-700 text-2xl leading-none">&times;</button>
-            </div>
+        <AdminDialog onClose={closeModal} maxWidth="max-w-4xl">
+          <AdminDialogHeader
+            title={modal === 'create' ? 'Nuovo progetto' : 'Modifica progetto'}
+            description="Compila i campi principali, scegli il layout e costruisci una gallery ordinata per il portfolio."
+            onClose={closeModal}
+          />
 
-            <form onSubmit={handleSave} className="p-6 space-y-5">
-              {formError && (
-                <div className="bg-red-50 border border-red-200 text-red-600 rounded-xl px-4 py-3 text-sm">
-                  {formError}
-                </div>
-              )}
+          <form onSubmit={handleSave} className="max-h-[calc(90vh-88px)] overflow-y-auto px-6 py-6" data-lenis-prevent>
+            <div className="space-y-5">
+              {formError && <AdminNotice tone="danger">{formError}</AdminNotice>}
 
-              <div className="grid grid-cols-2 gap-4">
-                <div className="col-span-2">
-                  <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Titolo *</label>
-                  <input name="title" value={form.title} onChange={handleChange}
-                    className="w-full border border-gray-200 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-[#1e4659]"
-                    placeholder="Nome del progetto" />
-                </div>
+              <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
+                <AdminField label="Titolo *" className="md:col-span-2">
+                  <AdminInput name="title" value={form.title} onChange={handleChange} placeholder="Nome del progetto" />
+                </AdminField>
 
-                <div className="col-span-2">
-                  <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Slug</label>
-                  <input name="slug" value={form.slug} onChange={handleChange}
-                    className="w-full border border-gray-200 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-[#1e4659] font-mono text-sm"
-                    placeholder="auto-generato dal titolo se vuoto" />
-                </div>
+                <AdminField label="Slug" className="md:col-span-2" hint="Se lasciato vuoto, può essere generato lato backend.">
+                  <AdminInput name="slug" value={form.slug} onChange={handleChange} placeholder="slug-del-progetto" className="font-mono" />
+                </AdminField>
 
-                <div>
-                  <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Cliente</label>
-                  <input name="client" value={form.client} onChange={handleChange}
-                    className="w-full border border-gray-200 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-[#1e4659]" />
-                </div>
+                <AdminField label="Cliente">
+                  <AdminInput name="client" value={form.client} onChange={handleChange} placeholder="Nome cliente" />
+                </AdminField>
 
-                <div>
-                  <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Servizi</label>
-                  <input name="services" value={form.services} onChange={handleChange}
-                    className="w-full border border-gray-200 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-[#1e4659]"
-                    placeholder="es. Branding, Web Design" />
-                </div>
+                <AdminField label="Servizi">
+                  <AdminInput name="services" value={form.services} onChange={handleChange} placeholder="Branding, Web Design..." />
+                </AdminField>
 
-                <div className="col-span-2">
-                  <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Descrizione</label>
-                  <textarea name="description" value={form.description} onChange={handleChange} rows={4}
-                    className="w-full border border-gray-200 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-[#1e4659] resize-none" />
-                </div>
+                <AdminField label="Descrizione" className="md:col-span-2">
+                  <AdminTextarea name="description" value={form.description} onChange={handleChange} rows={5} className="resize-none" />
+                </AdminField>
 
-                <div className="col-span-2">
-                  <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Cover Image (URL)</label>
-                  <input name="coverImage" value={form.coverImage} onChange={handleChange}
-                    className="w-full border border-gray-200 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-[#1e4659]" />
-                </div>
+                <AdminField label="Cover image URL" className="md:col-span-2">
+                  <AdminInput name="coverImage" value={form.coverImage} onChange={handleChange} placeholder="https://..." />
+                </AdminField>
 
                 <GalleryEditor images={gallery} onChange={setGallery} />
 
-                <div>
-                  <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Layout</label>
-                  <select name="layoutType" value={form.layoutType} onChange={handleChange}
-                    className="w-full border border-gray-200 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-[#1e4659]">
-                    {LAYOUT_TYPES.map(l => <option key={l} value={l}>{l}</option>)}
-                  </select>
-                </div>
+                <AdminField label="Layout">
+                  <AdminSelect name="layoutType" value={form.layoutType} onChange={handleChange}>
+                    {LAYOUT_TYPES.map((layout) => (
+                      <option key={layout} value={layout}>{layout}</option>
+                    ))}
+                  </AdminSelect>
+                </AdminField>
 
-                <div>
-                  <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Data progetto</label>
-                  <input type="date" name="projectDate" value={form.projectDate} onChange={handleChange}
-                    className="w-full border border-gray-200 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-[#1e4659]" />
-                </div>
+                <AdminField label="Data progetto">
+                  <AdminInput type="date" name="projectDate" value={form.projectDate} onChange={handleChange} />
+                </AdminField>
               </div>
 
-              <div className="flex items-center justify-end gap-3 pt-2">
-                <button type="button" onClick={closeModal}
-                  className="px-5 py-2.5 rounded-xl border border-gray-200 text-gray-600 font-bold hover:bg-gray-50 transition-colors">
-                  Annulla
-                </button>
-                <button type="submit" disabled={saving}
-                  className="px-5 py-2.5 rounded-xl font-bold transition-opacity disabled:opacity-50"
-                  style={{ backgroundColor: '#1e4659', color: '#ffffff' }}>
-                  {saving ? 'Salvataggio…' : 'Salva'}
-                </button>
+              <div className="flex justify-end gap-3 pt-3">
+                <AdminButton type="button" variant="secondary" onClick={closeModal}>Annulla</AdminButton>
+                <AdminButton type="submit" disabled={saving}>{saving ? 'Salvataggio…' : 'Salva progetto'}</AdminButton>
               </div>
-            </form>
-          </div>
-        </div>
+            </div>
+          </form>
+        </AdminDialog>
       )}
 
-      {/* Delete Confirm Modal */}
       {confirmDelete && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
-          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-sm p-6">
-            <h2 className="text-xl font-black mb-2">Elimina progetto</h2>
-            <p className="text-gray-500 mb-6">
-              Sei sicuro di voler eliminare <span className="font-bold text-gray-800">"{confirmDelete.title}"</span>? L'operazione è irreversibile.
+        <AdminDialog onClose={() => setConfirmDelete(null)} maxWidth="max-w-md">
+          <AdminDialogHeader
+            title="Elimina progetto"
+            description="Conferma la rimozione definitiva della scheda portfolio selezionata."
+            onClose={() => setConfirmDelete(null)}
+          />
+          <div className="space-y-6 px-6 py-6">
+            <p className="text-sm leading-6 text-slate-600">
+              Vuoi davvero eliminare <span className="font-black text-slate-900">{confirmDelete.title}</span>? L’operazione è irreversibile.
             </p>
-            <div className="flex gap-3 justify-end">
-              <button onClick={() => setConfirmDelete(null)}
-                className="px-5 py-2.5 rounded-xl border border-gray-200 text-gray-600 font-bold hover:bg-gray-50 transition-colors">
-                Annulla
-              </button>
-              <button onClick={handleDelete} disabled={deleting}
-                className="px-5 py-2.5 rounded-xl font-bold transition-colors disabled:opacity-50"
-                style={{ backgroundColor: '#ef4444', color: '#ffffff' }}>
+            <div className="flex justify-end gap-3">
+              <AdminButton type="button" variant="secondary" onClick={() => setConfirmDelete(null)}>Annulla</AdminButton>
+              <AdminButton type="button" variant="danger" onClick={handleDelete} disabled={deleting}>
                 {deleting ? 'Eliminazione…' : 'Elimina'}
-              </button>
+              </AdminButton>
             </div>
           </div>
-        </div>
+        </AdminDialog>
       )}
-    </div>
+    </AdminPage>
   );
 }

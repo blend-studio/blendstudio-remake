@@ -166,4 +166,38 @@ export const deleteUser = async (id) => {
     return response.data;
 };
 
+// ── Analytics (servizio Python porta 8001) ─────────────────────────────
+
+const ANALYTICS_BASE = import.meta.env.VITE_ANALYTICS_BASE_URL || 'http://localhost:8001';
+
+export const getAnalyticsStats = async () => {
+    const r = await fetch(`${ANALYTICS_BASE}/stats`);
+    if (!r.ok) throw new Error('Analytics stats failed');
+    return r.json();
+};
+
+export const getAnalyticsTrends = async (days = 30) => {
+    const r = await fetch(`${ANALYTICS_BASE}/trends?days=${days}`);
+    if (!r.ok) return [];
+    return r.json();
+};
+
+export const getAnalyticsTopPages = async (limit = 10) => {
+    const r = await fetch(`${ANALYTICS_BASE}/top-pages?limit=${limit}`);
+    if (!r.ok) return [];
+    return r.json();
+};
+
+export const getAnalyticsTopActions = async (limit = 10) => {
+    const r = await fetch(`${ANALYTICS_BASE}/top-actions?limit=${limit}`);
+    if (!r.ok) return [];
+    return r.json();
+};
+
+export const getAnalyticsEvents = async (page = 1, limit = 50) => {
+    const r = await fetch(`${ANALYTICS_BASE}/events?page=${page}&limit=${limit}`);
+    if (!r.ok) return null;
+    return r.json();
+};
+
 export default api;

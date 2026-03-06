@@ -111,7 +111,7 @@ const AdminLayout = () => {
       </aside>
 
       {/* Main */}
-      <main className="flex-grow overflow-auto" style={{ background: '#f8fafc' }} data-lenis-prevent>
+      <main className={`flex-grow ${['/admin/messages', '/admin'].includes(location.pathname) ? 'overflow-hidden' : 'overflow-auto'}`} style={{ background: '#f8fafc' }} data-lenis-prevent>
         <AnimatePresence mode="wait">
           <motion.div
             key={location.pathname}
@@ -119,7 +119,7 @@ const AdminLayout = () => {
             animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
             exit={{ opacity: 0, y: -8, filter: 'blur(4px)' }}
             transition={{ duration: 0.3, ease: [0.25, 0.46, 0.45, 0.94] }}
-            className="p-8 md:p-10 min-h-full"
+            className={['/admin/messages', '/admin'].includes(location.pathname) ? 'h-full' : 'p-8 md:p-10 min-h-full'}
           >
             <Outlet />
           </motion.div>
