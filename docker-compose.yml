@@ -67,8 +67,8 @@ services:
     ports:
       - "8001:8000"
     environment:
-      - MONGO_CONNECTION_STRING=${MONGO_CONNECTION_STRING}
-      - MLFLOW_TRACKING_URI=${MLFLOW_TRACKING_URI}
+      - MONGO_CONNECTION_STRING=${MONGO_CONNECTION_STRING:-mongodb://mongodb:27017/blendstudio}
+      - MLFLOW_TRACKING_URI=${MLFLOW_TRACKING_URI:-http://mlflow:5000}
     depends_on:
       - mongodb
       - mlflow

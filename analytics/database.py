@@ -7,6 +7,8 @@ Espone `get_col()`, l'unica funzione necessaria per ottenere la collection
 "telemetry" da qualsiasi router senza ripetere la logica di connessione.
 """
 
+from urllib.parse import urlparse
+
 from pymongo import MongoClient
 
 from config import MONGO_URI
@@ -34,5 +36,8 @@ def get_col():
       }
     """
     client = MongoClient(MONGO_URI)
-    db = client.get_default_database()
+    # Prova a ricavare il nome del db dall'URI (es. mongodb://host/blendstudio),
+    # altrimenti usa il default "blendstudio".
+    db_name = urlparse(MONGO_URI).path.lstrip("/") or "blendstudio"
+    db = client[db_name]
     return db["telemetry"]

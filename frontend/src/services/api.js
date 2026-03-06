@@ -122,8 +122,44 @@ export const deleteMessage = async (id) => {
     return response.data;
 };
 
-export const replyMessage = async (id, body) => {
-    const response = await api.post(`/admin/messages/${id}/reply`, { body });
+export const replyMessage = async (id, payload) => {
+    /* payload può essere una stringa (legacy) o { body, to, cc, bcc } */
+    const data = typeof payload === 'string'
+        ? { body: payload, to: [], cc: [], bcc: [] }
+        : payload;
+    const response = await api.post(`/admin/messages/${id}/reply`, data);
+    return response.data;
+};
+
+// ── Upload immagini ──────────────────────────────────────────────────────
+
+export const uploadImage = async (file) => {
+    const form = new FormData();
+    form.append('file', file);
+    const response = await api.post('/admin/upload/image', form, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+    });
+    return response.data; // { status, url, file_name }
+};
+
+export const deleteUploadedImage = async (fileName) => {
+    const response = await api.delete(`/admin/upload/image/${fileName}`);
+    return response.data;
+};
+
+// ── Firma email ────────────────────────────────────────────────────────────
+
+export const getSignature = async () => {
+    const response = await api.get('/admin/settings/signature');
+    return response.data;
+};
+
+export const uploadSignature = async (file) => {
+    const form = new FormData();
+    form.append('file', file);
+    const response = await api.post('/admin/settings/signature', form, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+    });
     return response.data;
 };
 
@@ -197,6 +233,18 @@ export const getAnalyticsTopActions = async (limit = 10) => {
 export const getAnalyticsEvents = async (page = 1, limit = 50) => {
     const r = await fetch(`${ANALYTICS_BASE}/events?page=${page}&limit=${limit}`);
     if (!r.ok) return null;
+    return r.json();
+};
+
+export const getAnalyticsScrollDepth = async () => {
+    const r = await fetch(`${ANALYTICS_BASE}/scroll-depth`);
+    if (!r.ok) return [];
+    return r.json();
+};
+
+export const getAnalyticsHourly = async () => {
+    const r = await fetch(`${ANALYTICS_BASE}/hourly-traffic`);
+    if (!r.ok) return [];
     return r.json();
 };
 

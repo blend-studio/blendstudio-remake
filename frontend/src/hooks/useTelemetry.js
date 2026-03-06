@@ -29,11 +29,15 @@ export const useTelemetry = () => {
     const track = useCallback((action, metadata = {}, elementId = null) => {
         try {
             const sessionId = getOrCreateSessionId();
+            // Converte tutti i valori in stringhe per compatibilità col backend (Dictionary<string, string?>)
+            const normalizedMetadata = Object.keys(metadata).length > 0
+                ? Object.fromEntries(Object.entries(metadata).map(([k, v]) => [k, v == null ? null : String(v)]))
+                : undefined;
             const payload = {
                 action,
                 page: window.location.pathname,
                 elementId: elementId ?? undefined,
-                metadata: Object.keys(metadata).length > 0 ? metadata : undefined,
+                metadata: normalizedMetadata,
                 sessionId,
                 referrer: document.referrer || undefined,
                 userAgent: navigator.userAgent,

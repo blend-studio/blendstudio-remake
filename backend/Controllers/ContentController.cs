@@ -35,7 +35,7 @@ namespace backend.Controllers
 
     /// <summary>
     /// CRUD dei contenuti CMS per il pannello admin. Tutti gli endpoint richiedono JWT.
-    /// I contenuti sono archiviati in MongoDB (collection "contents").
+    /// I contenuti sono archiviati in MongoDB (collection "adminpanel").
     /// Percorso base: /api/admin/content
     /// </summary>
     [ApiController]

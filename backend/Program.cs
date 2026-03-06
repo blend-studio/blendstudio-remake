@@ -2,7 +2,9 @@ using System.Text;
 using backend.Data;
 using backend.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
 using MongoDB.Driver;
 
@@ -76,6 +78,16 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseCors("AllowFrontend");
+
+// Serve immagini caricate staticamente da /uploads/images/
+var uploadsPath = Path.Combine(builder.Environment.WebRootPath ?? builder.Environment.ContentRootPath, "uploads", "images");
+Directory.CreateDirectory(uploadsPath);
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(uploadsPath),
+    RequestPath  = "/uploads/images",
+    ContentTypeProvider = new FileExtensionContentTypeProvider(),
+});
 
 if (!app.Environment.IsDevelopment())
 {

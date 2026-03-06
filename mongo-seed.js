@@ -1,6 +1,6 @@
 db = db.getSiblingDB('blendstudio');
 
-db.contents.insertMany([
+db.adminpanel.insertMany([
     {
         slug: 'home',
         data: {

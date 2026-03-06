@@ -30,11 +30,11 @@ async def get_device_stats():
     """
     col = get_col()
     pipeline = [
-        {"$match": {"screenW": {"$exists": True, "$ne": None}}},
+        {"$match": {"ScreenW": {"$exists": True, "$ne": None}}},
         # Primo evento della sessione → un solo device per sessione
         {"$group": {
-            "_id":     "$sessionId",
-            "screenW": {"$first": "$screenW"},
+            "_id":     "$SessionId",
+            "screenW": {"$first": "$ScreenW"},
         }},
     ]
     sessions = list(col.aggregate(pipeline))
@@ -65,11 +65,11 @@ async def get_session_stats():
     """
     col = get_col()
     pipeline = [
-        {"$match": {"sessionId": {"$ne": None}}},
+        {"$match": {"SessionId": {"$ne": None}}},
         {"$group": {
-            "_id":    "$sessionId",
+            "_id":    "$SessionId",
             "events": {"$sum": 1},
-            "pages":  {"$addToSet": "$page"},
+            "pages":  {"$addToSet": "$Page"},
         }},
     ]
     sessions = list(col.aggregate(pipeline))
@@ -109,8 +109,8 @@ async def get_referrer_stats(limit: int = Query(default=10, ge=1, le=50)):
     pipeline = [
         # Prende solo il primo referrer per sessione
         {"$group": {
-            "_id":      "$sessionId",
-            "referrer": {"$first": "$referrer"},
+            "_id":      "$SessionId",
+            "referrer": {"$first": "$Referrer"},
         }},
         # Sostituisce null/vuoto con "direct"
         {"$addFields": {
@@ -152,16 +152,16 @@ async def get_funnel():
 
     def distinct_sessions(query: dict) -> int:
         """Conta sessioni uniche che soddisfano `query`."""
-        result = col.distinct("sessionId", query)
+        result = col.distinct("SessionId", query)
         return len([s for s in result if s])
 
     def rate(num: int, denom: int) -> float:
         return round(num / denom * 100, 1) if denom > 0 else 0.0
 
-    total_visitors   = distinct_sessions({"action": "page_view"})
-    contact_visitors = distinct_sessions({"action": "page_view", "page": "/contact"})
-    form_started     = distinct_sessions({"action": "contact_form_start"})
-    form_submitted   = distinct_sessions({"action": "contact_form_submit"})
+    total_visitors   = distinct_sessions({"Action": "page_view"})
+    contact_visitors = distinct_sessions({"Action": "page_view", "Page": "/contact"})
+    form_started     = distinct_sessions({"Action": "contact_form_start"})
+    form_submitted   = distinct_sessions({"Action": "contact_form_submit"})
 
     return {
         "steps": [

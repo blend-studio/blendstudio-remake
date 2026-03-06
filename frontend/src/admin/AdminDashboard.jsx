@@ -128,23 +128,40 @@ const MONTHLY_DATA = [
   { label: 'Mar', value: 58 },
 ];
 
-const STATUS_ITEMS = [
-  { label: 'Backend API', status: 'online', detail: '.NET 10 · localhost:5051' },
-  { label: 'MongoDB', status: 'online', detail: 'blendstudio_mongo' },
-  { label: 'Analytics ML', status: 'warning', detail: 'Servizio non avviato' },
-  { label: 'MLflow', status: 'warning', detail: 'Tracking server offline' },
+const SERVICES_CONFIG = [
+  { label: 'Backend API',  detail: '.NET 10 · localhost:8000', url: `${import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8000'}/api/projects` },
+  { label: 'MongoDB',      detail: 'blendstudio_mongo',        url: `${import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8000'}/api/projects` }, // inferred via backend
+  { label: 'Analytics ML', detail: 'localhost:8001',           url: `${import.meta.env.VITE_ANALYTICS_BASE_URL ?? 'http://localhost:8001'}/stats` },
+  { label: 'MLflow',       detail: 'localhost:5000',           url: 'http://localhost:5000/health' },
 ];
 
 const AdminDashboard = () => {
   const [stats, setStats] = useState({ total_events: 0, projects: null, messages: null, forecast: '+12%' });
+  const [services, setServices] = useState(
+    SERVICES_CONFIG.map((s) => ({ ...s, status: 'checking' }))
+  );
+
+  // Ping a service with a 4s timeout, returns 'online' | 'offline'
+  const pingService = async (url) => {
+    try {
+      const ctrl = new AbortController();
+      const id = setTimeout(() => ctrl.abort(), 4000);
+      const res = await fetch(url, { signal: ctrl.signal, mode: 'cors' });
+      clearTimeout(id);
+      return res.ok ? 'online' : 'offline';
+    } catch {
+      return 'offline';
+    }
+  };
 
   useEffect(() => {
     const token = localStorage.getItem('blend_admin_token');
     const headers = { 'Authorization': `Bearer ${token}` };
-    const base = import.meta.env.VITE_API_BASE_URL;
+    const base = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8000';
 
+    // Stats fetch
     Promise.allSettled([
-      getAnalyticsStats(),   // servizio Python (porta 8001) — unica fonte per le stats
+      getAnalyticsStats(),
       fetch(`${base}/api/projects`).then(r => r.ok ? r.json() : null),
       fetch(`${base}/api/admin/messages`, { headers }).then(r => r.ok ? r.json() : null),
     ]).then(([telemetry, projects, messages]) => {
@@ -153,6 +170,15 @@ const AdminDashboard = () => {
         projects: projects.value?.data?.length ?? 0,
         messages: messages.value?.data?.length ?? 0,
         forecast: '+12%',
+      });
+    });
+
+    // Service health checks — run in parallel, update each individually
+    SERVICES_CONFIG.forEach((svc, i) => {
+      // MongoDB status inferred from backend (same URL); mark it after backend check
+      const url = i === 1 ? SERVICES_CONFIG[0].url : svc.url;
+      pingService(url).then((status) => {
+        setServices((prev) => prev.map((s, idx) => idx === i ? { ...s, status, detail: status === 'online' ? svc.detail : (i === 2 ? 'Servizio non avviato' : i === 3 ? 'Tracking server offline' : svc.detail) } : s));
       });
     });
   }, []);
@@ -271,15 +297,23 @@ const AdminDashboard = () => {
             <h3 className="text-lg font-black tracking-tight text-slate-900">Stato servizi</h3>
           </div>
           <div className="flex flex-col gap-3 flex-1">
-            {STATUS_ITEMS.map((s) => (
+            {services.map((s) => (
               <div key={s.label} className="flex items-center gap-3 rounded-2xl border border-slate-100 bg-slate-50/60 px-4 py-3">
-                <div className={`w-2 h-2 rounded-full flex-shrink-0 ${s.status === 'online' ? 'bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.8)]' : 'bg-amber-400 shadow-[0_0_8px_rgba(251,191,36,0.8)]'} animate-pulse`} />
+                <div className={`w-2 h-2 rounded-full flex-shrink-0 ${
+                  s.status === 'online'   ? 'bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.8)]' :
+                  s.status === 'offline'  ? 'bg-red-400 shadow-[0_0_8px_rgba(248,113,113,0.8)]' :
+                                            'bg-slate-300'
+                } ${s.status !== 'checking' ? 'animate-pulse' : ''}`} />
                 <div className="min-w-0 flex-1">
                   <p className="text-xs font-black text-slate-800 truncate">{s.label}</p>
                   <p className="text-[10px] text-slate-400 truncate">{s.detail}</p>
                 </div>
-                <span className={`text-[9px] font-black uppercase px-2 py-0.5 rounded-full ${s.status === 'online' ? 'bg-emerald-50 text-emerald-600' : 'bg-amber-50 text-amber-600'}`}>
-                  {s.status === 'online' ? 'OK' : 'OFF'}
+                <span className={`text-[9px] font-black uppercase px-2 py-0.5 rounded-full ${
+                  s.status === 'online'   ? 'bg-emerald-50 text-emerald-600' :
+                  s.status === 'offline'  ? 'bg-red-50 text-red-500' :
+                                            'bg-slate-100 text-slate-400'
+                }`}>
+                  {s.status === 'online' ? 'OK' : s.status === 'offline' ? 'OFF' : '…'}
                 </span>
               </div>
             ))}

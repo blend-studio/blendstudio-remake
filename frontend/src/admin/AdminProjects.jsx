@@ -1,5 +1,6 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import { getProjects, createProject, updateProject, deleteProject } from '../services/api';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { AnimatePresence } from 'framer-motion';
+import { getProjects, createProject, updateProject, deleteProject, uploadImage } from '../services/api';
 import {
   AdminBadge,
   AdminButton,
@@ -58,16 +59,56 @@ function IcoImage() {
   );
 }
 
-function GalleryEditor({ images, onChange }) {
-  const [newUrl, setNewUrl] = useState('');
+const MAX_SIZE = 500 * 1024; // 500 KB
 
-  const add = () => {
-    const url = newUrl.trim();
-    if (!url) return;
-    onChange([...images, url]);
-    setNewUrl('');
+function ImageUploadZone({ onUploaded, label = 'Carica immagine', disabled = false }) {
+  const inputRef = useRef(null);
+  const [uploading, setUploading] = useState(false);
+  const [err, setErr] = useState(null);
+
+  const handleFile = async (file) => {
+    if (!file) return;
+    setErr(null);
+    if (file.size > MAX_SIZE) { setErr('File troppo grande (max 500 KB).'); return; }
+    const ext = file.name.split('.').pop().toLowerCase();
+    if (!['jpg','jpeg','png','gif','webp','avif'].includes(ext)) { setErr('Formato non supportato.'); return; }
+    setUploading(true);
+    try {
+      const res = await uploadImage(file);
+      onUploaded(res.url);
+    } catch { setErr('Errore durante il caricamento.'); }
+    finally { setUploading(false); if (inputRef.current) inputRef.current.value = ''; }
   };
 
+  const onDrop = (e) => { e.preventDefault(); handleFile(e.dataTransfer.files?.[0]); };
+
+  return (
+    <div>
+      <div
+        onDrop={onDrop}
+        onDragOver={(e) => e.preventDefault()}
+        onClick={() => !disabled && !uploading && inputRef.current?.click()}
+        className={`flex cursor-pointer flex-col items-center justify-center gap-2 rounded-2xl border-2 border-dashed px-4 py-5 text-center transition ${
+          uploading ? 'border-cyan-300 bg-cyan-50 opacity-70' : 'border-slate-300 bg-slate-50 hover:border-cyan-400 hover:bg-cyan-50'
+        } ${disabled ? 'pointer-events-none opacity-50' : ''}`}
+      >
+        {uploading ? (
+          <div className="h-5 w-5 animate-spin rounded-full border-2 border-cyan-500 border-t-transparent" />
+        ) : (
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-slate-400"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        )}
+        <span className="text-xs font-semibold text-slate-500">
+          {uploading ? 'Caricamento…' : <>{label} <span className="text-slate-400">(max 500 KB)</span></>}
+        </span>
+        <span className="text-[11px] text-slate-400">JPG, PNG, WEBP, GIF, AVIF — trascina o clicca</span>
+      </div>
+      <input ref={inputRef} type="file" accept=".jpg,.jpeg,.png,.gif,.webp,.avif" className="hidden" onChange={(e) => handleFile(e.target.files?.[0])} />
+      {err && <p className="mt-1.5 text-xs font-semibold text-red-500">{err}</p>}
+    </div>
+  );
+}
+
+function GalleryEditor({ images, onChange }) {
   const remove = (idx) => onChange(images.filter((_, i) => i !== idx));
 
   const moveUp = (idx) => {
@@ -85,55 +126,29 @@ function GalleryEditor({ images, onChange }) {
   };
 
   return (
-    <div className="col-span-2 space-y-4">
-      <div className="flex items-center justify-between gap-3">
-        <p className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400">Gallery visual ({images.length})</p>
-        {images.length > 0 && <AdminBadge tone="slate">Ordina drag-like</AdminBadge>}
-      </div>
+    <div className="col-span-2 lg:col-span-3 space-y-4">
+      <p className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400">Gallery immagini ({images.length})</p>
 
       {images.length > 0 && (
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-4">
           {images.map((url, idx) => (
-            <div key={`${url}-${idx}`} className="overflow-hidden rounded-3xl border border-slate-200 bg-slate-50/80 shadow-sm">
+            <div key={`${url}-${idx}`} className="overflow-hidden rounded-2xl border border-slate-200 bg-slate-50">
               <div className="aspect-video bg-slate-100">
-                <img
-                  src={url}
-                  alt="Anteprima gallery"
-                  className="h-full w-full object-cover"
-                  onError={(e) => {
-                    e.currentTarget.style.display = 'none';
-                  }}
-                />
+                <img src={url} alt="gallery" className="h-full w-full object-cover" onError={(e) => { e.currentTarget.style.display = 'none'; }} />
               </div>
-              <div className="space-y-3 p-4">
-                <p className="truncate text-xs font-medium text-slate-500">{url}</p>
-                <div className="flex flex-wrap gap-2">
-                  <AdminButton type="button" variant="secondary" className="px-3 py-2 text-xs" onClick={() => moveUp(idx)} disabled={idx === 0}>
-                    ↑ Su
-                  </AdminButton>
-                  <AdminButton type="button" variant="secondary" className="px-3 py-2 text-xs" onClick={() => moveDown(idx)} disabled={idx === images.length - 1}>
-                    ↓ Giù
-                  </AdminButton>
-                  <AdminButton type="button" variant="danger" className="px-3 py-2 text-xs" onClick={() => remove(idx)}>
-                    Rimuovi
-                  </AdminButton>
+              <div className="flex items-center justify-between gap-1 p-2">
+                <div className="flex gap-1">
+                  <AdminButton type="button" variant="secondary" className="px-2 py-1 text-xs" onClick={() => moveUp(idx)} disabled={idx === 0}>↑</AdminButton>
+                  <AdminButton type="button" variant="secondary" className="px-2 py-1 text-xs" onClick={() => moveDown(idx)} disabled={idx === images.length - 1}>↓</AdminButton>
                 </div>
+                <AdminButton type="button" variant="danger" className="px-2 py-1 text-xs" onClick={() => remove(idx)}>✕</AdminButton>
               </div>
             </div>
           ))}
         </div>
       )}
 
-      <div className="flex flex-col gap-3 sm:flex-row">
-        <AdminInput
-          value={newUrl}
-          onChange={(e) => setNewUrl(e.target.value)}
-          onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), add())}
-          placeholder="https://... URL immagine"
-          className="flex-1"
-        />
-        <AdminButton type="button" onClick={add}>+ Aggiungi immagine</AdminButton>
-      </div>
+      <ImageUploadZone label="Aggiungi immagine gallery" onUploaded={(url) => onChange([...images, url])} />
     </div>
   );
 }
@@ -144,6 +159,7 @@ export default function AdminProjects() {
   const [error, setError] = useState(null);
   const [search, setSearch] = useState('');
   const [filterLayout, setFilterLayout] = useState('all');
+  const [filterSector, setFilterSector] = useState('all');
   const [modal, setModal] = useState(null);
   const [editing, setEditing] = useState(null);
   const [form, setForm] = useState(EMPTY_FORM);
@@ -263,9 +279,19 @@ export default function AdminProjects() {
     }
   };
 
+  // Settori unici estratti dal campo services di tutti i progetti
+  const sectors = useMemo(() => {
+    const set = new Set();
+    projects.forEach((p) => {
+      if (p.services) p.services.split(',').forEach((s) => { const t = s.trim(); if (t) set.add(t); });
+    });
+    return ['all', ...Array.from(set).sort()];
+  }, [projects]);
+
   const filteredProjects = useMemo(() => {
     let list = projects;
     if (filterLayout !== 'all') list = list.filter((p) => (p.layoutType ?? p.layout_type ?? 'default') === filterLayout);
+    if (filterSector !== 'all') list = list.filter((p) => p.services?.split(',').map((s) => s.trim()).includes(filterSector));
     if (search.trim()) {
       const q = search.toLowerCase();
       list = list.filter(
@@ -277,7 +303,7 @@ export default function AdminProjects() {
       );
     }
     return list;
-  }, [projects, search, filterLayout]);
+  }, [projects, search, filterLayout, filterSector]);
 
   const safeDate = (value) => {
     if (!value) return '—';
@@ -316,42 +342,53 @@ export default function AdminProjects() {
         action={<AdminButton type="button" variant="secondary" onClick={load}>Aggiorna</AdminButton>}
       >
         {/* Filter bar */}
-        <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex items-center gap-2 rounded-2xl border border-slate-200 bg-slate-100 px-3 py-2 focus-within:border-cyan-400 focus-within:ring-4 focus-within:ring-cyan-100 sm:w-72">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-slate-400"><circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" /></svg>
-            <input
-              type="text"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Cerca per titolo, cliente, servizi…"
-              className="flex-1 bg-transparent text-sm text-slate-800 outline-none placeholder:text-slate-400"
-            />
-            {search && (
-              <button type="button" onClick={() => setSearch('')} className="text-slate-400 hover:text-slate-600">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
-              </button>
-            )}
-          </div>
-          <div className="flex flex-wrap items-center gap-2">
-            {['all', ...LAYOUT_TYPES].map((lt) => (
-              <button
-                key={lt}
-                type="button"
-                onClick={() => setFilterLayout(lt)}
-                className={`rounded-2xl border px-3 py-1.5 text-xs font-black uppercase tracking-[0.15em] transition ${filterLayout === lt ? 'border-slate-950 bg-slate-950 text-white' : 'border-slate-300 bg-slate-100 text-slate-600 hover:bg-slate-200'}`}
-              >
-                {lt === 'all' ? 'Tutti' : lt}
-              </button>
-            ))}
-            {(search || filterLayout !== 'all') && (
+        <div className="mb-6 space-y-3">
+          {/* Row 1: search + reset */}
+          <div className="flex flex-wrap items-center gap-3">
+            <div className="flex flex-1 items-center gap-2 rounded-2xl border border-slate-200 bg-slate-100 px-3 py-2 focus-within:border-cyan-400 focus-within:ring-4 focus-within:ring-cyan-100 sm:max-w-sm">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="shrink-0 text-slate-400"><circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" /></svg>
+              <input
+                type="text"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder="Cerca per titolo, cliente, servizi…"
+                className="flex-1 bg-transparent text-sm text-slate-800 outline-none placeholder:text-slate-400"
+              />
+              {search && (
+                <button type="button" onClick={() => setSearch('')} className="text-slate-400 hover:text-slate-600">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
+                </button>
+              )}
+            </div>
+            {(search || filterSector !== 'all' || filterLayout !== 'all') && (
               <button
                 type="button"
-                onClick={() => { setSearch(''); setFilterLayout('all'); }}
-                className="rounded-2xl border border-red-200 bg-red-50 px-3 py-1.5 text-xs font-black text-red-600 transition hover:bg-red-100"
+                onClick={() => { setSearch(''); setFilterSector('all'); setFilterLayout('all'); }}
+                className="rounded-2xl border border-red-200 bg-red-50 px-3 py-2 text-xs font-black text-red-600 transition hover:bg-red-100"
               >
                 Resetta filtri
               </button>
             )}
+            <p className="ml-auto text-xs text-slate-400">{filteredProjects.length} / {projects.length} progetti</p>
+          </div>
+
+          {/* Row 2: settori */}
+          <div className="flex flex-wrap items-center gap-1.5">
+            <span className="mr-1 text-[10px] font-black uppercase tracking-[0.18em] text-slate-400">Settore:</span>
+            {sectors.map((s) => (
+              <button
+                key={s}
+                type="button"
+                onClick={() => setFilterSector(s)}
+                className={`rounded-full border px-3 py-1 text-[11px] font-black uppercase tracking-[0.12em] transition ${
+                  filterSector === s
+                    ? 'border-cyan-500 bg-cyan-500 text-white shadow-sm'
+                    : 'border-slate-200 bg-slate-100 text-slate-600 hover:border-cyan-300 hover:bg-cyan-50 hover:text-cyan-700'
+                }`}
+              >
+                {s === 'all' ? 'Tutti' : s}
+              </button>
+            ))}
           </div>
         </div>
 
@@ -383,11 +420,11 @@ export default function AdminProjects() {
               return (
                 <article
                   key={p.id}
-                  className="group overflow-hidden rounded-[30px] border border-slate-200 bg-white shadow-[0_18px_45px_rgba(15,23,42,0.07)] transition hover:-translate-y-1 hover:shadow-[0_26px_60px_rgba(15,23,42,0.11)]"
+                  className="group overflow-hidden rounded-[30px] border border-slate-200 bg-white shadow-[0_18px_45px_rgba(15,23,42,0.07)] will-change-transform transition-transform duration-200 hover:-translate-y-1 hover:shadow-[0_26px_60px_rgba(15,23,42,0.11)]"
                 >
                   <div className="relative aspect-16/10 overflow-hidden bg-linear-to-br from-slate-900 via-slate-800 to-cyan-900">
                     {cover ? (
-                      <img src={cover} alt={p.title} loading="lazy" decoding="async" className="h-full w-full object-cover transition duration-500 group-hover:scale-105" />
+                      <img src={cover} alt={p.title} loading="lazy" decoding="async" className="h-full w-full object-cover transition-transform duration-300 will-change-transform group-hover:scale-[1.03]" />
                     ) : (
                       <div className="flex h-full w-full items-center justify-center text-5xl text-white/70">🖼️</div>
                     )}
@@ -423,25 +460,22 @@ export default function AdminProjects() {
         )}
       </AdminPanel>
 
+      <AnimatePresence>
       {modal && (
-        <AdminDialog onClose={closeModal} maxWidth="max-w-4xl">
+        <AdminDialog onClose={closeModal} maxWidth="max-w-6xl">
           <AdminDialogHeader
             title={modal === 'create' ? 'Nuovo progetto' : 'Modifica progetto'}
             description="Compila i campi principali, scegli il layout e costruisci una gallery ordinata per il portfolio."
             onClose={closeModal}
           />
 
-          <form onSubmit={handleSave} className="max-h-[calc(90vh-88px)] overflow-y-auto px-6 py-6" data-lenis-prevent>
-            <div className="space-y-5">
+          <form onSubmit={handleSave} className="max-h-[calc(92vh-88px)] overflow-y-auto px-7 py-7" data-lenis-prevent>
+            <div className="space-y-6">
               {formError && <AdminNotice tone="danger">{formError}</AdminNotice>}
 
-              <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
-                <AdminField label="Titolo *" className="md:col-span-2">
+              <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
+                <AdminField label="Titolo *" className="md:col-span-2 lg:col-span-3">
                   <AdminInput name="title" value={form.title} onChange={handleChange} placeholder="Nome del progetto" />
-                </AdminField>
-
-                <AdminField label="Slug" className="md:col-span-2" hint="Se lasciato vuoto, può essere generato lato backend.">
-                  <AdminInput name="slug" value={form.slug} onChange={handleChange} placeholder="slug-del-progetto" className="font-mono" />
                 </AdminField>
 
                 <AdminField label="Cliente">
@@ -452,16 +486,6 @@ export default function AdminProjects() {
                   <AdminInput name="services" value={form.services} onChange={handleChange} placeholder="Branding, Web Design..." />
                 </AdminField>
 
-                <AdminField label="Descrizione" className="md:col-span-2">
-                  <AdminTextarea name="description" value={form.description} onChange={handleChange} rows={5} className="resize-none" />
-                </AdminField>
-
-                <AdminField label="Cover image URL" className="md:col-span-2">
-                  <AdminInput name="coverImage" value={form.coverImage} onChange={handleChange} placeholder="https://..." />
-                </AdminField>
-
-                <GalleryEditor images={gallery} onChange={setGallery} />
-
                 <AdminField label="Layout">
                   <AdminSelect name="layoutType" value={form.layoutType} onChange={handleChange}>
                     {LAYOUT_TYPES.map((layout) => (
@@ -470,12 +494,36 @@ export default function AdminProjects() {
                   </AdminSelect>
                 </AdminField>
 
+                <AdminField label="Descrizione" className="md:col-span-2 lg:col-span-3">
+                  <AdminTextarea name="description" value={form.description} onChange={handleChange} rows={4} className="resize-none" />
+                </AdminField>
+
+                <AdminField label="Cover Image" className="md:col-span-2">
+                  {form.coverImage && (
+                    <div className="mb-2 overflow-hidden rounded-2xl border border-slate-200">
+                      <img src={form.coverImage} alt="cover" className="aspect-video w-full object-cover" onError={(e) => { e.currentTarget.style.display='none'; }} />
+                    </div>
+                  )}
+                  <ImageUploadZone
+                    label="Carica cover"
+                    onUploaded={(url) => setForm((prev) => ({ ...prev, coverImage: url }))}
+                  />
+                  {form.coverImage && (
+                    <button type="button" onClick={() => setForm((p) => ({ ...p, coverImage: '' }))}
+                      className="mt-2 text-xs font-semibold text-red-500 hover:text-red-700">
+                      ✕ Rimuovi cover
+                    </button>
+                  )}
+                </AdminField>
+
                 <AdminField label="Data progetto">
                   <AdminInput type="date" name="projectDate" value={form.projectDate} onChange={handleChange} />
                 </AdminField>
+
+                <GalleryEditor images={gallery} onChange={setGallery} />
               </div>
 
-              <div className="flex justify-end gap-3 pt-3">
+              <div className="flex justify-end gap-3 pt-2">
                 <AdminButton type="button" variant="secondary" onClick={closeModal}>Annulla</AdminButton>
                 <AdminButton type="submit" disabled={saving}>{saving ? 'Salvataggio…' : 'Salva progetto'}</AdminButton>
               </div>
@@ -483,7 +531,9 @@ export default function AdminProjects() {
           </form>
         </AdminDialog>
       )}
+      </AnimatePresence>
 
+      <AnimatePresence>
       {confirmDelete && (
         <AdminDialog onClose={() => setConfirmDelete(null)} maxWidth="max-w-md">
           <AdminDialogHeader
@@ -504,6 +554,7 @@ export default function AdminProjects() {
           </div>
         </AdminDialog>
       )}
+      </AnimatePresence>
     </AdminPage>
   );
 }

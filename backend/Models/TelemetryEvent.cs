@@ -1,12 +1,17 @@
+using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
+
 namespace backend.Models;
 
 public class TelemetryEvent
 {
-    public string? Id { get; set; }
+    [BsonId]
+    [BsonRepresentation(BsonType.ObjectId)]
+    public string Id { get; set; } = ObjectId.GenerateNewId().ToString();
     public string Action { get; set; } = string.Empty;
     public string Page { get; set; } = string.Empty;
     public string? ElementId { get; set; }
-    public Dictionary<string, object>? Metadata { get; set; }
+    public Dictionary<string, string?>? Metadata { get; set; }
     public DateTime Timestamp { get; set; }
     public string? SessionId { get; set; }
 

@@ -2,7 +2,6 @@
 import { getAllContent, updateContent } from '../services/api';
 import {
   AdminBadge,
-  AdminButton,
   AdminInput,
   AdminNotice,
   AdminPage,
@@ -115,7 +114,7 @@ function ObjectEditor({ data, onChange, depth = 0 }) {
     return (
       <div className="space-y-3">
         {data.map((item, idx) => (
-          <div key={idx} className="flex flex-col gap-2 rounded-2xl border border-slate-200 bg-white p-3 shadow-sm sm:flex-row sm:items-center">
+          <div key={idx} className="flex flex-col gap-2">
             <AdminInput
               type="text"
               value={item ?? ''}
@@ -124,17 +123,9 @@ function ObjectEditor({ data, onChange, depth = 0 }) {
                 next[idx] = e.target.value;
                 onChange(next);
               }}
-              className="flex-1"
             />
-            <AdminButton type="button" variant="danger" className="sm:px-3 sm:py-2" onClick={() => onChange(data.filter((_, i) => i !== idx))}>
-              Rimuovi
-            </AdminButton>
           </div>
         ))}
-
-        <AdminButton type="button" variant="secondary" onClick={() => onChange([...data, ''])}>
-          + Aggiungi valore
-        </AdminButton>
       </div>
     );
   }
@@ -144,11 +135,8 @@ function ObjectEditor({ data, onChange, depth = 0 }) {
       <div className="space-y-4">
         {data.map((item, idx) => (
           <div key={idx} className="rounded-3xl border border-slate-200 bg-slate-50/80 p-4 shadow-sm">
-            <div className="mb-4 flex items-center justify-between gap-3">
+            <div className="mb-4">
               <AdminBadge tone="slate">Elemento #{idx + 1}</AdminBadge>
-              <AdminButton type="button" variant="danger" className="px-3 py-2 text-xs" onClick={() => onChange(data.filter((_, i) => i !== idx))}>
-                Rimuovi
-              </AdminButton>
             </div>
             <ObjectEditor
               data={item}
@@ -161,19 +149,6 @@ function ObjectEditor({ data, onChange, depth = 0 }) {
             />
           </div>
         ))}
-
-        <AdminButton
-          type="button"
-          variant="secondary"
-          onClick={() => {
-            const template = data[0]
-              ? Object.fromEntries(Object.keys(data[0]).map((key) => [key, typeof data[0][key] === 'number' ? 0 : '']))
-              : {};
-            onChange([...data, template]);
-          }}
-        >
-          + Aggiungi elemento
-        </AdminButton>
       </div>
     );
   }
@@ -198,6 +173,17 @@ function ObjectEditor({ data, onChange, depth = 0 }) {
                 onChange={(newVal) => onChange({ ...data, [key]: newVal })}
                 depth={depth + 1}
               />
+            </div>
+          );
+        }
+
+        if (key === 'href') {
+          return (
+            <div key={key} className="flex flex-col gap-2">
+              <label className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400">href</label>
+              <div className="rounded-2xl border border-slate-200 bg-slate-100 px-4 py-2.5 font-mono text-sm text-slate-400 select-none">
+                {String(val)}
+              </div>
             </div>
           );
         }
@@ -391,7 +377,7 @@ export default function AdminContent() {
                   )}
                   {isDirty && (
                     <span className="ml-2 inline-flex items-center gap-1 rounded-full border border-amber-200 bg-amber-50 px-2.5 py-0.5 text-[10px] font-black uppercase tracking-[0.15em] text-amber-700">
-                      <span className="h-1.5 w-1.5 rounded-full bg-amber-400" />\u25cf Non salvato
+                      <span className="h-1.5 w-1.5 rounded-full bg-amber-400" /> Non salvato
                     </span>
                   )}
                 </div>
@@ -497,7 +483,7 @@ export default function AdminContent() {
 
                     {isDirty && !jsonError && (
                       <div className="flex items-center justify-between rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3">
-                        <p className="text-sm font-semibold text-amber-700">\u25cf Modifiche non salvate in <strong>{selectedMeta?.label}</strong></p>
+                        <p className="text-sm font-semibold text-amber-700">● Modifiche non salvate in <strong>{selectedMeta?.label}</strong></p>
                         <div className="flex items-center gap-2">
                           <button type="button" onClick={handleDiscard} className="rounded-2xl border border-amber-300 bg-white px-3 py-1.5 text-xs font-black text-amber-700 transition hover:bg-amber-50">
                             Annulla

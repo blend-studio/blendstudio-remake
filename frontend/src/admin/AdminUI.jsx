@@ -1,4 +1,5 @@
 import React from 'react';
+import { createPortal } from 'react-dom';
 import { motion } from 'framer-motion';
 
 function cx(...classes) {
@@ -62,7 +63,7 @@ export function AdminPanel({ title, description, action, children, className = '
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
       className={cx(
-        'overflow-hidden rounded-[28px] border border-slate-200/70 bg-white/90 shadow-[0_18px_50px_rgba(15,23,42,0.08)] backdrop-blur-sm',
+        'overflow-hidden rounded-[28px] border border-slate-200/70 bg-white shadow-[0_18px_50px_rgba(15,23,42,0.08)]',
         className,
       )}
     >
@@ -197,19 +198,34 @@ export function AdminEmptyState({ icon, title, description, action }) {
 }
 
 export function AdminDialog({ children, onClose, maxWidth = 'max-w-2xl', overlayClassName = '', panelClassName = '' }) {
-  return (
-    <div className={cx('fixed inset-0 z-50 flex items-center justify-center bg-slate-950/55 p-4 backdrop-blur-md', overlayClassName)} onClick={onClose}>
-      <div
+  return createPortal(
+    <motion.div
+      className={cx('fixed inset-0 z-[9999] flex items-center justify-center p-4 sm:p-6', overlayClassName)}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.15 }}
+      onClick={onClose}
+    >
+      {/* Backdrop */}
+      <div className="absolute inset-0 bg-slate-950/65 backdrop-blur-sm" />
+
+      <motion.div
         className={cx(
-          'max-h-[90vh] w-full overflow-hidden rounded-[28px] border border-white/10 bg-white shadow-[0_28px_90px_rgba(15,23,42,0.35)]',
+          'relative max-h-[92vh] w-full overflow-hidden rounded-[32px] border border-white/10 bg-white shadow-[0_40px_120px_rgba(15,23,42,0.45)]',
           maxWidth,
           panelClassName,
         )}
+        initial={{ opacity: 0, scale: 0.95, y: 20 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.97, y: 10 }}
+        transition={{ type: 'spring', stiffness: 420, damping: 32, mass: 0.75 }}
         onClick={(e) => e.stopPropagation()}
       >
         {children}
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>,
+    document.body,
   );
 }
 

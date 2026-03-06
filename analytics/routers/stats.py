@@ -36,14 +36,14 @@ async def get_stats():
 
     # Mezzanotte UTC corrente come riferimento per "oggi"
     today = datetime.now(timezone.utc).replace(hour=0, minute=0, second=0, microsecond=0)
-    today_count = col.count_documents({"timestamp": {"$gte": today}})
+    today_count = col.count_documents({"Timestamp": {"$gte": today}})
 
     # Ultimi 7 giorni (dall'inizio di 7 giorni fa)
     week_ago = today - timedelta(days=7)
-    week_count = col.count_documents({"timestamp": {"$gte": week_ago}})
+    week_count = col.count_documents({"Timestamp": {"$gte": week_ago}})
 
-    # Sessioni uniche: distinct sul campo sessionId, escludi valori falsy
-    sessions = [s for s in col.distinct("sessionId") if s]
+    # Sessioni uniche: distinct sul campo SessionId, escludi valori falsy
+    sessions = [s for s in col.distinct("SessionId") if s]
 
     return {
         "total_events":    total,
@@ -79,11 +79,11 @@ async def get_trends(days: int = Query(default=30, ge=1, le=365)):
     )
 
     pipeline = [
-        {"$match": {"timestamp": {"$gte": from_date}}},
+        {"$match": {"Timestamp": {"$gte": from_date}}},
         {"$group": {
-            "_id":      {"$dateToString": {"format": "%Y-%m-%d", "date": "$timestamp"}},
+            "_id":      {"$dateToString": {"format": "%Y-%m-%d", "date": "$Timestamp"}},
             "events":   {"$sum": 1},
-            "sessions": {"$addToSet": "$sessionId"},
+            "sessions": {"$addToSet": "$SessionId"},
         }},
         {"$sort": {"_id": 1}},
     ]
@@ -117,9 +117,9 @@ async def get_top_pages(limit: int = Query(default=10, ge=1, le=50)):
     col = get_col()
     pipeline = [
         {"$group": {
-            "_id":      "$page",
+            "_id":      "$Page",
             "views":    {"$sum": 1},
-            "sessions": {"$addToSet": "$sessionId"},
+            "sessions": {"$addToSet": "$SessionId"},
         }},
         {"$sort":  {"views": -1}},
         {"$limit": limit},
@@ -145,7 +145,7 @@ async def get_top_actions(limit: int = Query(default=10, ge=1, le=50)):
     col = get_col()
     pipeline = [
         {"$group": {
-            "_id":   "$action",
+            "_id":   "$Action",
             "count": {"$sum": 1},
         }},
         {"$sort":  {"count": -1}},
@@ -177,22 +177,86 @@ async def get_events(
 
     query: dict = {}
     if action:
-        query["action"] = action
+        query["Action"] = action
     if page_path:
-        query["page"] = page_path
+        query["Page"] = page_path
 
     total = col.count_documents(query)
 
     # {"_id": 0} esclude ObjectId non serializzabile in JSON
     docs = list(
         col.find(query, {"_id": 0})
-        .sort("timestamp", -1)
+        .sort("Timestamp", -1)
         .skip((page - 1) * limit)
         .limit(limit)
     )
 
+    # Normalizza PascalCase → camelCase per il frontend
+    normalized = []
     for doc in docs:
-        if isinstance(doc.get("timestamp"), datetime):
-            doc["timestamp"] = doc["timestamp"].isoformat()
+        ts = doc.get("Timestamp")
+        normalized.append({
+            "action":    doc.get("Action"),
+            "page":      doc.get("Page"),
+            "elementId": doc.get("ElementId"),
+            "metadata":  doc.get("Metadata"),
+            "sessionId": doc.get("SessionId"),
+            "referrer":  doc.get("Referrer"),
+            "userAgent": doc.get("UserAgent"),
+            "language":  doc.get("Language"),
+            "screenW":   doc.get("ScreenW"),
+            "screenH":   doc.get("ScreenH"),
+            "timestamp": ts.isoformat() if isinstance(ts, datetime) else ts,
+        })
 
-    return {"total": total, "page": page, "limit": limit, "data": docs}
+    return {"total": total, "page": page, "limit": limit, "data": normalized}
+
+
+@router.get("/scroll-depth")
+async def get_scroll_depth():
+    """Distribuzione della profondità di scroll per milestone (25/50/75/100%).
+
+    Conta quante sessioni uniche hanno raggiunto ciascun milestone di scroll.
+    I dati provengono dagli eventi "scroll_depth" tracciati da useScrollDepth.
+
+    Il risultato mostra quanti utenti hanno effettivamente letto il contenuto
+    della pagina oltre la prima schermata.
+    """
+    col = get_col()
+    milestones = [25, 50, 75, 100]
+    result = []
+    for m in milestones:
+        count = len([s for s in col.distinct("SessionId", {
+            "Action":           "scroll_depth",
+            "Metadata.depth":   str(m),
+        }) if s])
+        result.append({"depth": m, "sessions": count, "label": f"{m}%"})
+    return result
+
+
+@router.get("/hourly-traffic")
+async def get_hourly_traffic():
+    """Distribuzione oraria del traffico — quanti eventi per ora del giorno (UTC+1).
+
+    Utile per capire in quale fascia oraria il sito riceve più visite.
+    Raggruppa tutti gli eventi per ora (0-23) e restituisce il conteggio.
+    """
+    col = get_col()
+    pipeline = [
+        {"$match": {"Timestamp": {"$ne": None}}},
+        {"$addFields": {
+            "hour": {
+                "$hour": {
+                    "date":     "$Timestamp",
+                    "timezone": "Europe/Rome",
+                }
+            }
+        }},
+        {"$group": {
+            "_id":   "$hour",
+            "count": {"$sum": 1},
+        }},
+        {"$sort": {"_id": 1}},
+    ]
+    raw = {doc["_id"]: doc["count"] for doc in col.aggregate(pipeline)}
+    return [{"hour": h, "label": f"{h:02d}:00", "count": raw.get(h, 0)} for h in range(24)]

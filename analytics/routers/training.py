@@ -49,7 +49,7 @@ def run_training_cycle() -> None:
     col = get_col()
 
     # Carica solo i campi necessari, esclude _id (ObjectId non serializzabile)
-    docs = list(col.find({}, {"_id": 0, "timestamp": 1, "sessionId": 1, "page": 1}))
+    docs = list(col.find({}, {"_id": 0, "Timestamp": 1, "SessionId": 1, "Page": 1}))
     if not docs:
         print("[training] Nessun dato — la collection telemetry è vuota.")
         return
@@ -57,7 +57,7 @@ def run_training_cycle() -> None:
     df = pd.DataFrame(docs)
 
     # Forza UTC-aware per evitare errori di confronto timezone-naive/aware
-    df["timestamp"] = pd.to_datetime(df["timestamp"], utc=True)
+    df["timestamp"] = pd.to_datetime(df["Timestamp"], utc=True)
     df["day"] = df["timestamp"].dt.date
 
     # Aggregazione giornaliera

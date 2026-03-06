@@ -124,14 +124,12 @@ public class ContactController : ControllerBase
         return Ok(new { status = "success", message = "Messaggio eliminato" });
     }
 
-    public class ReplyRequest { public string Body { get; set; } = string.Empty; }
-
     /// <summary>
     /// POST /api/admin/messages/{id}/reply — Invia una risposta email al mittente del messaggio.
-    /// Segna automaticamente il messaggio come letto dopo l'invio.
+    /// Supporta destinatari multipli, CC e BCC. Segna automaticamente il messaggio come letto.
     /// </summary>
     /// <param name="id">Id del messaggio a cui rispondere.</param>
-    /// <param name="request">Testo della risposta da inviare.</param>
+    /// <param name="request">Dati della risposta: body HTML, To extra, CC, BCC.</param>
     [Authorize]
     [HttpPost]
     [Route("/api/admin/messages/{id:int}/reply")]
@@ -142,15 +140,19 @@ public class ContactController : ControllerBase
         if (string.IsNullOrWhiteSpace(request.Body))
             return BadRequest(new { status = "error", message = "Testo risposta mancante" });
 
-        var subject = $"Re: Il tuo messaggio a Blend Studio";
-        var body = $@"
-            <p>Ciao {msg.Name},</p>
-            <p>{request.Body.Replace("\n", "<br>")}</p>
-            <br>
-            <p style='color:#888;font-size:12px'>— Team Blend Studio</p>
-        ";
+        /* Costruisce la lista destinatari: mittente originale + eventuali To extra */
+        var toList = new List<string> { msg.Email };
+        toList.AddRange(request.To.Where(e => !string.IsNullOrWhiteSpace(e) && e != msg.Email));
 
-        var sent = await _mailer.SendEmailAsync(msg.Email, subject, body);
+        var subject = "Re: Il tuo messaggio a Blend Studio";
+
+        var sent = await _mailer.SendEmailAsync(
+            toEmails: toList,
+            subject:  subject,
+            bodyHtml: request.Body,
+            cc:  request.Cc.Where(e => !string.IsNullOrWhiteSpace(e)).ToList(),
+            bcc: request.Bcc.Where(e => !string.IsNullOrWhiteSpace(e)).ToList());
+
         if (!sent) return StatusCode(500, new { status = "error", message = "Invio email fallito" });
 
         msg.IsRead = true;
