@@ -4,7 +4,10 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace backend.Controllers
 {
-    // ── Public: GET /api/content/{slug} ──────────────────────────────────────
+    /// <summary>
+    /// Espone i contenuti CMS pubblici per slug (usato dal frontend per caricare testi delle pagine).
+    /// Percorso: GET /api/content/{slug}
+    /// </summary>
     [ApiController]
     [Route("api/content")]
     public class ContentController : ControllerBase
@@ -16,6 +19,11 @@ namespace backend.Controllers
             _mongoService = mongoService;
         }
 
+        /// <summary>
+        /// GET /api/content/{slug} — Recupera il contenuto di una pagina dal suo slug MongoDB.
+        /// Restituisce 404 se lo slug non esiste.
+        /// </summary>
+        /// <param name="slug">Identificatore univoco del contenuto (es. "home", "servizi").</param>
         [HttpGet("{slug}")]
         public async Task<IActionResult> GetContent(string slug)
         {
@@ -25,7 +33,11 @@ namespace backend.Controllers
         }
     }
 
-    // ── Admin: /api/admin/content/* ──────────────────────────────────────────
+    /// <summary>
+    /// CRUD dei contenuti CMS per il pannello admin. Tutti gli endpoint richiedono JWT.
+    /// I contenuti sono archiviati in MongoDB (collection "contents").
+    /// Percorso base: /api/admin/content
+    /// </summary>
     [ApiController]
     [Route("api/admin/content")]
     [Authorize]
@@ -38,7 +50,9 @@ namespace backend.Controllers
             _mongoService = mongoService;
         }
 
-        // GET /api/admin/content
+        /// <summary>
+        /// GET /api/admin/content — Restituisce tutti i blocchi di contenuto presenti in MongoDB.
+        /// </summary>
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
@@ -46,7 +60,11 @@ namespace backend.Controllers
             return Ok(new { status = "success", data = contents });
         }
 
-        // GET /api/admin/content/{slug}
+        /// <summary>
+        /// GET /api/admin/content/{slug} — Restituisce il contenuto di una singola pagina per slug.
+        /// Restituisce 404 se lo slug non esiste.
+        /// </summary>
+        /// <param name="slug">Slug del contenuto da recuperare.</param>
         [HttpGet("{slug}")]
         public async Task<IActionResult> GetOne(string slug)
         {
@@ -55,7 +73,12 @@ namespace backend.Controllers
             return Ok(new { status = "success", data = content });
         }
 
-        // PUT /api/admin/content/{slug}
+        /// <summary>
+        /// PUT /api/admin/content/{slug} — Crea o aggiorna il contenuto associato allo slug (upsert).
+        /// Il campo Slug nel body viene sovrascritto con quello del path per coerenza.
+        /// </summary>
+        /// <param name="slug">Slug del contenuto da creare/aggiornare.</param>
+        /// <param name="content">Nuovo contenuto da salvare.</param>
         [HttpPut("{slug}")]
         public async Task<IActionResult> UpdateContent(string slug, [FromBody] PageContent content)
         {

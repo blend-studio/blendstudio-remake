@@ -63,21 +63,10 @@ export const useTelemetry = () => {
     return { track };
 };
 
-// ── API lettura analytics (dal servizio Python) ───────────────────────────
-export const fetchAnalyticsStats = () =>
-    fetch(`${ANALYTICS_BASE}/stats`).then(r => r.ok ? r.json() : null).catch(() => null);
-
-export const fetchAnalyticsTrends = (days = 30) =>
-    fetch(`${ANALYTICS_BASE}/trends?days=${days}`).then(r => r.ok ? r.json() : []).catch(() => []);
-
-export const fetchTopPages = (limit = 10) =>
-    fetch(`${ANALYTICS_BASE}/top-pages?limit=${limit}`).then(r => r.ok ? r.json() : []).catch(() => []);
-
-export const fetchTopActions = (limit = 10) =>
-    fetch(`${ANALYTICS_BASE}/top-actions?limit=${limit}`).then(r => r.ok ? r.json() : []).catch(() => []);
-
-export const fetchRecentEvents = (page = 1, limit = 50) =>
-    fetch(`${ANALYTICS_BASE}/events?page=${page}&limit=${limit}`).then(r => r.ok ? r.json() : null).catch(() => null);
+// ── API lettura analytics avanzata (dal servizio Python) ────────────────
+// Le funzioni base (stats, trends, top-pages, top-actions, events) sono
+// esportate da src/services/api.js come getAnalytics*.
+// Qui si trovano solo le funzioni aggiuntive non presenti in api.js.
 
 export const fetchDeviceStats = () =>
     fetch(`${ANALYTICS_BASE}/device-stats`).then(r => r.ok ? r.json() : null).catch(() => null);

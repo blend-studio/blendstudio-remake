@@ -7,6 +7,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace backend.Controllers;
 
+/// <summary>
+/// Gestisce le richieste di contatto pubbliche e l'amministrazione dei messaggi ricevuti.
+/// Gli endpoint pubblici non richiedono autenticazione; quelli admin richiedono JWT.
+/// </summary>
 [ApiController]
 [Route("api/[controller]")]
 public class ContactController : ControllerBase
@@ -22,6 +26,11 @@ public class ContactController : ControllerBase
         _config = config;
     }
 
+    /// <summary>
+    /// POST /api/contact — Salva il messaggio nel database e invia una notifica email all'admin.
+    /// Non richiede autenticazione. Restituisce 400 se email o testo sono vuoti.
+    /// </summary>
+    /// <param name="request">Dati del form di contatto (nome, email, testo, telefono opzionale).</param>
     [HttpPost]
     // Consente chiamate anche a /api/contact per compatibilità totale
     [Route("/api/contact")]
@@ -69,6 +78,9 @@ public class ContactController : ControllerBase
 
     // ── Admin endpoints ────────────────────────────────────────────────────
 
+    /// <summary>
+    /// GET /api/admin/messages — Restituisce tutti i messaggi in ordine cronologico decrescente.
+    /// </summary>
     [Authorize]
     [HttpGet]
     [Route("/api/admin/messages")]
@@ -80,6 +92,10 @@ public class ContactController : ControllerBase
         return Ok(new { status = "success", data = messages });
     }
 
+    /// <summary>
+    /// PATCH /api/admin/messages/{id}/read — Segna il messaggio come letto (IsRead = true).
+    /// </summary>
+    /// <param name="id">Id del messaggio da marcare come letto.</param>
     [Authorize]
     [HttpPatch]
     [Route("/api/admin/messages/{id:int}/read")]
@@ -92,6 +108,10 @@ public class ContactController : ControllerBase
         return Ok(new { status = "success" });
     }
 
+    /// <summary>
+    /// DELETE /api/admin/messages/{id} — Elimina definitivamente un messaggio.
+    /// </summary>
+    /// <param name="id">Id del messaggio da eliminare.</param>
     [Authorize]
     [HttpDelete]
     [Route("/api/admin/messages/{id:int}")]
@@ -106,6 +126,12 @@ public class ContactController : ControllerBase
 
     public class ReplyRequest { public string Body { get; set; } = string.Empty; }
 
+    /// <summary>
+    /// POST /api/admin/messages/{id}/reply — Invia una risposta email al mittente del messaggio.
+    /// Segna automaticamente il messaggio come letto dopo l'invio.
+    /// </summary>
+    /// <param name="id">Id del messaggio a cui rispondere.</param>
+    /// <param name="request">Testo della risposta da inviare.</param>
     [Authorize]
     [HttpPost]
     [Route("/api/admin/messages/{id:int}/reply")]

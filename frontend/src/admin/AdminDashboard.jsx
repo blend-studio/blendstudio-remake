@@ -1,6 +1,7 @@
 ﻿import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
+import { getAnalyticsStats } from '../services/api';
 
 // Animated counter
 function AnimatedNumber({ value }) {
@@ -143,7 +144,7 @@ const AdminDashboard = () => {
     const base = import.meta.env.VITE_API_BASE_URL;
 
     Promise.allSettled([
-      fetch(`${base}/api/telemetry/stats`, { headers }).then(r => r.ok ? r.json() : null),
+      getAnalyticsStats(),   // servizio Python (porta 8001) — unica fonte per le stats
       fetch(`${base}/api/projects`).then(r => r.ok ? r.json() : null),
       fetch(`${base}/api/admin/messages`, { headers }).then(r => r.ok ? r.json() : null),
     ]).then(([telemetry, projects, messages]) => {

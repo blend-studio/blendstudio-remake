@@ -7,6 +7,11 @@ using System.Text.RegularExpressions;
 
 namespace backend.Controllers;
 
+/// <summary>
+/// CRUD dei progetti del portfolio.
+/// Gli endpoint di lettura sono pubblici; creazione, modifica e cancellazione richiedono JWT.
+/// Le immagini gallery sono serializzate come JSON nel campo GalleryImages.
+/// </summary>
 [ApiController]
 [Route("api/[controller]")]
 public class ProjectController : ControllerBase
@@ -18,6 +23,10 @@ public class ProjectController : ControllerBase
         _context = context;
     }
 
+    /// <summary>
+    /// GET /api/projects — Restituisce tutti i progetti ordinati per data decrescente.
+    /// Le gallery_images vengono deserializzate da JSON prima di essere esposte.
+    /// </summary>
     [HttpGet]
     [Route("/api/projects")]
     public async Task<IActionResult> Index()
@@ -43,6 +52,12 @@ public class ProjectController : ControllerBase
         return Ok(new { status = "success", data = formattedProjects });
     }
 
+    /// <summary>
+    /// GET /api/project?id={id} o ?slug={slug} — Recupera un singolo progetto per id o slug.
+    /// Restituisce 400 se nessun parametro è fornito, 404 se il progetto non esiste.
+    /// </summary>
+    /// <param name="id">Id numerico del progetto (opzionale).</param>
+    /// <param name="slug">Slug testuale del progetto (opzionale, usato se id non fornito).</param>
     [HttpGet]
     [Route("/api/project")]
     public async Task<IActionResult> Show([FromQuery] int? id, [FromQuery] string? slug)
@@ -85,6 +100,12 @@ public class ProjectController : ControllerBase
         return NotFound(new { status = "error", message = "Progetto non trovato" });
     }
 
+    /// <summary>
+    /// POST /api/projects — Crea un nuovo progetto. Richiede JWT.
+    /// Lo slug viene generato automaticamente dal titolo se non fornito.
+    /// Restituisce 409 se lo slug è già in uso.
+    /// </summary>
+    /// <param name="request">Dati del progetto da creare.</param>
     [Authorize]
     [HttpPost]
     [Route("/api/projects")]
@@ -110,6 +131,12 @@ public class ProjectController : ControllerBase
         return Ok(new { status = "success", data = request });
     }
 
+    /// <summary>
+    /// PUT /api/projects/{id} — Aggiorna tutti i campi di un progetto esistente. Richiede JWT.
+    /// Restituisce 404 se il progetto non esiste, 409 se il nuovo slug è già usato da un altro.
+    /// </summary>
+    /// <param name="id">Id del progetto da aggiornare.</param>
+    /// <param name="request">Nuovi dati del progetto.</param>
     [Authorize]
     [HttpPut]
     [Route("/api/projects/{id:int}")]
@@ -141,6 +168,11 @@ public class ProjectController : ControllerBase
         return Ok(new { status = "success", data = project });
     }
 
+    /// <summary>
+    /// DELETE /api/projects/{id} — Elimina definitivamente un progetto. Richiede JWT.
+    /// Restituisce 404 se il progetto non esiste.
+    /// </summary>
+    /// <param name="id">Id del progetto da eliminare.</param>
     [Authorize]
     [HttpDelete]
     [Route("/api/projects/{id:int}")]
@@ -155,6 +187,11 @@ public class ProjectController : ControllerBase
         return Ok(new { status = "success", message = "Progetto eliminato" });
     }
 
+    /// <summary>
+    /// Normalizza una stringa in uno slug URL-friendly (minuscolo, solo alfanumerici e trattini).
+    /// Gestisce le lettere accentate italiane (à, è, ì, ò, ù).
+    /// </summary>
+    /// <param name="text">Testo da convertire in slug (tipicamente il titolo del progetto).</param>
     private static string Slugify(string text)
     {
         text = text.ToLowerInvariant().Trim();
@@ -168,6 +205,11 @@ public class ProjectController : ControllerBase
         return text;
     }
 
+    /// <summary>
+    /// Deserializza il campo GalleryImages da stringa JSON a array di oggetti.
+    /// Restituisce un array vuoto in caso di JSON malformato o campo nullo.
+    /// </summary>
+    /// <param name="json">Stringa JSON contenente le immagini della galleria.</param>
     private object[] ParseGalleryImages(string json)
     {
         try

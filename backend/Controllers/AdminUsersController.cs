@@ -7,6 +7,10 @@ using BCrypt.Net;
 
 namespace backend.Controllers;
 
+/// <summary>
+/// CRUD degli utenti amministratori. Tutti gli endpoint richiedono un JWT valido.
+/// Percorso base: /api/admin/users
+/// </summary>
 [ApiController]
 [Authorize]
 [Route("api/admin/users")]
@@ -19,7 +23,9 @@ public class AdminUsersController : ControllerBase
         _context = context;
     }
 
-    // GET /api/admin/users
+    /// <summary>
+    /// GET /api/admin/users — Restituisce la lista di tutti gli utenti (id, email, data creazione).
+    /// </summary>
     [HttpGet]
     public async Task<IActionResult> GetAll()
     {
@@ -31,7 +37,11 @@ public class AdminUsersController : ControllerBase
         return Ok(new { status = "success", data = users });
     }
 
-    // POST /api/admin/users
+    /// <summary>
+    /// POST /api/admin/users — Crea un nuovo utente admin con la password hashata tramite BCrypt.
+    /// Restituisce 400 se email già registrata o campi mancanti.
+    /// </summary>
+    /// <param name="request">Email e password del nuovo utente.</param>
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] CreateUserRequest request)
     {
@@ -54,7 +64,12 @@ public class AdminUsersController : ControllerBase
         return Ok(new { status = "success", data = new { user.Id, user.Email, user.CreatedAt } });
     }
 
-    // PATCH /api/admin/users/{id}/password
+    /// <summary>
+    /// PATCH /api/admin/users/{id}/password — Aggiorna la password di un utente esistente.
+    /// La nuova password viene hashata con BCrypt prima del salvataggio.
+    /// </summary>
+    /// <param name="id">Id dell'utente da aggiornare.</param>
+    /// <param name="request">Nuova password in chiaro (verrà hashata).</param>
     [HttpPatch("{id:int}/password")]
     public async Task<IActionResult> ChangePassword(int id, [FromBody] ChangePasswordRequest request)
     {
@@ -70,7 +85,11 @@ public class AdminUsersController : ControllerBase
         return Ok(new { status = "success", message = "Password aggiornata" });
     }
 
-    // DELETE /api/admin/users/{id}
+    /// <summary>
+    /// DELETE /api/admin/users/{id} — Elimina un utente admin.
+    /// Impedisce l'eliminazione dell'account con cui si è autenticati.
+    /// </summary>
+    /// <param name="id">Id dell'utente da eliminare.</param>
     [HttpDelete("{id:int}")]
     public async Task<IActionResult> Delete(int id)
     {

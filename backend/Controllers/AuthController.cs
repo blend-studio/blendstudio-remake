@@ -9,6 +9,10 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace backend.Controllers;
 
+/// <summary>
+/// Gestisce l'autenticazione degli utenti tramite JWT.
+/// Espone login, logout e verifica token per il pannello admin.
+/// </summary>
 [ApiController]
 [Route("api/[controller]")]
 public class AuthController : ControllerBase
@@ -28,6 +32,10 @@ public class AuthController : ControllerBase
         public string Password { get; set; } = string.Empty;
     }
 
+    /// <summary>
+    /// POST /api/login — Verifica le credenziali e restituisce un JWT valido 7 giorni.
+    /// </summary>
+    /// <param name="request">Email e password dell'utente.</param>
     [HttpPost]
     [Route("/api/login")]
     public async Task<IActionResult> Login([FromBody] LoginRequest request)
@@ -51,6 +59,10 @@ public class AuthController : ControllerBase
         });
     }
 
+    /// <summary>
+    /// GET /api/check-auth — Verifica che il JWT nel header Authorization sia valido.
+    /// Restituisce id e email dell'utente autenticato.
+    /// </summary>
     [Authorize]
     [HttpGet]
     [Route("/api/check-auth")]
@@ -61,6 +73,10 @@ public class AuthController : ControllerBase
         return Ok(new { status = "authenticated", user = new { id = userId, email } });
     }
 
+    /// <summary>
+    /// POST /api/logout — Con JWT il logout è stateless: il client elimina il token localmente.
+    /// Questo endpoint esiste per uniformità con le API REST.
+    /// </summary>
     [HttpPost]
     [Route("/api/logout")]
     public IActionResult Logout()
@@ -69,6 +85,12 @@ public class AuthController : ControllerBase
         return Ok(new { status = "success", message = "Logout effettuato" });
     }
 
+    /// <summary>
+    /// Genera un JWT firmato con HS256, valido 7 giorni.
+    /// Inserisce come claim: NameIdentifier (userId) e Email.
+    /// </summary>
+    /// <param name="userId">Id numerico dell'utente da includere nel token.</param>
+    /// <param name="email">Email dell'utente da includere nel token.</param>
     private string GenerateJwt(int userId, string email)
     {
         var secret = _config["JWT_SECRET"] ?? "super_secret_key_blend_studio_2024_make_it_longer_later";
