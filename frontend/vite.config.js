@@ -18,5 +18,12 @@ export default defineConfig({
     host: true,
     strictPort: true,
     port: 5173,
+    proxy: {
+      '/mlflow-proxy': {
+        target: 'http://localhost:5000',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/mlflow-proxy/, ''),
+      },
+    },
   },
 })

@@ -37,9 +37,7 @@ const PageLoader = () => (
 
 // Attiva il tracking automatico delle page view (solo pagine pubbliche)
 function TelemetryTracker() {
-  const location = useLocation();
-  const isPublic = !location.pathname.startsWith('/admin') && location.pathname !== '/login';
-  useTelemetry(); // il hook traccia le page_view automaticamente
+  useTelemetry(); // il hook ignora internamente le route /admin e /login
   return null;
 }
 

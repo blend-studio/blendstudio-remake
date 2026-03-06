@@ -132,7 +132,7 @@ const SERVICES_CONFIG = [
   { label: 'Backend API',  detail: '.NET 10 · localhost:8000', url: `${import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8000'}/api/projects` },
   { label: 'MongoDB',      detail: 'blendstudio_mongo',        url: `${import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8000'}/api/projects` }, // inferred via backend
   { label: 'Analytics ML', detail: 'localhost:8001',           url: `${import.meta.env.VITE_ANALYTICS_BASE_URL ?? 'http://localhost:8001'}/stats` },
-  { label: 'MLflow',       detail: 'localhost:5000',           url: 'http://localhost:5000/health' },
+  { label: 'MLflow',       detail: 'localhost:5000',           url: '/mlflow-proxy/health' },
 ];
 
 const AdminDashboard = () => {

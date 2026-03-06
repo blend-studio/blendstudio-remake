@@ -27,6 +27,8 @@ export const useTelemetry = () => {
     const lastPage = useRef(null);
 
     const track = useCallback((action, metadata = {}, elementId = null) => {
+        // Non tracciare mai nell'area admin o nella pagina di login
+        if (window.location.pathname.startsWith('/admin') || window.location.pathname === '/login') return;
         try {
             const sessionId = getOrCreateSessionId();
             // Converte tutti i valori in stringhe per compatibilità col backend (Dictionary<string, string?>)
@@ -56,10 +58,11 @@ export const useTelemetry = () => {
         }
     }, []);
 
-    // Auto page-view ad ogni cambio di route
+    // Auto page-view ad ogni cambio di route (solo pagine pubbliche)
     useEffect(() => {
         const page = location.pathname;
         if (page === lastPage.current) return;
+        if (page.startsWith('/admin') || page === '/login') return;
         lastPage.current = page;
         track('page_view', { title: document.title });
     }, [location.pathname, track]);

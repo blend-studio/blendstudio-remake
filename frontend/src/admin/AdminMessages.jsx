@@ -171,7 +171,7 @@ function EmailTagInput({ label, emails, setEmails, input, setInput, placeholder 
   return (
     <div className="flex items-start gap-2">
       <span className="w-8 shrink-0 pt-2 text-[10px] font-black uppercase tracking-[0.18em] text-slate-400">{label}</span>
-      <div className="flex flex-1 flex-wrap items-center gap-1.5 min-h-[36px] rounded-2xl border border-slate-200 bg-white px-3 py-1.5 focus-within:border-cyan-400 focus-within:ring-2 focus-within:ring-cyan-100 transition">
+      <div className="flex flex-1 flex-wrap items-center gap-1.5 min-h-9 rounded-2xl border border-slate-200 bg-white px-3 py-1.5 focus-within:border-cyan-400 focus-within:ring-2 focus-within:ring-cyan-100 transition">
         {emails.map((e) => (
           <span key={e} className="inline-flex items-center gap-1 rounded-full bg-slate-100 px-2.5 py-0.5 text-[11px] font-semibold text-slate-700">
             {e}
@@ -188,7 +188,7 @@ function EmailTagInput({ label, emails, setEmails, input, setInput, placeholder 
           onKeyDown={handleKeyDown}
           onBlur={() => { if (input) addEmail(input); }}
           placeholder={!emails.length ? placeholder : 'Aggiungi email…'}
-          className="min-w-[120px] flex-1 bg-transparent text-xs text-slate-800 outline-none placeholder:text-slate-400"
+          className="min-w-30 flex-1 bg-transparent text-xs text-slate-800 outline-none placeholder:text-slate-400"
         />
       </div>
     </div>
@@ -309,7 +309,7 @@ function RichEditor({ editorRef, onChange, placeholder }) {
         onKeyUp={updateFormats}
         onMouseUp={updateFormats}
         data-placeholder={placeholder}
-        className="prose prose-sm max-w-none min-h-[180px] px-4 py-3 text-sm leading-7 text-slate-800 outline-none [&>h3]:text-base [&>h3]:font-black [&>h3]:text-slate-900 [&>blockquote]:border-l-4 [&>blockquote]:border-cyan-300 [&>blockquote]:pl-3 [&>blockquote]:text-slate-500 [&>ul]:list-disc [&>ul]:pl-5 [&>ol]:list-decimal [&>ol]:pl-5 empty:before:content-[attr(data-placeholder)] empty:before:text-slate-400 empty:before:pointer-events-none"
+        className="prose prose-sm max-w-none min-h-45 px-4 py-3 text-sm leading-7 text-slate-800 outline-none [&>h3]:text-base [&>h3]:font-black [&>h3]:text-slate-900 [&>blockquote]:border-l-4 [&>blockquote]:border-cyan-300 [&>blockquote]:pl-3 [&>blockquote]:text-slate-500 [&>ul]:list-disc [&>ul]:pl-5 [&>ol]:list-decimal [&>ol]:pl-5 empty:before:content-[attr(data-placeholder)] empty:before:text-slate-400 empty:before:pointer-events-none"
         style={{ minHeight: '180px' }}
       />
     </div>
@@ -552,56 +552,10 @@ export default function AdminMessages() {
 
   /* ════════════════ RENDER ════════════════ */
   return (
-    <div className="flex h-full flex-col gap-5 overflow-hidden p-8 md:p-10">
-
-      {/* ── Header + KPI ── */}
-      <div className="shrink-0">
-        <div className="mb-5 flex flex-wrap items-start justify-between gap-4">
-          <div>
-            <p className="text-[11px] font-black uppercase tracking-[0.22em] text-slate-400">
-              Area riservata / Email
-            </p>
-            <h1 className="mt-1 text-2xl font-black tracking-tight text-slate-900">
-              Posta in arrivo
-            </h1>
-            <p className="mt-1 text-sm text-slate-500">
-              Gestisci i messaggi ricevuti dal form contatti del sito.
-            </p>
-          </div>
-          <button
-            type="button"
-            onClick={() => load(true)}
-            disabled={refreshing}
-            className="flex items-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-600 shadow-sm transition hover:bg-slate-50 disabled:opacity-60"
-          >
-            <span className={refreshing ? 'animate-spin' : ''}><IcoRefresh /></span>
-            {refreshing ? 'Aggiornamento…' : 'Aggiorna'}
-          </button>
-        </div>
-
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-          <StatCard
-            label="Totale messaggi"
-            value={messages.length}
-            sub="dalla prima apertura"
-          />
-          <StatCard
-            label="Non letti"
-            value={unread}
-            sub={unread > 0 ? 'richiedono attenzione' : 'tutti letti'}
-            accent={unread > 0 ? 'border-amber-200 bg-amber-50' : 'border-slate-200 bg-white'}
-          />
-          <StatCard label="Oggi" value={todayCount} sub="ricevuti oggi" />
-          <StatCard
-            label="Tasso lettura"
-            value={`${readRate}%`}
-            sub={`${messages.length - unread} letti su ${messages.length}`}
-          />
-        </div>
-      </div>
+    <div className="flex h-full flex-col overflow-hidden p-4 md:p-5">
 
       {error && (
-        <div className="shrink-0 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-600">
+        <div className="shrink-0 mb-2 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-600">
           {error}
         </div>
       )}
@@ -616,17 +570,26 @@ export default function AdminMessages() {
         <div className="flex h-full">
 
           {/* ────── Sidebar ────── */}
-          <aside className="flex w-[190px] shrink-0 flex-col border-r border-slate-800 bg-slate-950">
+          <aside className="flex w-47.5 shrink-0 flex-col border-r border-slate-800 bg-slate-950">
             <div className="flex items-center gap-3 border-b border-slate-800 px-5 py-5">
               <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-cyan-500/15 text-cyan-400">
                 <IcoInbox />
               </div>
-              <div>
+              <div className="flex-1 min-w-0">
                 <p className="text-sm font-black text-white">Mail</p>
                 <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-slate-500">
                   BlendStudio
                 </p>
               </div>
+              <button
+                type="button"
+                onClick={() => load(true)}
+                disabled={refreshing}
+                title="Aggiorna"
+                className="flex h-7 w-7 items-center justify-center rounded-xl text-slate-500 hover:bg-white/10 hover:text-slate-300 transition disabled:opacity-40"
+              >
+                <span className={refreshing ? 'animate-spin' : ''}><IcoRefresh /></span>
+              </button>
             </div>
 
             <nav className="flex flex-1 flex-col gap-1 px-3 py-4">
@@ -667,7 +630,7 @@ export default function AdminMessages() {
           </aside>
 
           {/* ────── Message list ────── */}
-          <div className="flex w-[290px] shrink-0 flex-col border-r border-slate-200">
+          <div className="flex w-72.5 shrink-0 flex-col border-r border-slate-200">
             <div className="border-b border-slate-200 px-4 py-3">
               <div className="flex items-center gap-2 rounded-2xl border border-slate-200 bg-slate-50 px-3 py-2 focus-within:border-cyan-400 focus-within:ring-4 focus-within:ring-cyan-100 transition">
                 <span className="text-slate-400"><IcoSearch /></span>
